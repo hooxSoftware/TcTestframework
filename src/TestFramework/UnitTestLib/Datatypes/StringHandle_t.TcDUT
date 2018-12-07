@@ -1,0 +1,7 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4022.9">
+  <DUT Name="StringHandle_t" Id="{b00b16aa-a1c0-41cd-9b04-c61a581ed61c}">
+    <Declaration><![CDATA[TYPE StringHandle_t : POINTER TO STRING(255); END_TYPE
+]]></Declaration>
+  </DUT>
+</TcPlcObject>

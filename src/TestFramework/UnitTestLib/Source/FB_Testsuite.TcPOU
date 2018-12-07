@@ -1,0 +1,382 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4022.12">
+  <POU Name="FB_Testsuite" Id="{ae8bbd51-73a9-4be0-b082-2ec8a068e7f6}" SpecialFunc="None">
+    <Declaration><![CDATA[(******************************************************************************
+Baustein: FB_Testsuite
+Spezifikation: doc/Spezifikation.pdf, Kap. x.y.z
+-------------------------------------------------------------------------------
+erstellt:
+von:
+Geändert:
+von:
+-------------------------------------------------------------------------------
+Beschreibung
+Dieser Baustein enthält alle zugeordneten Testfälle. Ein Testfall
+ist ein abgeleiteter Baustein (FB) von FB_UnitTestBase.
+
+-------------------------------------------------------------------------------
+Input
+-
+
+Output
+-
+******************************************************************************)
+FUNCTION_BLOCK FB_Testsuite
+VAR_INPUT
+	i_bStart : BOOL;
+END_VAR
+VAR_OUTPUT
+	o_eState  : EState_t;
+	o_eResult : EResult_t;
+END_VAR
+VAR
+	bRegistered     : BOOL;
+	a_pTest  		: ARRAY [0..255] OF TestCaseHandle_t;
+	pTest     		: TestCaseHandle_t;
+	u16TestCases  	: UINT;
+	u16Index 		: UINT;
+	u32Passed 		: UDINT;
+	u32Failed 		: UDINT;
+	sResult   		: SResult_t;
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[
+	CASE o_eState OF
+		
+	EState_t.eStateInit:
+	
+		bRegistered := PRG_UnitTestLib.addTestSuite(THIS);
+		
+		o_eState 	:= EState_t.eStateError;
+		IF bRegistered = TRUE THEN
+			o_eState 	:= EState_t.eStateIdle;
+		END_IF;
+		
+	EState_t.eStateIdle:
+
+		u16Index := 0;
+
+		IF i_bStart = TRUE THEN
+			pTest 	 := getFirstTestCase();
+			o_eState  := EState_t.eStatePrepare;
+			o_eResult := EResult_t.eStatePassed;
+		END_IF;
+
+	EState_t.eStatePrepare:
+
+		IF pTest <> 0 THEN
+			IF pTest^.prepare() = TRUE THEN
+				pTest 	:= getNextTestCase();
+			END_IF;
+		ELSE
+			o_eState := EState_t.eStateExecute;
+			pTest 	:= getFirstTestCase();
+		END_IF;
+
+	EState_t.eStateExecute:
+
+		IF pTest <> 0 THEN
+			IF pTest^.execute() = TRUE THEN
+
+				sResult := pTest^.getResult();
+				u32Passed := u32Passed + sResult.u32Passed;
+				u32Failed := u32Failed + sResult.u32Failed;
+				
+				CASE o_eResult OF 
+
+				EResult_t.eStatePassed:
+					// Status des letzen Tests übernehmen
+					o_eResult := pTest^.o_eResult;
+
+				EResult_t.eStateFailed:
+					// Status nur übernehmen wenn ein Fatal-Status
+					// ermittelt wird und der Test sofort abgebrochen
+					// werden soll.
+					IF pTest^.o_eResult = EResult_t.eStateFailedFatal THEN
+						o_eResult := pTest^.o_eResult;
+						o_eState  := EState_t.eStateCleanUp;
+						pTest 	 := getFirstTestCase();	
+					END_IF;
+
+				EResult_t.eStateFailedFatal:
+
+					o_eState := EState_t.eStateCleanUp;
+					pTest 	:= getFirstTestCase();					
+
+				END_CASE;
+
+				IF o_eResult <> EResult_t.eStateFailedFatal THEN
+					pTest 	 := getNextTestCase();
+				END_IF;
+
+			END_IF;
+		ELSE
+			o_eState := EState_t.eStateCleanUp;
+			pTest 	:= getFirstTestCase();
+		END_IF;
+
+	ESTate_t.eStateCleanUp:
+
+		IF pTest <> 0 THEN
+			IF pTest^.cleanup() = TRUE THEN
+				pTest 	:= getNextTestCase();
+			END_IF;
+		ELSE
+			o_eState := EState_t.eStateIdle;
+		END_IF;
+		
+	ESTate_t.eStateError:	
+		
+		// wenn wir hier rauskommen ist was dummes passiert
+		
+	ELSE
+		
+		o_eState := EState_t.eStateError;
+		
+	END_CASE;
+	
+	
+	
+	
+	
+	
+//	]]></ST>
+    </Implementation>
+    <Method Name="addTestcase" Id="{80822225-6192-4f00-bbb8-24a92c6881f7}">
+      <Declaration><![CDATA[(******************************************************************************
+Baustein: FB_UnitTestBase.
+Spezifikation: doc/Spezifikation.pdf, Kap. x.y.z
+-------------------------------------------------------------------------------
+erstellt:
+von:
+Geändert:
+von:
+-------------------------------------------------------------------------------
+Beschreibung
+Diese Methode
+
+-------------------------------------------------------------------------------
+Input
+-
+
+Output
+-
+******************************************************************************)
+METHOD PUBLIC addTestcase : BOOL
+VAR_INPUT
+	i_pTestCase : TestCaseHandle_t;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[
+	addTestcase := FALSE;
+
+	IF 	i_pTestCase  <> 0   AND 
+		u16TestCases <  255 THEN
+		
+		a_pTest[u16TestCases] := i_pTestCase;
+		
+		u16TestCases := u16TestCases +1;
+	
+		addTestcase := true;
+	END_IF]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="getFirstTestCase" Id="{565a7440-2552-4228-bd2b-b6378bb5c8b9}">
+      <Declaration><![CDATA[(******************************************************************************
+Baustein: FB_UnitTestBase.
+Spezifikation: doc/Spezifikation.pdf, Kap. x.y.z
+-------------------------------------------------------------------------------
+erstellt:
+von:
+Geändert:
+von:
+-------------------------------------------------------------------------------
+Beschreibung
+Diese Methode
+
+-------------------------------------------------------------------------------
+Input
+-
+
+Output
+-
+******************************************************************************)
+METHOD PRIVATE getFirstTestCase : TestCaseHandle_t
+VAR_INPUT
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[
+	u16Index := 0;
+	getFirstTestCase := a_pTest[0];]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="getNextTestCase" Id="{caddd296-a017-4642-872a-27f49eaad75c}">
+      <Declaration><![CDATA[(******************************************************************************
+Baustein: FB_UnitTestBase.
+Spezifikation: doc/Spezifikation.pdf, Kap. x.y.z
+-------------------------------------------------------------------------------
+erstellt:
+von:
+Geändert:
+von:
+-------------------------------------------------------------------------------
+Beschreibung
+Diese Methode
+
+-------------------------------------------------------------------------------
+Input
+-
+
+Output
+-
+******************************************************************************)
+METHOD PRIVATE getNextTestCase : TestCaseHandle_t
+VAR_INPUT
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[
+	getNextTestCase := 0;
+	u16Index 		 := u16Index + 1;
+
+	IF u16Index <= 255 THEN
+		getNextTestCase := a_pTest[u16Index];
+	END_IF;]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="register" Id="{3a42094d-f3f7-40aa-9e2e-e1eb00f9e432}">
+      <Declaration><![CDATA[(******************************************************************************
+Baustein: FB_UnitTestBase.
+Spezifikation: doc/Spezifikation.pdf, Kap. x.y.z
+-------------------------------------------------------------------------------
+erstellt:
+von:
+Geändert:
+von:
+-------------------------------------------------------------------------------
+Beschreibung
+Diese Methode
+
+-------------------------------------------------------------------------------
+Input
+-
+
+Output
+-
+******************************************************************************)
+METHOD PROTECTED register : BOOL
+VAR_INPUT
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[]]></ST>
+      </Implementation>
+    </Method>
+    <LineIds Name="FB_Testsuite">
+      <LineId Id="39" Count="0" />
+      <LineId Id="9" Count="0" />
+      <LineId Id="221" Count="0" />
+      <LineId Id="70" Count="0" />
+      <LineId Id="225" Count="1" />
+      <LineId Id="232" Count="0" />
+      <LineId Id="229" Count="1" />
+      <LineId Id="227" Count="0" />
+      <LineId Id="224" Count="0" />
+      <LineId Id="231" Count="0" />
+      <LineId Id="69" Count="0" />
+      <LineId Id="72" Count="0" />
+      <LineId Id="71" Count="0" />
+      <LineId Id="93" Count="0" />
+      <LineId Id="92" Count="0" />
+      <LineId Id="95" Count="1" />
+      <LineId Id="105" Count="0" />
+      <LineId Id="94" Count="0" />
+      <LineId Id="43" Count="0" />
+      <LineId Id="42" Count="0" />
+      <LineId Id="49" Count="0" />
+      <LineId Id="52" Count="1" />
+      <LineId Id="68" Count="0" />
+      <LineId Id="67" Count="0" />
+      <LineId Id="73" Count="1" />
+      <LineId Id="87" Count="0" />
+      <LineId Id="54" Count="0" />
+      <LineId Id="41" Count="0" />
+      <LineId Id="40" Count="0" />
+      <LineId Id="55" Count="0" />
+      <LineId Id="75" Count="1" />
+      <LineId Id="144" Count="0" />
+      <LineId Id="102" Count="0" />
+      <LineId Id="100" Count="0" />
+      <LineId Id="103" Count="0" />
+      <LineId Id="107" Count="0" />
+      <LineId Id="112" Count="0" />
+      <LineId Id="116" Count="0" />
+      <LineId Id="115" Count="0" />
+      <LineId Id="118" Count="0" />
+      <LineId Id="117" Count="0" />
+      <LineId Id="119" Count="1" />
+      <LineId Id="122" Count="0" />
+      <LineId Id="129" Count="1" />
+      <LineId Id="121" Count="0" />
+      <LineId Id="124" Count="0" />
+      <LineId Id="142" Count="1" />
+      <LineId Id="123" Count="0" />
+      <LineId Id="125" Count="2" />
+      <LineId Id="138" Count="1" />
+      <LineId Id="114" Count="0" />
+      <LineId Id="113" Count="0" />
+      <LineId Id="140" Count="0" />
+      <LineId Id="134" Count="0" />
+      <LineId Id="131" Count="0" />
+      <LineId Id="133" Count="0" />
+      <LineId Id="141" Count="0" />
+      <LineId Id="78" Count="2" />
+      <LineId Id="88" Count="0" />
+      <LineId Id="56" Count="0" />
+      <LineId Id="45" Count="0" />
+      <LineId Id="44" Count="0" />
+      <LineId Id="61" Count="0" />
+      <LineId Id="81" Count="5" />
+      <LineId Id="47" Count="0" />
+      <LineId Id="233" Count="2" />
+      <LineId Id="247" Count="0" />
+      <LineId Id="246" Count="0" />
+      <LineId Id="66" Count="0" />
+      <LineId Id="238" Count="0" />
+      <LineId Id="236" Count="1" />
+      <LineId Id="46" Count="0" />
+      <LineId Id="239" Count="6" />
+    </LineIds>
+    <LineIds Name="FB_Testsuite.addTestcase">
+      <LineId Id="12" Count="1" />
+      <LineId Id="8" Count="0" />
+      <LineId Id="5" Count="0" />
+      <LineId Id="18" Count="0" />
+      <LineId Id="9" Count="0" />
+      <LineId Id="16" Count="1" />
+      <LineId Id="11" Count="0" />
+      <LineId Id="14" Count="1" />
+      <LineId Id="10" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_Testsuite.getFirstTestCase">
+      <LineId Id="7" Count="0" />
+      <LineId Id="6" Count="0" />
+      <LineId Id="5" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_Testsuite.getNextTestCase">
+      <LineId Id="10" Count="0" />
+      <LineId Id="7" Count="0" />
+      <LineId Id="6" Count="0" />
+      <LineId Id="11" Count="0" />
+      <LineId Id="8" Count="0" />
+      <LineId Id="5" Count="0" />
+      <LineId Id="9" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_Testsuite.register">
+      <LineId Id="5" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>

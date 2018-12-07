@@ -1,0 +1,18 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4022.12">
+  <DUT Name="EState_t" Id="{13bcc7bf-0c44-446c-8c7a-7c1c7cd30d15}">
+    <Declaration><![CDATA[{attribute 'qualified_only'}
+{attribute 'strict'}
+TYPE EState_t :
+(
+	eStateInit,
+	eStateIdle,
+	eStatePrepare,
+	eStateExecute,
+	eStateCleanUp,
+	eStateError
+);
+END_TYPE
+]]></Declaration>
+  </DUT>
+</TcPlcObject>

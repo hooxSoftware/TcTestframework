@@ -1,0 +1,1264 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4022.12">
+  <POU Name="FB_UnitTestBase" Id="{77b52f8d-9a49-403a-aba1-80915f687878}" SpecialFunc="None">
+    <Declaration><![CDATA[(******************************************************************************
+Baustein: FB_UnitTestBase
+Spezifikation: doc/Spezifikation.pdf, Kap. x.y.z
+-------------------------------------------------------------------------------
+erstellt:
+von:
+Geändert:
+von:
+-------------------------------------------------------------------------------
+Beschreibung
+Dieser Baustein stellt die Basis für einen Unittest dar und enthält
+alle notwendigen Variablen und Methoden zur Testauswertung.
+
+-------------------------------------------------------------------------------
+Input
+-
+
+Output
+-
+******************************************************************************)
+FUNCTION_BLOCK FB_UnitTestBase
+VAR_INPUT
+END_VAR
+VAR_OUTPUT
+	o_eState : EState_t;
+	o_eResult: EResult_t;
+END_VAR
+VAR
+	strId	  		: STRING;
+	bRegistered 	: BOOL;
+	u32Passed 		: UDINT;
+	u32Failed 		: UDINT;
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[]]></ST>
+    </Implementation>
+    <Method Name="addFailed" Id="{877265ac-7517-465d-8046-dbd413ab22a9}">
+      <Declaration><![CDATA[(******************************************************************************
+Baustein: FB_UnitTestBase.addFailed
+Spezifikation: doc/Spezifikation.pdf, Kap. x.y.z
+-------------------------------------------------------------------------------
+erstellt:
+von:
+Geändert:
+von:
+-------------------------------------------------------------------------------
+Beschreibung
+Diese Methode
+
+-------------------------------------------------------------------------------
+Input
+-
+
+Output
+-
+******************************************************************************)
+METHOD PRIVATE addFailed : BOOL
+VAR_INPUT
+	bFatal : BOOL;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[
+	u32Failed := u32Failed + 1;
+	
+	o_eResult := EResult_t.eStateFailed;
+	
+	IF bFatal = true THEN
+		o_eResult := EResult_t.eStateFailedFatal;
+	END_IF
+]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="addPassed" Id="{725a8b74-1eab-4dbd-9f39-193c14d3c944}">
+      <Declaration><![CDATA[(******************************************************************************
+Baustein: FB_UnitTestBase.
+Spezifikation: doc/Spezifikation.pdf, Kap. x.y.z
+-------------------------------------------------------------------------------
+erstellt:
+von:
+Geändert:
+von:
+-------------------------------------------------------------------------------
+Beschreibung
+Diese Methode
+
+-------------------------------------------------------------------------------
+Input
+-
+
+Output
+-
+******************************************************************************)
+METHOD PRIVATE addPassed : BOOL
+VAR_INPUT
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[
+	u32Passed := u32Passed + 1;]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="assertEQUAL" Id="{3541cd09-bacb-486c-b274-55964cece777}">
+      <Declaration><![CDATA[(******************************************************************************
+Baustein: FB_UnitTestBase.assertEQUAL
+Spezifikation: doc/Spezifikation.pdf, Kap. x.y.z
+-------------------------------------------------------------------------------
+erstellt:
+von:
+Geändert:
+von:
+-------------------------------------------------------------------------------
+Beschreibung
+Diese Methode...
+
+-------------------------------------------------------------------------------
+Input
+-
+
+Output
+-
+******************************************************************************)
+METHOD PROTECTED assertEQUAL : BOOL
+VAR_INPUT
+	d32Actual   : DINT;
+	d32Expected : DINT;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[
+	assertTRUE( d32Actual = d32Expected );
+]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="assertEQUAL_Fatal" Id="{4d3db720-2315-421b-a569-e8f449540482}">
+      <Declaration><![CDATA[(******************************************************************************
+Baustein: FB_UnitTestBase.
+Spezifikation: doc/Spezifikation.pdf, Kap. x.y.z
+-------------------------------------------------------------------------------
+erstellt:
+von:
+Geändert:
+von:
+-------------------------------------------------------------------------------
+Beschreibung
+Diese Methode
+
+-------------------------------------------------------------------------------
+Input
+-
+
+Output
+-
+******************************************************************************)
+METHOD PROTECTED assertEQUAL_Fatal : BOOL
+VAR_INPUT
+	d32Actual   : DINT;
+	d32Expected : DINT;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[
+	assertTRUE_Fatal( d32Actual = d32Expected );]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="assertFALSE" Id="{d4d5eea3-3c53-497c-9176-1d2814a51e39}">
+      <Declaration><![CDATA[(******************************************************************************
+Baustein: FB_UnitTestBase.assertFALSE
+Spezifikation: doc/Spezifikation.pdf, Kap. x.y.z
+-------------------------------------------------------------------------------
+erstellt:
+von:
+Geändert:
+von:
+-------------------------------------------------------------------------------
+Beschreibung
+Diese Methode...
+
+-------------------------------------------------------------------------------
+Input
+-
+
+Output
+-
+******************************************************************************)
+METHOD PROTECTED assertFALSE : BOOL
+VAR_INPUT
+	bValue : BOOL;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[
+	IF bValue = FALSE THEN
+		u32Passed := u32Passed + 1;
+	ELSE
+		u32Failed := u32Failed + 1;
+	END_IF]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="assertFALSE_Fatal" Id="{75476dd2-303d-4781-a584-de30bb3a6473}">
+      <Declaration><![CDATA[(******************************************************************************
+Baustein: FB_UnitTestBase.
+Spezifikation: doc/Spezifikation.pdf, Kap. x.y.z
+-------------------------------------------------------------------------------
+erstellt:
+von:
+Geändert:
+von:
+-------------------------------------------------------------------------------
+Beschreibung
+Diese Methode
+
+-------------------------------------------------------------------------------
+Input
+-
+
+Output
+-
+******************************************************************************)
+METHOD PROTECTED assertFALSE_Fatal : BOOL
+VAR_INPUT
+	bValue : BOOL;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[
+	IF bValue = FALSE THEN
+		addPassed();
+	ELSE
+		addFailed(bFatal := true);
+	END_IF]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="assertNotEqual" Id="{72e8515c-ae4c-4438-959f-e57420569332}">
+      <Declaration><![CDATA[(******************************************************************************
+Baustein: FB_UnitTestBase.assertNotEqual
+Spezifikation: doc/Spezifikation.pdf, Kap. x.y.z
+-------------------------------------------------------------------------------
+erstellt:
+von:
+Geändert:
+von:
+-------------------------------------------------------------------------------
+Beschreibung
+Diese Methode...
+
+-------------------------------------------------------------------------------
+Input
+-
+
+Output
+-
+******************************************************************************)
+METHOD PROTECTED assertNotEqual : BOOL
+VAR_INPUT
+	d32Actual   : DINT;
+	d32Expected : DINT;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[
+	assertTRUE( d32Actual <> d32Expected );
+		]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="assertNotEqual_Fatal" Id="{43ddb367-fd59-4f07-9a32-13abd728e6c2}">
+      <Declaration><![CDATA[(******************************************************************************
+Baustein: FB_UnitTestBase.
+Spezifikation: doc/Spezifikation.pdf, Kap. x.y.z
+-------------------------------------------------------------------------------
+erstellt:
+von:
+Geändert:
+von:
+-------------------------------------------------------------------------------
+Beschreibung
+Diese Methode
+
+-------------------------------------------------------------------------------
+Input
+-
+
+Output
+-
+******************************************************************************)
+METHOD PROTECTED assertNotEqual_Fatal : BOOL
+VAR_INPUT
+	d32Actual   : DINT;
+	d32Expected : DINT;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[
+	assertTRUE_Fatal( d32Actual <> d32Expected );]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="assertPtrEqual" Id="{95a0bcc0-afe3-4228-85a2-ce212c091a6f}">
+      <Declaration><![CDATA[(******************************************************************************
+Baustein: FB_UnitTestBase.
+Spezifikation: doc/Spezifikation.pdf, Kap. x.y.z
+-------------------------------------------------------------------------------
+erstellt:
+von:
+Geändert:
+von:
+-------------------------------------------------------------------------------
+Beschreibung
+Diese Methode
+
+-------------------------------------------------------------------------------
+Input
+-
+
+Output
+-
+******************************************************************************)
+METHOD PROTECTED assertPtrEqual : BOOL
+VAR_INPUT
+	pActual   : PVOID;
+	pExpected : PVOID;
+END_VAR]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[
+	assertTRUE(pActual = pExpected);]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="assertPtrEqual_Fatal" Id="{1b8e3907-0f7e-4c04-80e7-103c2b3a23a5}">
+      <Declaration><![CDATA[(******************************************************************************
+Baustein: FB_UnitTestBase.
+Spezifikation: doc/Spezifikation.pdf, Kap. x.y.z
+-------------------------------------------------------------------------------
+erstellt:
+von:
+Geändert:
+von:
+-------------------------------------------------------------------------------
+Beschreibung
+Diese Methode
+
+-------------------------------------------------------------------------------
+Input
+-
+
+Output
+-
+******************************************************************************)
+METHOD PROTECTED assertPtrEqual_Fatal : BOOL
+VAR_INPUT
+	pActual   : PVOID;
+	pExpected : PVOID;
+END_VAR]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[
+	assertTRUE_Fatal(pActual = pExpected);]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="assertPtrNotEqual" Id="{57846629-242c-4e81-af74-58586a21a4fc}">
+      <Declaration><![CDATA[(******************************************************************************
+Baustein: FB_UnitTestBase.
+Spezifikation: doc/Spezifikation.pdf, Kap. x.y.z
+-------------------------------------------------------------------------------
+erstellt:
+von:
+Geändert:
+von:
+-------------------------------------------------------------------------------
+Beschreibung
+Diese Methode
+
+-------------------------------------------------------------------------------
+Input
+-
+
+Output
+-
+******************************************************************************)
+METHOD PROTECTED assertPtrNotEqual : BOOL
+VAR_INPUT
+	pActual   : PVOID;
+	pExpected : PVOID;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[
+	assertTRUE(pActual <> pExpected);]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="assertPtrNotEqual_Fatal" Id="{39a47f2c-67f8-43f2-bc30-f2cb3de76090}">
+      <Declaration><![CDATA[(******************************************************************************
+Baustein: FB_UnitTestBase.
+Spezifikation: doc/Spezifikation.pdf, Kap. x.y.z
+-------------------------------------------------------------------------------
+erstellt:
+von:
+Geändert:
+von:
+-------------------------------------------------------------------------------
+Beschreibung
+Diese Methode
+
+-------------------------------------------------------------------------------
+Input
+-
+
+Output
+-
+******************************************************************************)
+METHOD PROTECTED assertPtrNotEqual_Fatal : BOOL
+VAR_INPUT
+	pActual   : PVOID;
+	pExpected : PVOID;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[
+	assertTRUE_Fatal(pActual <> pExpected);]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="assertPtrNotNull" Id="{f628fc0d-4d94-48e7-aae3-588658d79bb7}">
+      <Declaration><![CDATA[(******************************************************************************
+Baustein: FB_UnitTestBase.
+Spezifikation: doc/Spezifikation.pdf, Kap. x.y.z
+-------------------------------------------------------------------------------
+erstellt:
+von:
+Geändert:
+von:
+-------------------------------------------------------------------------------
+Beschreibung
+Diese Methode
+
+-------------------------------------------------------------------------------
+Input
+-
+
+Output
+-
+******************************************************************************)
+METHOD PROTECTED assertPtrNotNull : BOOL
+VAR_INPUT
+	pActual   : PVOID;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[
+	assertTRUE(pActual <> 0);]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="assertPtrNotNull_Fatal" Id="{02ae7d7d-3ede-4c25-85fd-0879e689222b}">
+      <Declaration><![CDATA[(******************************************************************************
+Baustein: FB_UnitTestBase.
+Spezifikation: doc/Spezifikation.pdf, Kap. x.y.z
+-------------------------------------------------------------------------------
+erstellt:
+von:
+Geändert:
+von:
+-------------------------------------------------------------------------------
+Beschreibung
+Diese Methode
+
+-------------------------------------------------------------------------------
+Input
+-
+
+Output
+-
+******************************************************************************)
+METHOD PROTECTED assertPtrNotNull_Fatal : BOOL
+VAR_INPUT
+	pActual   : PVOID;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[
+	assertTRUE_Fatal(pActual <> 0);]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="assertPtrNull" Id="{abd2bd77-de32-4620-9218-680a260e8028}">
+      <Declaration><![CDATA[(******************************************************************************
+Baustein: FB_UnitTestBase.
+Spezifikation: doc/Spezifikation.pdf, Kap. x.y.z
+-------------------------------------------------------------------------------
+erstellt:
+von:
+Geändert:
+von:
+-------------------------------------------------------------------------------
+Beschreibung
+Diese Methode
+
+-------------------------------------------------------------------------------
+Input
+-
+
+Output
+-
+******************************************************************************)
+METHOD PROTECTED assertPtrNull : BOOL
+VAR_INPUT
+	pActual   : PVOID;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[
+	assertTRUE(pActual = 0);]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="assertPtrNull_Fatal" Id="{5bf9c97f-bc97-48db-98fa-ba9cb62263a9}">
+      <Declaration><![CDATA[(******************************************************************************
+Baustein: FB_UnitTestBase.
+Spezifikation: doc/Spezifikation.pdf, Kap. x.y.z
+-------------------------------------------------------------------------------
+erstellt:
+von:
+Geändert:
+von:
+-------------------------------------------------------------------------------
+Beschreibung
+Diese Methode
+
+-------------------------------------------------------------------------------
+Input
+-
+
+Output
+-
+******************************************************************************)
+METHOD PROTECTED assertPtrNull_Fatal : BOOL
+VAR_INPUT
+	pActual   : PVOID;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[
+	assertTRUE_Fatal(pActual = 0);]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="assertRealEqual" Id="{d770309a-bad4-4c69-b79f-274b8b36691a}">
+      <Declaration><![CDATA[(******************************************************************************
+Baustein: FB_UnitTestBase.
+Spezifikation: doc/Spezifikation.pdf, Kap. x.y.z
+-------------------------------------------------------------------------------
+erstellt:
+von:
+Geändert:
+von:
+-------------------------------------------------------------------------------
+Beschreibung
+Diese Methode
+
+-------------------------------------------------------------------------------
+Input
+-
+
+Output
+-
+******************************************************************************)
+METHOD PROTECTED assertRealEqual : BOOL
+VAR_INPUT
+	r32Actual 		: REAL;
+	r32Expected 	: REAL;
+	r32Granularity 	: REAL;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[
+	assertTRUE(ABS(r32Actual-r32Expected) <= ABS(r32Granularity));]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="assertRealEqual_Fatal" Id="{cf2c2abf-779b-4ad8-b6e5-676b71c0ac70}">
+      <Declaration><![CDATA[(******************************************************************************
+Baustein: FB_UnitTestBase.
+Spezifikation: doc/Spezifikation.pdf, Kap. x.y.z
+-------------------------------------------------------------------------------
+erstellt:
+von:
+Geändert:
+von:
+-------------------------------------------------------------------------------
+Beschreibung
+Diese Methode
+
+-------------------------------------------------------------------------------
+Input
+-
+
+Output
+-
+******************************************************************************)
+METHOD PROTECTED assertRealEqual_Fatal : BOOL
+VAR_INPUT
+	r32Actual 		: REAL;
+	r32Expected 	: REAL;
+	r32Granularity 	: REAL;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[
+	assertTRUE_Fatal(ABS(r32Actual-r32Expected) <= ABS(r32Granularity));]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="assertRealNotEqual" Id="{78d62bc5-9b58-4d56-afb5-189d3abc8861}">
+      <Declaration><![CDATA[(******************************************************************************
+Baustein: FB_UnitTestBase.
+Spezifikation: doc/Spezifikation.pdf, Kap. x.y.z
+-------------------------------------------------------------------------------
+erstellt:
+von:
+Geändert:
+von:
+-------------------------------------------------------------------------------
+Beschreibung
+Diese Methode
+
+-------------------------------------------------------------------------------
+Input
+-
+
+Output
+-
+******************************************************************************)
+METHOD PRIVATE assertRealNotEqual : BOOL
+VAR_INPUT
+	r32Actual 		: REAL;
+	r32Expected 	: REAL;
+	r32Granularity 	: REAL;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[
+	assertTRUE(ABS(r32Actual-r32Expected) > ABS(r32Granularity));]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="assertRealNotEqual_Fatal" Id="{258a11aa-40fa-4616-826d-01f5de63c20d}">
+      <Declaration><![CDATA[(******************************************************************************
+Baustein: FB_UnitTestBase.
+Spezifikation: doc/Spezifikation.pdf, Kap. x.y.z
+-------------------------------------------------------------------------------
+erstellt:
+von:
+Geändert:
+von:
+-------------------------------------------------------------------------------
+Beschreibung
+Diese Methode
+
+-------------------------------------------------------------------------------
+Input
+-
+
+Output
+-
+******************************************************************************)
+METHOD PROTECTED assertRealNotEqual_Fatal : BOOL
+VAR_INPUT
+	r32Actual 		: REAL;
+	r32Expected 	: REAL;
+	r32Granularity 	: REAL;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[
+	assertTRUE_Fatal(ABS(r32Actual-r32Expected) > ABS(r32Granularity));]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="assertStringEqual" Id="{83105799-7b7a-4d3d-8679-14126f120e79}">
+      <Declaration><![CDATA[(******************************************************************************
+Baustein: FB_UnitTestBase.
+Spezifikation: doc/Spezifikation.pdf, Kap. x.y.z
+-------------------------------------------------------------------------------
+erstellt:
+von:
+Geändert:
+von:
+-------------------------------------------------------------------------------
+Beschreibung
+Diese Methode
+
+-------------------------------------------------------------------------------
+Input
+-
+
+Output
+-
+******************************************************************************)
+METHOD PROTECTED assertStringEqual : BOOL
+VAR_INPUT
+	pActual 	: StringHandle_t;
+	pExpected 	: StringHandle_t;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[
+	IF strncmp(pActual, pExpected, LEN(pExpected^)) = TRUE THEN
+		addPassed();
+	ELSE
+		addFailed(bFatal := FALSE);		
+	END_IF]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="assertStringEqual_Fatal" Id="{bf1be694-6409-4e9e-9292-da4654ce1902}">
+      <Declaration><![CDATA[(******************************************************************************
+Baustein: FB_UnitTestBase.
+Spezifikation: doc/Spezifikation.pdf, Kap. x.y.z
+-------------------------------------------------------------------------------
+erstellt:
+von:
+Geändert:
+von:
+-------------------------------------------------------------------------------
+Beschreibung
+Diese Methode
+
+-------------------------------------------------------------------------------
+Input
+-
+
+Output
+-
+******************************************************************************)
+METHOD PROTECTED assertStringEqual_Fatal : BOOL
+VAR_INPUT
+	pActual 	: StringHandle_t;
+	pExpected 	: StringHandle_t;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[
+	IF strncmp(pActual, pExpected, LEN(pExpected^)) = TRUE THEN
+		addPassed();
+	ELSE
+		addFailed(bFatal := TRUE);		
+	END_IF]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="assertStringNotEqual" Id="{5b6c5929-a0bc-40c1-a6e9-53f688e2534b}">
+      <Declaration><![CDATA[(******************************************************************************
+Baustein: FB_UnitTestBase.
+Spezifikation: doc/Spezifikation.pdf, Kap. x.y.z
+-------------------------------------------------------------------------------
+erstellt:
+von:
+Geändert:
+von:
+-------------------------------------------------------------------------------
+Beschreibung
+Diese Methode
+
+-------------------------------------------------------------------------------
+Input
+-
+
+Output
+-
+******************************************************************************)
+METHOD PROTECTED assertStringNotEqual : BOOL
+VAR_INPUT
+	pActual 	: StringHandle_t;
+	pExpected 	: StringHandle_t;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[
+	IF strncmp(pActual, pExpected, LEN(pExpected^)) = false THEN
+		addPassed();
+	ELSE
+		addFailed(bFatal := FALSE);		
+	END_IF]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="assertStringNotEqual_fatal" Id="{5f4342ff-8918-48d1-98ef-3f0b434e545d}">
+      <Declaration><![CDATA[(******************************************************************************
+Baustein: FB_UnitTestBase.
+Spezifikation: doc/Spezifikation.pdf, Kap. x.y.z
+-------------------------------------------------------------------------------
+erstellt:
+von:
+Geändert:
+von:
+-------------------------------------------------------------------------------
+Beschreibung
+Diese Methode
+
+-------------------------------------------------------------------------------
+Input
+-
+
+Output
+-
+******************************************************************************)
+METHOD PROTECTED assertStringNotEqual_fatal : BOOL
+VAR_INPUT
+	pExpected 	: StringHandle_t;
+	pActual 	: StringHandle_t;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[
+	IF strncmp(pActual, pExpected, LEN(pExpected^)) = FALSE THEN
+		addPassed();
+	ELSE
+		addFailed(bFatal := TRUE);		
+	END_IF]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="assertTRUE" Id="{22cc59e3-d507-4b30-a16f-46ddc4d327da}">
+      <Declaration><![CDATA[(******************************************************************************
+Baustein: FB_UnitTestBase.assertTRUE
+Spezifikation: doc/Spezifikation.pdf, Kap. x.y.z
+-------------------------------------------------------------------------------
+erstellt:
+von:
+Geändert:
+von:
+-------------------------------------------------------------------------------
+Beschreibung
+Diese Methode...
+
+-------------------------------------------------------------------------------
+Input
+-
+
+Output
+-
+******************************************************************************)
+METHOD PROTECTED assertTRUE : BOOL
+VAR_INPUT
+	bValue : BOOL;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[
+	IF bValue = true THEN
+		addPassed();
+	ELSE
+		addFailed(bFatal := FALSE);
+	END_IF]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="assertTRUE_Fatal" Id="{33bf9cec-0e76-4b31-9c97-1667bb6d5ac6}">
+      <Declaration><![CDATA[
+(******************************************************************************
+Baustein: FB_UnitTestBase.
+Spezifikation: doc/Spezifikation.pdf, Kap. x.y.z
+-------------------------------------------------------------------------------
+erstellt:
+von:
+Geändert:
+von:
+-------------------------------------------------------------------------------
+Beschreibung
+Diese Methode
+
+-------------------------------------------------------------------------------
+Input
+-
+
+Output
+-
+******************************************************************************)
+METHOD PROTECTED assertTRUE_Fatal : BOOL
+VAR_INPUT
+	bValue : BOOL;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[
+	IF bValue = TRUE THEN
+		addPassed();
+	ELSE
+		addFailed(bFatal := true);
+	END_IF]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="cleanup" Id="{bb611570-6ab2-451b-9f0d-51e2ce59af0a}">
+      <Declaration><![CDATA[(******************************************************************************
+Baustein: FB_UnitTestBase.cleanup
+Spezifikation: doc/Spezifikation.pdf, Kap. x.y.z
+-------------------------------------------------------------------------------
+erstellt:
+von:
+Geändert:
+von:
+-------------------------------------------------------------------------------
+Beschreibung
+Diese Methode...
+
+-------------------------------------------------------------------------------
+Input
+-
+
+Output
+-
+******************************************************************************)
+METHOD FINAL cleanup : BOOL
+VAR_INPUT
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[
+	o_eState  := EState_t.eStateCleanUp;]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="execute" Id="{eaaea70b-9bf9-4b40-b05d-957421faa196}">
+      <Declaration><![CDATA[(******************************************************************************
+Baustein: FB_UnitTestBase.execute
+Spezifikation: doc/Spezifikation.pdf, Kap. x.y.z
+-------------------------------------------------------------------------------
+erstellt:
+von:
+Geändert:
+von:
+-------------------------------------------------------------------------------
+Beschreibung
+Diese Methode...
+
+-------------------------------------------------------------------------------
+Input
+-
+
+Output
+-
+******************************************************************************)
+METHOD FINAL execute : BOOL
+VAR_INPUT
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[
+	o_eState  := EState_t.eStateExecute;]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="getResult" Id="{3f3bc089-c817-4d4a-b249-9806d1ff7fc0}">
+      <Declaration><![CDATA[(******************************************************************************
+Baustein: FB_UnitTestBase.
+Spezifikation: doc/Spezifikation.pdf, Kap. x.y.z
+-------------------------------------------------------------------------------
+erstellt:
+von:
+Geändert:
+von:
+-------------------------------------------------------------------------------
+Beschreibung
+Diese Methode
+
+-------------------------------------------------------------------------------
+Input
+-
+
+Output
+-
+******************************************************************************)
+METHOD FINAL getResult : SResult_t
+VAR_INPUT
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[
+	getResult.u32Failed := u32Failed;
+	getResult.u32Passed := u32Passed;]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="prepare" Id="{571b8d1e-086f-4be7-aee6-f996b70e4b02}">
+      <Declaration><![CDATA[(******************************************************************************
+Baustein: FB_UnitTestBase.prepare
+Spezifikation: doc/Spezifikation.pdf, Kap. x.y.z
+-------------------------------------------------------------------------------
+erstellt:
+von:
+Geändert:
+von:
+-------------------------------------------------------------------------------
+Beschreibung
+Diese Methode...
+
+-------------------------------------------------------------------------------
+Input
+-
+
+Output
+-
+******************************************************************************)
+METHOD FINAL prepare : BOOL
+VAR_INPUT
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[
+	u32Passed := 0;
+	u32Failed := 0;
+	o_eState  := EState_t.eStatePrepare;]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="register" Id="{4a228bed-2579-4e19-893d-8dcd5cfaa8a3}">
+      <Declaration><![CDATA[(******************************************************************************
+Baustein: FB_UnitTestBase.
+Spezifikation: doc/Spezifikation.pdf, Kap. x.y.z
+-------------------------------------------------------------------------------
+erstellt:
+von:
+Geändert:
+von:
+-------------------------------------------------------------------------------
+Beschreibung
+Diese Methode
+
+-------------------------------------------------------------------------------
+Input
+-
+
+Output
+-
+******************************************************************************)
+METHOD PROTECTED register : BOOL
+VAR_INPUT
+	i_pTestSuite : TestSuiteHandle_t;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[
+	IF i_pTestSuite <> 0 	AND 
+       bRegistered = FALSE  THEN
+		
+		bRegistered := i_pTestSuite^.addTestcase(THIS);
+	
+	END_IF]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="strncmp" Id="{ba3fcb40-c976-48c8-9fd0-cd1feb115e5f}">
+      <Declaration><![CDATA[(******************************************************************************
+Baustein: FB_UnitTestBase.
+Spezifikation: doc/Spezifikation.pdf, Kap. x.y.z
+-------------------------------------------------------------------------------
+erstellt:
+von:
+Geändert:
+von:
+-------------------------------------------------------------------------------
+Beschreibung
+Diese Methode
+
+-------------------------------------------------------------------------------
+Input
+-
+
+Output
+-
+******************************************************************************)
+METHOD PRIVATE strncmp : BOOL
+VAR_INPUT
+	strInput 	: StringHandle_t;
+	strCompare 	: StringHandle_t;
+	s16Size		: INT;
+END_VAR
+VAR
+	s16Size1 : INT;
+	s16Size2 : INT;
+	s16Diff  : INT;
+END_VAR]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[
+   s16Size1:= LEN(strInput^); 
+	s16Size2:= LEN(strCompare^); 
+	
+	strncmp := FALSE;
+	
+	s16Diff := s16Size1 - s16Size2;
+   
+	// vergleich nur wenn beide Strings
+	// gleich groß sind.
+	IF s16Diff  = 0 THEN
+
+		strncmp := TRUE;
+	
+		WHILE(s16Size > 0) DO
+
+			IF strInput^ <> strCompare^ THEN
+				strncmp := FALSE;
+			END_IF;  
+ 
+			strInput   := strInput + 1;
+			strCompare := strCompare + 1;
+			s16Size    := s16Size - 1;
+
+		END_WHILE
+
+
+	
+	END_IF;
+]]></ST>
+      </Implementation>
+    </Method>
+    <LineIds Name="FB_UnitTestBase">
+      <LineId Id="9" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_UnitTestBase.addFailed">
+      <LineId Id="6" Count="0" />
+      <LineId Id="5" Count="0" />
+      <LineId Id="7" Count="0" />
+      <LineId Id="9" Count="0" />
+      <LineId Id="18" Count="0" />
+      <LineId Id="12" Count="2" />
+      <LineId Id="10" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_UnitTestBase.addPassed">
+      <LineId Id="6" Count="1" />
+    </LineIds>
+    <LineIds Name="FB_UnitTestBase.assertEQUAL">
+      <LineId Id="8" Count="1" />
+      <LineId Id="5" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_UnitTestBase.assertEQUAL_Fatal">
+      <LineId Id="8" Count="0" />
+      <LineId Id="5" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_UnitTestBase.assertFALSE">
+      <LineId Id="8" Count="0" />
+      <LineId Id="5" Count="0" />
+      <LineId Id="9" Count="0" />
+      <LineId Id="11" Count="1" />
+      <LineId Id="10" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_UnitTestBase.assertFALSE_Fatal">
+      <LineId Id="7" Count="4" />
+      <LineId Id="5" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_UnitTestBase.assertNotEqual">
+      <LineId Id="6" Count="2" />
+    </LineIds>
+    <LineIds Name="FB_UnitTestBase.assertNotEqual_Fatal">
+      <LineId Id="8" Count="0" />
+      <LineId Id="5" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_UnitTestBase.assertPtrEqual">
+      <LineId Id="8" Count="0" />
+      <LineId Id="5" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_UnitTestBase.assertPtrEqual_Fatal">
+      <LineId Id="8" Count="0" />
+      <LineId Id="5" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_UnitTestBase.assertPtrNotEqual">
+      <LineId Id="8" Count="0" />
+      <LineId Id="5" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_UnitTestBase.assertPtrNotEqual_Fatal">
+      <LineId Id="8" Count="0" />
+      <LineId Id="5" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_UnitTestBase.assertPtrNotNull">
+      <LineId Id="7" Count="0" />
+      <LineId Id="5" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_UnitTestBase.assertPtrNotNull_Fatal">
+      <LineId Id="7" Count="0" />
+      <LineId Id="5" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_UnitTestBase.assertPtrNull">
+      <LineId Id="7" Count="0" />
+      <LineId Id="5" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_UnitTestBase.assertPtrNull_Fatal">
+      <LineId Id="7" Count="0" />
+      <LineId Id="5" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_UnitTestBase.assertRealEqual">
+      <LineId Id="9" Count="0" />
+      <LineId Id="5" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_UnitTestBase.assertRealEqual_Fatal">
+      <LineId Id="9" Count="0" />
+      <LineId Id="5" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_UnitTestBase.assertRealNotEqual">
+      <LineId Id="9" Count="0" />
+      <LineId Id="5" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_UnitTestBase.assertRealNotEqual_Fatal">
+      <LineId Id="9" Count="0" />
+      <LineId Id="5" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_UnitTestBase.assertStringEqual">
+      <LineId Id="14" Count="0" />
+      <LineId Id="19" Count="0" />
+      <LineId Id="16" Count="2" />
+      <LineId Id="11" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_UnitTestBase.assertStringEqual_Fatal">
+      <LineId Id="9" Count="4" />
+      <LineId Id="5" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_UnitTestBase.assertStringNotEqual">
+      <LineId Id="9" Count="4" />
+      <LineId Id="5" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_UnitTestBase.assertStringNotEqual_fatal">
+      <LineId Id="8" Count="4" />
+      <LineId Id="5" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_UnitTestBase.assertTRUE">
+      <LineId Id="8" Count="4" />
+      <LineId Id="5" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_UnitTestBase.assertTRUE_Fatal">
+      <LineId Id="6" Count="4" />
+      <LineId Id="5" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_UnitTestBase.cleanup">
+      <LineId Id="28" Count="0" />
+      <LineId Id="5" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_UnitTestBase.execute">
+      <LineId Id="28" Count="0" />
+      <LineId Id="5" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_UnitTestBase.getResult">
+      <LineId Id="6" Count="0" />
+      <LineId Id="5" Count="0" />
+      <LineId Id="7" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_UnitTestBase.prepare">
+      <LineId Id="28" Count="0" />
+      <LineId Id="5" Count="0" />
+      <LineId Id="29" Count="1" />
+    </LineIds>
+    <LineIds Name="FB_UnitTestBase.register">
+      <LineId Id="7" Count="0" />
+      <LineId Id="5" Count="0" />
+      <LineId Id="12" Count="0" />
+      <LineId Id="8" Count="0" />
+      <LineId Id="10" Count="1" />
+      <LineId Id="9" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_UnitTestBase.strncmp">
+      <LineId Id="11" Count="4" />
+      <LineId Id="31" Count="1" />
+      <LineId Id="34" Count="0" />
+      <LineId Id="46" Count="1" />
+      <LineId Id="35" Count="0" />
+      <LineId Id="58" Count="0" />
+      <LineId Id="57" Count="0" />
+      <LineId Id="38" Count="0" />
+      <LineId Id="48" Count="0" />
+      <LineId Id="53" Count="2" />
+      <LineId Id="49" Count="0" />
+      <LineId Id="62" Count="0" />
+      <LineId Id="56" Count="0" />
+      <LineId Id="59" Count="0" />
+      <LineId Id="51" Count="0" />
+      <LineId Id="60" Count="0" />
+      <LineId Id="50" Count="0" />
+      <LineId Id="52" Count="0" />
+      <LineId Id="39" Count="0" />
+      <LineId Id="43" Count="0" />
+      <LineId Id="37" Count="0" />
+      <LineId Id="5" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>

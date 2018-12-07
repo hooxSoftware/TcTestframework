@@ -1,0 +1,7 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4022.9">
+  <DUT Name="TestSuiteHandle_t" Id="{4c6be0e1-fd4b-4671-aeb6-cca131117c9d}">
+    <Declaration><![CDATA[TYPE TestSuiteHandle_t : POINTER TO FB_TestSuite; END_TYPE
+]]></Declaration>
+  </DUT>
+</TcPlcObject>

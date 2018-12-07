@@ -1,0 +1,12 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4022.9">
+  <DUT Name="SResult_t" Id="{5ce9f7b8-c2c2-4fc8-b390-afc850c2e143}">
+    <Declaration><![CDATA[TYPE SResult_t :
+STRUCT
+	u32Passed : UDINT;
+	u32Failed : UDINT;
+END_STRUCT
+END_TYPE
+]]></Declaration>
+  </DUT>
+</TcPlcObject>

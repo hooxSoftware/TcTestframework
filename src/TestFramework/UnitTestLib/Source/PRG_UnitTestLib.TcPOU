@@ -1,0 +1,84 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4022.12">
+  <POU Name="PRG_UnitTestLib" Id="{dbeace52-75a3-4dfa-9955-9febf020e88e}" SpecialFunc="None">
+    <Declaration><![CDATA[(******************************************************************************
+Baustein: PRG_TestLibrary
+Spezifikation: doc/Spezifikation.pdf, Kap. x.y.z
+-------------------------------------------------------------------------------
+erstellt:
+von:
+Geändert:
+von:
+-------------------------------------------------------------------------------
+Beschreibung
+Dieser Baustein etnhält alle Testsuites und führt diese aus.
+
+-------------------------------------------------------------------------------
+Input
+-
+
+Output
+-
+******************************************************************************)
+PROGRAM PRG_UnitTestLib
+VAR_INPUT
+END_VAR
+VAR_OUTPUT
+END_VAR
+VAR
+	a_pTestSuite : ARRAY [0..255] OF TestSuiteHandle_t;
+	u16TestSuites : UINT;
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[]]></ST>
+    </Implementation>
+    <Method Name="addTestSuite" Id="{4899b7f4-5457-4c86-b63d-9b10a5e33440}">
+      <Declaration><![CDATA[(******************************************************************************
+Baustein: FB_UnitTestBase.
+Spezifikation: doc/Spezifikation.pdf, Kap. x.y.z
+-------------------------------------------------------------------------------
+erstellt:
+von:
+Geändert:
+von:
+-------------------------------------------------------------------------------
+Beschreibung
+Diese Methode
+
+-------------------------------------------------------------------------------
+Input
+-
+
+Output
+-
+******************************************************************************)
+METHOD PUBLIC addTestSuite : BOOL
+VAR_INPUT
+	i_pTestSuite : TestSuiteHandle_t;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[
+	addTestSuite := FALSE;
+
+	IF 	i_pTestSuite  <> 0   AND 
+		u16TestSuites <  255 THEN
+		
+		a_pTestSuite[u16TestSuites] := i_pTestSuite;
+		
+		u16TestSuites := u16TestSuites +1;
+	
+		addTestSuite := TRUE;
+	END_IF]]></ST>
+      </Implementation>
+    </Method>
+    <LineIds Name="PRG_UnitTestLib">
+      <LineId Id="9" Count="0" />
+    </LineIds>
+    <LineIds Name="PRG_UnitTestLib.addTestSuite">
+      <LineId Id="7" Count="10" />
+      <LineId Id="5" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>
