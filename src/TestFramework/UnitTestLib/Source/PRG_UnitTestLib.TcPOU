@@ -20,18 +20,88 @@ Input
 Output
 -
 ******************************************************************************)
+{attribute 'global_init_slot' := '41000'}
 PROGRAM PRG_UnitTestLib
 VAR_INPUT
+	i_bStart : BOOL;
 END_VAR
 VAR_OUTPUT
+	o_eState  : EState_t;
+	o_eResult : EResult_t;
 END_VAR
 VAR
-	a_pTestSuite : ARRAY [0..255] OF TestSuiteHandle_t;
-	u16TestSuites : UINT;
+	a_pTestSuite 	: ARRAY [0..255] OF TestSuiteHandle_t;
+	u16TestSuites 	: UINT;
+	u16Index	  	: UINT;
+	pActTestSuite 	: TestSuiteHandle_t;
 END_VAR
 ]]></Declaration>
     <Implementation>
-      <ST><![CDATA[]]></ST>
+      <ST><![CDATA[
+	CASE o_eState OF 
+	
+	EState_t.eStateInit:	
+	
+	EState_t.eStateIdle:
+	
+		IF i_bStart = TRUE THEN
+			o_eState := EState_t.eStatePrepare;
+		END_IF
+	
+	EState_t.eStatePrepare:
+	
+		o_eResult 	  := EResult_t.eStatePassed;
+		
+		pActTestSuite := getFirstTestSuite();
+		
+		IF pActTestSuite <> 0 THEN
+			o_eState := EState_t.eStateExecute;
+		ELSE
+			o_eState := EState_t.eStateError;	
+		END_IF
+	
+	EState_t.eStateExecute:
+	
+		pActTestSuite^(i_bStart := TRUE);
+	
+		IF pActTestSuite^.o_eState = EState_t.eStateReady THEN
+			
+			IF pActTestSuite^.o_eResult = EResult_t.eStateFailed THEN
+				o_eResult := EResult_t.eStateFailed;
+			END_IF
+			
+			pActTestSuite^(i_bStart := FALSE);
+			
+			o_eState := EState_t.eStateCleanUp;
+			
+		END_IF
+	
+	EState_t.eStateCleanUp:
+	
+		IF pActTestSuite^.o_eResult = EResult_t.eStateFailedFatal THEN
+			o_eResult := EResult_t.eStateFailedFatal;
+			o_eState  := EState_t.eStateReady;
+		ELSE
+			
+			pActTestSuite := getNextTestSuite();
+						
+			IF pActTestSuite <> 0 THEN
+				o_eState := EState_t.eStateExecute;
+			ELSE
+				o_eState := EState_t.eStateReady;
+			END_IF		
+			
+		END_IF
+		
+	EState_t.eStateReady:
+
+		IF i_bStart = FALSE THEN
+			o_eState := EState_t.eStateIdle;
+		END_IF
+				
+	EState_t.eStateError:
+	
+	END_CASE]]></ST>
     </Implementation>
     <Method Name="addTestSuite" Id="{4899b7f4-5457-4c86-b63d-9b10a5e33440}">
       <Declaration><![CDATA[(******************************************************************************
@@ -73,11 +143,122 @@ END_VAR
 	END_IF]]></ST>
       </Implementation>
     </Method>
+    <Method Name="getFirstTestSuite" Id="{6dd3fe68-4fa4-401b-93b4-4e9d66a75960}">
+      <Declaration><![CDATA[(******************************************************************************
+Baustein: FB_UnitTestBase.
+Spezifikation: doc/Spezifikation.pdf, Kap. x.y.z
+-------------------------------------------------------------------------------
+erstellt:
+von:
+Geändert:
+von:
+-------------------------------------------------------------------------------
+Beschreibung
+Diese Methode
+
+-------------------------------------------------------------------------------
+Input
+-
+
+Output
+-
+******************************************************************************)
+METHOD PRIVATE getFirstTestSuite : TestSuiteHandle_t
+VAR_INPUT
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[
+	u16Index := 0;
+	getFirstTestSuite := a_pTestSuite[0];]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="getNextTestSuite" Id="{25155ea4-e257-4500-9294-2e5b075f342b}">
+      <Declaration><![CDATA[(******************************************************************************
+Baustein: FB_UnitTestBase.
+Spezifikation: doc/Spezifikation.pdf, Kap. x.y.z
+-------------------------------------------------------------------------------
+erstellt:
+von:
+Geändert:
+von:
+-------------------------------------------------------------------------------
+Beschreibung
+Diese Methode
+
+-------------------------------------------------------------------------------
+Input
+-
+
+Output
+-
+******************************************************************************)
+METHOD PRIVATE getNextTestSuite : TestSuiteHandle_t
+VAR_INPUT
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[
+	getNextTestSuite := 0;
+	u16Index 		 := u16Index + 1;
+
+	IF u16Index < u16TestSuites THEN
+		getNextTestSuite := a_pTestSuite[u16Index];
+	END_IF;]]></ST>
+      </Implementation>
+    </Method>
     <LineIds Name="PRG_UnitTestLib">
+      <LineId Id="41" Count="0" />
       <LineId Id="9" Count="0" />
+      <LineId Id="42" Count="0" />
+      <LineId Id="45" Count="2" />
+      <LineId Id="57" Count="3" />
+      <LineId Id="48" Count="0" />
+      <LineId Id="52" Count="0" />
+      <LineId Id="63" Count="0" />
+      <LineId Id="114" Count="1" />
+      <LineId Id="64" Count="3" />
+      <LineId Id="108" Count="1" />
+      <LineId Id="68" Count="0" />
+      <LineId Id="53" Count="0" />
+      <LineId Id="49" Count="0" />
+      <LineId Id="72" Count="1" />
+      <LineId Id="70" Count="1" />
+      <LineId Id="118" Count="0" />
+      <LineId Id="120" Count="1" />
+      <LineId Id="119" Count="0" />
+      <LineId Id="123" Count="0" />
+      <LineId Id="122" Count="0" />
+      <LineId Id="124" Count="0" />
+      <LineId Id="74" Count="0" />
+      <LineId Id="125" Count="0" />
+      <LineId Id="75" Count="0" />
+      <LineId Id="50" Count="1" />
+      <LineId Id="77" Count="0" />
+      <LineId Id="95" Count="1" />
+      <LineId Id="99" Count="1" />
+      <LineId Id="116" Count="0" />
+      <LineId Id="102" Count="5" />
+      <LineId Id="101" Count="0" />
+      <LineId Id="117" Count="0" />
+      <LineId Id="97" Count="0" />
+      <LineId Id="93" Count="0" />
+      <LineId Id="86" Count="0" />
+      <LineId Id="88" Count="3" />
+      <LineId Id="87" Count="0" />
+      <LineId Id="54" Count="1" />
+      <LineId Id="43" Count="0" />
     </LineIds>
     <LineIds Name="PRG_UnitTestLib.addTestSuite">
       <LineId Id="7" Count="10" />
+      <LineId Id="5" Count="0" />
+    </LineIds>
+    <LineIds Name="PRG_UnitTestLib.getFirstTestSuite">
+      <LineId Id="25" Count="1" />
+      <LineId Id="5" Count="0" />
+    </LineIds>
+    <LineIds Name="PRG_UnitTestLib.getNextTestSuite">
+      <LineId Id="25" Count="5" />
       <LineId Id="5" Count="0" />
     </LineIds>
   </POU>

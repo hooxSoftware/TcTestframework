@@ -33,10 +33,16 @@ und Dokumentation.</Description>
     <Compile Include="Datatypes\EState_t.TcDUT">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Datatypes\ObjectId_t.TcDUT">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Datatypes\SResult_t.TcDUT">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Datatypes\StringHandle_t.TcDUT">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Datatypes\IdHandle_t.TcDUT">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Datatypes\TestCaseHandle_t.TcDUT">
@@ -73,10 +79,19 @@ und Dokumentation.</Description>
       <DefaultResolution>Tc2_Standard, * (Beckhoff Automation GmbH)</DefaultResolution>
       <Namespace>Tc2_Standard</Namespace>
     </PlaceholderReference>
+    <PlaceholderReference Include="Tc2_System">
+      <DefaultResolution>Tc2_System, * (Beckhoff Automation GmbH)</DefaultResolution>
+      <Namespace>Tc2_System</Namespace>
+    </PlaceholderReference>
     <PlaceholderReference Include="Tc2_Utilities">
       <DefaultResolution>Tc2_Utilities, * (Beckhoff Automation GmbH)</DefaultResolution>
       <Namespace>Tc2_Utilities</Namespace>
     </PlaceholderReference>
+  </ItemGroup>
+  <ItemGroup>
+    <LibraryReference Include="Base Interfaces,newest,System">
+      <Namespace>IBaseLibrary</Namespace>
+    </LibraryReference>
   </ItemGroup>
   <ProjectExtensions>
     <PlcProjectOptions>

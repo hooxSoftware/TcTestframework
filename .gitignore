@@ -1,0 +1,4 @@
+*.compileinfo
+*.compiled-library
+_Boot
+*.suo

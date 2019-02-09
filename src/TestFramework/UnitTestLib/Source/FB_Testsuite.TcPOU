@@ -30,11 +30,13 @@ VAR_OUTPUT
 	o_eResult : EResult_t;
 END_VAR
 VAR
+	strId			: ObjectId_t;
 	bRegistered     : BOOL;
 	a_pTest  		: ARRAY [0..255] OF TestCaseHandle_t;
 	pTest     		: TestCaseHandle_t;
 	u16TestCases  	: UINT;
 	u16Index 		: UINT;
+	u32Asserts      : UDINT;
 	u32Passed 		: UDINT;
 	u32Failed 		: UDINT;
 	sResult   		: SResult_t;
@@ -46,8 +48,6 @@ END_VAR
 		
 	EState_t.eStateInit:
 	
-		bRegistered := PRG_UnitTestLib.addTestSuite(THIS);
-		
 		o_eState 	:= EState_t.eStateError;
 		IF bRegistered = TRUE THEN
 			o_eState 	:= EState_t.eStateIdle;
@@ -79,9 +79,10 @@ END_VAR
 		IF pTest <> 0 THEN
 			IF pTest^.execute() = TRUE THEN
 
-				sResult := pTest^.getResult();
-				u32Passed := u32Passed + sResult.u32Passed;
-				u32Failed := u32Failed + sResult.u32Failed;
+				sResult 	:= pTest^.getResult();
+				u32Passed 	:= u32Passed + sResult.u32Passed;
+				u32Failed 	:= u32Failed + sResult.u32Failed;
+				u32Asserts 	:= u32Passed + u32Failed;
 				
 				CASE o_eResult OF 
 
@@ -125,6 +126,12 @@ END_VAR
 		ELSE
 			o_eState := EState_t.eStateIdle;
 		END_IF;
+		
+	ESTate_t.eStateReady:
+	
+		IF i_bStart = FALSE THEN
+			o_eState := EState_t.eStateIdle;
+		END_IF
 		
 	ESTate_t.eStateError:	
 		
@@ -181,6 +188,21 @@ END_VAR
 	
 		addTestcase := true;
 	END_IF]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="FB_init" Id="{cdfd5773-6fa2-4b78-87a3-142799abac6a}">
+      <Declaration><![CDATA[METHOD FB_init : BOOL
+VAR_INPUT
+	bInitRetains 	: BOOL; // if TRUE, the retain variables are initialized (warm start / cold start)
+	bInCopyCode 	: BOOL;  // if TRUE, the instance afterwards gets moved into the copy code (online change)
+	i_strId	  		: ObjectId_t;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[
+	strId := i_StrId;
+	
+	register();]]></ST>
       </Implementation>
     </Method>
     <Method Name="getFirstTestCase" Id="{565a7440-2552-4228-bd2b-b6378bb5c8b9}">
@@ -242,7 +264,7 @@ END_VAR
 	getNextTestCase := 0;
 	u16Index 		 := u16Index + 1;
 
-	IF u16Index <= 255 THEN
+	IF u16Index < u16TestCases THEN
 		getNextTestCase := a_pTest[u16Index];
 	END_IF;]]></ST>
       </Implementation>
@@ -272,7 +294,8 @@ VAR_INPUT
 END_VAR
 ]]></Declaration>
       <Implementation>
-        <ST><![CDATA[]]></ST>
+        <ST><![CDATA[
+	PRG_UnitTestLib.addTestSuite(this);]]></ST>
       </Implementation>
     </Method>
     <LineIds Name="FB_Testsuite">
@@ -280,8 +303,7 @@ END_VAR
       <LineId Id="9" Count="0" />
       <LineId Id="221" Count="0" />
       <LineId Id="70" Count="0" />
-      <LineId Id="225" Count="1" />
-      <LineId Id="232" Count="0" />
+      <LineId Id="225" Count="0" />
       <LineId Id="229" Count="1" />
       <LineId Id="227" Count="0" />
       <LineId Id="224" Count="0" />
@@ -311,6 +333,7 @@ END_VAR
       <LineId Id="102" Count="0" />
       <LineId Id="100" Count="0" />
       <LineId Id="103" Count="0" />
+      <LineId Id="294" Count="0" />
       <LineId Id="107" Count="0" />
       <LineId Id="112" Count="0" />
       <LineId Id="116" Count="0" />
@@ -341,7 +364,13 @@ END_VAR
       <LineId Id="61" Count="0" />
       <LineId Id="81" Count="5" />
       <LineId Id="47" Count="0" />
-      <LineId Id="233" Count="2" />
+      <LineId Id="291" Count="0" />
+      <LineId Id="287" Count="0" />
+      <LineId Id="292" Count="0" />
+      <LineId Id="288" Count="1" />
+      <LineId Id="233" Count="0" />
+      <LineId Id="290" Count="0" />
+      <LineId Id="234" Count="1" />
       <LineId Id="247" Count="0" />
       <LineId Id="246" Count="0" />
       <LineId Id="66" Count="0" />
@@ -361,6 +390,11 @@ END_VAR
       <LineId Id="14" Count="1" />
       <LineId Id="10" Count="0" />
     </LineIds>
+    <LineIds Name="FB_Testsuite.FB_init">
+      <LineId Id="10" Count="0" />
+      <LineId Id="7" Count="0" />
+      <LineId Id="11" Count="1" />
+    </LineIds>
     <LineIds Name="FB_Testsuite.getFirstTestCase">
       <LineId Id="7" Count="0" />
       <LineId Id="6" Count="0" />
@@ -376,6 +410,7 @@ END_VAR
       <LineId Id="9" Count="0" />
     </LineIds>
     <LineIds Name="FB_Testsuite.register">
+      <LineId Id="28" Count="0" />
       <LineId Id="5" Count="0" />
     </LineIds>
   </POU>

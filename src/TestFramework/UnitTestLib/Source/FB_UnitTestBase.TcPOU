@@ -29,14 +29,16 @@ VAR_OUTPUT
 	o_eResult: EResult_t;
 END_VAR
 VAR
-	strId	  		: STRING;
+	strId	  		: ObjectId_t;
+	pTestSuite      : TestSuiteHandle_t;
 	bRegistered 	: BOOL;
 	u32Passed 		: UDINT;
 	u32Failed 		: UDINT;
 END_VAR
 ]]></Declaration>
     <Implementation>
-      <ST><![CDATA[]]></ST>
+      <ST><![CDATA[
+	]]></ST>
     </Implementation>
     <Method Name="addFailed" Id="{877265ac-7517-465d-8046-dbd413ab22a9}">
       <Declaration><![CDATA[(******************************************************************************
@@ -104,67 +106,43 @@ END_VAR
 	u32Passed := u32Passed + 1;]]></ST>
       </Implementation>
     </Method>
-    <Method Name="assertEQUAL" Id="{3541cd09-bacb-486c-b274-55964cece777}">
-      <Declaration><![CDATA[(******************************************************************************
-Baustein: FB_UnitTestBase.assertEQUAL
-Spezifikation: doc/Spezifikation.pdf, Kap. x.y.z
--------------------------------------------------------------------------------
-erstellt:
-von:
-Geändert:
-von:
--------------------------------------------------------------------------------
-Beschreibung
-Diese Methode...
-
--------------------------------------------------------------------------------
-Input
--
-
-Output
--
-******************************************************************************)
-METHOD PROTECTED assertEQUAL : BOOL
+    <Method Name="assertEQUAL" Id="{ad51daad-5695-45d0-ad00-7926bcc015fa}">
+      <Declaration><![CDATA[METHOD PROTECTED assertEQUAL : BOOL
 VAR_INPUT
-	d32Actual   : DINT;
-	d32Expected : DINT;
+	Actual   : ANY;
+	Expected : ANY;
 END_VAR
 ]]></Declaration>
       <Implementation>
         <ST><![CDATA[
-	assertTRUE( d32Actual = d32Expected );
+	assertEQUAL := FALSE;
+	
+	IF validate(Actual, Expected) = FALSE THEN
+		addFailed(true);
+		RETURN;
+	END_IF
+	
+	assertTrue(MEMCMP(Actual.pValue, Expected.pValue, TO_UDINT(Actual.diSize)) = 0);
 ]]></ST>
       </Implementation>
     </Method>
-    <Method Name="assertEQUAL_Fatal" Id="{4d3db720-2315-421b-a569-e8f449540482}">
-      <Declaration><![CDATA[(******************************************************************************
-Baustein: FB_UnitTestBase.
-Spezifikation: doc/Spezifikation.pdf, Kap. x.y.z
--------------------------------------------------------------------------------
-erstellt:
-von:
-Geändert:
-von:
--------------------------------------------------------------------------------
-Beschreibung
-Diese Methode
-
--------------------------------------------------------------------------------
-Input
--
-
-Output
--
-******************************************************************************)
-METHOD PROTECTED assertEQUAL_Fatal : BOOL
+    <Method Name="assertEQUAL_Fatal" Id="{69be4dda-87a9-4f6f-9eca-8a1ee02fedac}">
+      <Declaration><![CDATA[METHOD PROTECTED assertEQUAL_Fatal : BOOL
 VAR_INPUT
-	d32Actual   : DINT;
-	d32Expected : DINT;
+	Actual   : ANY;
+	Expected : ANY;
 END_VAR
 ]]></Declaration>
       <Implementation>
         <ST><![CDATA[
-	assertTRUE_Fatal( d32Actual = d32Expected );]]></ST>
+	assertEQUAL_Fatal := FALSE;
+	
+	IF validate(Actual, Expected) = FALSE THEN
+		addFailed(true);
+		RETURN;
+	END_IF
+
+	assertTrue_Fatal(MEMCMP(Actual.pValue, Expected.pValue, TO_UDINT(Actual.diSize)) = 0);]]></ST>
       </Implementation>
     </Method>
     <Method Name="assertFALSE" Id="{d4d5eea3-3c53-497c-9176-1d2814a51e39}">
@@ -235,67 +213,44 @@ END_VAR
 	END_IF]]></ST>
       </Implementation>
     </Method>
-    <Method Name="assertNotEqual" Id="{72e8515c-ae4c-4438-959f-e57420569332}">
-      <Declaration><![CDATA[(******************************************************************************
-Baustein: FB_UnitTestBase.assertNotEqual
-Spezifikation: doc/Spezifikation.pdf, Kap. x.y.z
--------------------------------------------------------------------------------
-erstellt:
-von:
-Geändert:
-von:
--------------------------------------------------------------------------------
-Beschreibung
-Diese Methode...
-
--------------------------------------------------------------------------------
-Input
--
-
-Output
--
-******************************************************************************)
-METHOD PROTECTED assertNotEqual : BOOL
+    <Method Name="assertNotEqual" Id="{7bdd8554-52a7-414f-8a4a-343d38a85ee0}">
+      <Declaration><![CDATA[METHOD PROTECTED assertNotEqual : BOOL
 VAR_INPUT
-	d32Actual   : DINT;
-	d32Expected : DINT;
+	Actual   : ANY;
+	Expected : ANY;
 END_VAR
 ]]></Declaration>
       <Implementation>
         <ST><![CDATA[
-	assertTRUE( d32Actual <> d32Expected );
-		]]></ST>
+	assertNotEqual := FALSE;
+	
+	IF validate(Actual, Expected) = FALSE THEN
+		addFailed(true);
+		RETURN;
+	END_IF
+	
+	assertTrue(MEMCMP(Actual.pValue, Expected.pValue, TO_UDINT(Actual.diSize)) <> 0);
+]]></ST>
       </Implementation>
     </Method>
-    <Method Name="assertNotEqual_Fatal" Id="{43ddb367-fd59-4f07-9a32-13abd728e6c2}">
-      <Declaration><![CDATA[(******************************************************************************
-Baustein: FB_UnitTestBase.
-Spezifikation: doc/Spezifikation.pdf, Kap. x.y.z
--------------------------------------------------------------------------------
-erstellt:
-von:
-Geändert:
-von:
--------------------------------------------------------------------------------
-Beschreibung
-Diese Methode
-
--------------------------------------------------------------------------------
-Input
--
-
-Output
--
-******************************************************************************)
-METHOD PROTECTED assertNotEqual_Fatal : BOOL
+    <Method Name="assertNotEqual_Fatal" Id="{50f19e45-a9a3-4436-9481-7ad1f66a8015}">
+      <Declaration><![CDATA[METHOD PROTECTED assertNotEqual_Fatal : BOOL
 VAR_INPUT
-	d32Actual   : DINT;
-	d32Expected : DINT;
+	Actual   : ANY;
+	Expected : ANY;
 END_VAR
 ]]></Declaration>
       <Implementation>
         <ST><![CDATA[
-	assertTRUE_Fatal( d32Actual <> d32Expected );]]></ST>
+	assertNotEqual_Fatal := FALSE;
+	
+	IF validate(Actual, Expected) = FALSE THEN
+		addFailed(true);
+		RETURN;
+	END_IF
+	
+	assertTrue_Fatal(MEMCMP(Actual.pValue, Expected.pValue, TO_UDINT(Actual.diSize)) <> 0);
+]]></ST>
       </Implementation>
     </Method>
     <Method Name="assertPtrEqual" Id="{95a0bcc0-afe3-4228-85a2-ce212c091a6f}">
@@ -935,6 +890,22 @@ END_VAR
 	o_eState  := EState_t.eStateExecute;]]></ST>
       </Implementation>
     </Method>
+    <Method Name="FB_init" Id="{4cb36c1a-3bd9-4b40-bdb1-0e89fb27e2fa}">
+      <Declaration><![CDATA[METHOD FB_init : BOOL
+VAR_INPUT
+	bInitRetains 	: BOOL; // if TRUE, the retain variables are initialized (warm start / cold start)
+	bInCopyCode 	: BOOL;  // if TRUE, the instance afterwards gets moved into the copy code (online change)
+	i_strId	  		: ObjectId_t;
+	i_pTestSuite 	: TestSuiteHandle_t;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[	
+	strId := i_strId;
+
+	register();]]></ST>
+      </Implementation>
+    </Method>
     <Method Name="getResult" Id="{3f3bc089-c817-4d4a-b249-9806d1ff7fc0}">
       <Declaration><![CDATA[(******************************************************************************
 Baustein: FB_UnitTestBase.
@@ -1018,15 +989,14 @@ Output
 ******************************************************************************)
 METHOD PROTECTED register : BOOL
 VAR_INPUT
-	i_pTestSuite : TestSuiteHandle_t;
 END_VAR
 ]]></Declaration>
       <Implementation>
         <ST><![CDATA[
-	IF i_pTestSuite <> 0 	AND 
+	IF pTestSuite <> 0 	AND 
        bRegistered = FALSE  THEN
 		
-		bRegistered := i_pTestSuite^.addTestcase(THIS);
+		bRegistered := pTestSuite^.addTestcase(THIS);
 	
 	END_IF]]></ST>
       </Implementation>
@@ -1095,7 +1065,34 @@ END_VAR]]></Declaration>
 ]]></ST>
       </Implementation>
     </Method>
+    <Method Name="validate" Id="{26cbef17-aced-449e-9fb6-d6b834f5b8ef}">
+      <Declaration><![CDATA[METHOD PRIVATE validate : BOOL
+VAR_INPUT
+	var1 : ANY;
+	var2 : ANY;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[
+	validate := FALSE;
+	
+	IF (var1.pValue = 0 OR var1.pValue = 0) THEN
+		RETURN;
+	END_IF
+
+	IF (var1.TypeClass <> var1.TypeClass) THEN
+		RETURN;
+	END_IF;	
+	
+	IF (var1.diSize <> var1.diSize) THEN
+		RETURN;
+	END_IF;	
+	
+	validate := true;]]></ST>
+      </Implementation>
+    </Method>
     <LineIds Name="FB_UnitTestBase">
+      <LineId Id="43" Count="0" />
       <LineId Id="9" Count="0" />
     </LineIds>
     <LineIds Name="FB_UnitTestBase.addFailed">
@@ -1111,12 +1108,20 @@ END_VAR]]></Declaration>
       <LineId Id="6" Count="1" />
     </LineIds>
     <LineIds Name="FB_UnitTestBase.assertEQUAL">
-      <LineId Id="8" Count="1" />
-      <LineId Id="5" Count="0" />
+      <LineId Id="9" Count="1" />
+      <LineId Id="16" Count="1" />
+      <LineId Id="22" Count="0" />
+      <LineId Id="18" Count="1" />
+      <LineId Id="21" Count="0" />
+      <LineId Id="15" Count="0" />
+      <LineId Id="12" Count="0" />
     </LineIds>
     <LineIds Name="FB_UnitTestBase.assertEQUAL_Fatal">
-      <LineId Id="8" Count="0" />
-      <LineId Id="5" Count="0" />
+      <LineId Id="9" Count="0" />
+      <LineId Id="16" Count="2" />
+      <LineId Id="22" Count="0" />
+      <LineId Id="19" Count="2" />
+      <LineId Id="12" Count="0" />
     </LineIds>
     <LineIds Name="FB_UnitTestBase.assertFALSE">
       <LineId Id="8" Count="0" />
@@ -1130,11 +1135,22 @@ END_VAR]]></Declaration>
       <LineId Id="5" Count="0" />
     </LineIds>
     <LineIds Name="FB_UnitTestBase.assertNotEqual">
-      <LineId Id="6" Count="2" />
+      <LineId Id="9" Count="1" />
+      <LineId Id="16" Count="1" />
+      <LineId Id="22" Count="0" />
+      <LineId Id="18" Count="1" />
+      <LineId Id="21" Count="0" />
+      <LineId Id="15" Count="0" />
+      <LineId Id="12" Count="0" />
     </LineIds>
     <LineIds Name="FB_UnitTestBase.assertNotEqual_Fatal">
-      <LineId Id="8" Count="0" />
-      <LineId Id="5" Count="0" />
+      <LineId Id="9" Count="1" />
+      <LineId Id="16" Count="1" />
+      <LineId Id="22" Count="0" />
+      <LineId Id="18" Count="1" />
+      <LineId Id="21" Count="0" />
+      <LineId Id="15" Count="0" />
+      <LineId Id="12" Count="0" />
     </LineIds>
     <LineIds Name="FB_UnitTestBase.assertPtrEqual">
       <LineId Id="8" Count="0" />
@@ -1218,6 +1234,11 @@ END_VAR]]></Declaration>
       <LineId Id="28" Count="0" />
       <LineId Id="5" Count="0" />
     </LineIds>
+    <LineIds Name="FB_UnitTestBase.FB_init">
+      <LineId Id="11" Count="1" />
+      <LineId Id="9" Count="0" />
+      <LineId Id="7" Count="0" />
+    </LineIds>
     <LineIds Name="FB_UnitTestBase.getResult">
       <LineId Id="6" Count="0" />
       <LineId Id="5" Count="0" />
@@ -1259,6 +1280,20 @@ END_VAR]]></Declaration>
       <LineId Id="43" Count="0" />
       <LineId Id="37" Count="0" />
       <LineId Id="5" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_UnitTestBase.validate">
+      <LineId Id="8" Count="0" />
+      <LineId Id="5" Count="0" />
+      <LineId Id="9" Count="0" />
+      <LineId Id="11" Count="0" />
+      <LineId Id="14" Count="0" />
+      <LineId Id="10" Count="0" />
+      <LineId Id="19" Count="2" />
+      <LineId Id="18" Count="0" />
+      <LineId Id="22" Count="0" />
+      <LineId Id="16" Count="1" />
+      <LineId Id="15" Count="0" />
+      <LineId Id="23" Count="1" />
     </LineIds>
   </POU>
 </TcPlcObject>
