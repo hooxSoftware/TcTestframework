@@ -1,0 +1,7 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4022.12">
+  <DUT Name="StrFileName_t" Id="{c448d63c-0f29-4504-9e69-ddaebaba3993}">
+    <Declaration><![CDATA[TYPE StrFileName_t : String(255); END_TYPE
+]]></Declaration>
+  </DUT>
+</TcPlcObject>

@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           xmlns="http://hoox.software"
+		   xmlns:mstns="http://hoox.software"
+           targetNamespace="http://hoox.software/Sigmatek"
+           elementFormDefault="qualified">
+
+	<xs:simpleType name="Hardware_t">
+		<xs:restriction base="xs:string">
+			<!-- Digital Module -->
+			<xs:enumeration value="DI200" />
+			<xs:enumeration value="DM161" />
+			<xs:enumeration value="DM081" />
+			<xs:enumeration value="TO161" />
+			<!-- Analog Eingangsmodule -->
+			<xs:enumeration value="AI043" />
+
+			<!-- Analog Ausgangsmodule -->
+			<xs:enumeration value="AO041" />
+
+			<!-- Antriebsklemmen  -->
+			<xs:enumeration value="ST151" />
+			<xs:enumeration value="DC062" />
+
+			<xs:enumeration value="TS041" />
+			
+			<!-- Safetyklemmen  -->
+			<xs:enumeration value="SCP111" />
+			<xs:enumeration value="SDM081" />			
+			
+		</xs:restriction>
+	</xs:simpleType>	
+
+	
+</xs:schema>

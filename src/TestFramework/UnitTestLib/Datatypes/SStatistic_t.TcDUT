@@ -1,0 +1,16 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4022.12">
+  <DUT Name="SStatistic_t" Id="{1bab325b-bebc-4938-9dd0-fcf6492717ca}">
+    <Declaration><![CDATA[TYPE SStatistic_t :
+STRUCT
+	u32TestSuites   : UDINT;
+	u32TestCases 	: UDINT;
+	u32Executed 	: UDINT;
+	u32Asserts 		: UDINT;
+	u32Passed 		: UDINT;
+	u32Failed 		: UDINT;
+END_STRUCT
+END_TYPE
+]]></Declaration>
+  </DUT>
+</TcPlcObject>

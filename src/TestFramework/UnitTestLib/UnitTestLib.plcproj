@@ -36,13 +36,34 @@ und Dokumentation.</Description>
     <Compile Include="Datatypes\ObjectId_t.TcDUT">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Datatypes\Report\ERetCode_t.TcDUT">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Datatypes\Report\NameHandle_t.TcDUT">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Datatypes\Report\PathHandle_t.TcDUT">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Datatypes\Report\StrFileName_t.TcDUT">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Datatypes\Report\StrPathName_t.TcDUT">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Datatypes\SResult_t.TcDUT">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Datatypes\SStatistic_t.TcDUT">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Datatypes\StringHandle_t.TcDUT">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Datatypes\IdHandle_t.TcDUT">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Datatypes\StrMessage_t.TcDUT">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Datatypes\TestCaseHandle_t.TcDUT">
@@ -60,13 +81,18 @@ und Dokumentation.</Description>
     <Compile Include="Source\PRG_UnitTestLib.TcPOU">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Source\Report\FB_TestReportBase.TcPOU">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Version\Global_Version.TcGVL">
       <SubType>Code</SubType>
     </Compile>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Datatypes" />
+    <Folder Include="Datatypes\Report" />
     <Folder Include="Source" />
+    <Folder Include="Source\Report" />
     <Folder Include="Version" />
   </ItemGroup>
   <ItemGroup>

@@ -1,0 +1,15 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4022.12">
+  <DUT Name="ERetCode_t" Id="{f174652a-7676-462f-840c-197fcbddb504}">
+    <Declaration><![CDATA[{attribute 'qualified_only'}
+{attribute 'strict'}
+TYPE ERetCode_t :
+(
+	eRetFailed := 0,
+	eRetBusy,
+	eRetDone
+);
+END_TYPE
+]]></Declaration>
+  </DUT>
+</TcPlcObject>

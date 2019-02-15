@@ -26,8 +26,8 @@ VAR_INPUT
 	i_bStart : BOOL;
 END_VAR
 VAR_OUTPUT
-	o_eState  : EState_t;
-	o_eResult : EResult_t;
+	o_eState  		: EState_t;
+	o_eResult 		: EResult_t;
 END_VAR
 VAR
 	strId			: ObjectId_t;
@@ -36,10 +36,7 @@ VAR
 	pTest     		: TestCaseHandle_t;
 	u16TestCases  	: UINT;
 	u16Index 		: UINT;
-	u32Asserts      : UDINT;
-	u32Passed 		: UDINT;
-	u32Failed 		: UDINT;
-	sResult   		: SResult_t;
+	sStatistic 		: SStatistic_t;
 END_VAR
 ]]></Declaration>
     <Implementation>
@@ -64,6 +61,11 @@ END_VAR
 		END_IF;
 
 	EState_t.eStatePrepare:
+	
+		sStatistic.u32Executed  := 0;
+		sStatistic.u32Passed 	:= 0;
+		sStatistic.u32Failed 	:= 0;
+		sStatistic.u32Asserts 	:= 0;
 
 		IF pTest <> 0 THEN
 			IF pTest^.prepare() = TRUE THEN
@@ -79,10 +81,11 @@ END_VAR
 		IF pTest <> 0 THEN
 			IF pTest^.execute() = TRUE THEN
 
-				sResult 	:= pTest^.getResult();
-				u32Passed 	:= u32Passed + sResult.u32Passed;
-				u32Failed 	:= u32Failed + sResult.u32Failed;
-				u32Asserts 	:= u32Passed + u32Failed;
+				sStatistic.u32Executed := sStatistic.u32Executed + 1;	
+			
+				sStatistic.u32Passed 	:= sStatistic.u32Passed + pTest^.getPassed();
+				sStatistic.u32Failed 	:= sStatistic.u32Failed + pTest^.getFailed();
+				sStatistic.u32Asserts   := sStatistic.u32Passed + sStatistic.u32Failed;
 				
 				CASE o_eResult OF 
 
@@ -97,7 +100,7 @@ END_VAR
 					IF pTest^.o_eResult = EResult_t.eStateFailedFatal THEN
 						o_eResult := pTest^.o_eResult;
 						o_eState  := EState_t.eStateCleanUp;
-						pTest 	 := getFirstTestCase();	
+						pTest 	  := getFirstTestCase();	
 					END_IF;
 
 				EResult_t.eStateFailedFatal:
@@ -124,7 +127,7 @@ END_VAR
 				pTest 	:= getNextTestCase();
 			END_IF;
 		ELSE
-			o_eState := EState_t.eStateIdle;
+			o_eState := EState_t.eStateReady;
 		END_IF;
 		
 	ESTate_t.eStateReady:
@@ -185,7 +188,9 @@ END_VAR
 		a_pTest[u16TestCases] := i_pTestCase;
 		
 		u16TestCases := u16TestCases +1;
-	
+		
+		sStatistic.u32TestCases := sStatistic.u32TestCases + 1;
+		
 		addTestcase := true;
 	END_IF]]></ST>
       </Implementation>
@@ -203,6 +208,26 @@ END_VAR
 	strId := i_StrId;
 	
 	register();]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="getExecuted" Id="{804ee58b-a056-4a70-9969-b35be52cb2ce}">
+      <Declaration><![CDATA[METHOD PUBLIC getExecuted : UDINT
+VAR_INPUT
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[
+	getExecuted := sStatistic.u32Executed;]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="getFailed" Id="{ce9f9fb8-dfbd-411b-9557-00a87161e21a}">
+      <Declaration><![CDATA[METHOD PUBLIC getFailed : UDINT
+VAR_INPUT
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[
+	getFailed := sStatistic.u32Failed;]]></ST>
       </Implementation>
     </Method>
     <Method Name="getFirstTestCase" Id="{565a7440-2552-4228-bd2b-b6378bb5c8b9}">
@@ -269,6 +294,26 @@ END_VAR
 	END_IF;]]></ST>
       </Implementation>
     </Method>
+    <Method Name="getNoOfTests" Id="{5c45c94a-2ee3-4a94-bafd-ed5fe0d7c4f1}">
+      <Declaration><![CDATA[METHOD PUBLIC getNoOfTests : UDINT
+VAR_INPUT
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[
+	getNoOfTests := sStatistic.u32TestCases;]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="getPassed" Id="{613bafe4-a0f5-4b42-965c-d87e0581e3fb}">
+      <Declaration><![CDATA[METHOD PUBLIC getPassed : UDINT
+VAR_INPUT
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[
+	getPassed := sStatistic.u32Passed;]]></ST>
+      </Implementation>
+    </Method>
     <Method Name="register" Id="{3a42094d-f3f7-40aa-9e2e-e1eb00f9e432}">
       <Declaration><![CDATA[(******************************************************************************
 Baustein: FB_UnitTestBase.
@@ -295,89 +340,14 @@ END_VAR
 ]]></Declaration>
       <Implementation>
         <ST><![CDATA[
-	PRG_UnitTestLib.addTestSuite(this);]]></ST>
+	bRegistered := PRG_UnitTestLib.addTestSuite(this);]]></ST>
       </Implementation>
     </Method>
     <LineIds Name="FB_Testsuite">
-      <LineId Id="39" Count="0" />
-      <LineId Id="9" Count="0" />
-      <LineId Id="221" Count="0" />
-      <LineId Id="70" Count="0" />
-      <LineId Id="225" Count="0" />
-      <LineId Id="229" Count="1" />
-      <LineId Id="227" Count="0" />
-      <LineId Id="224" Count="0" />
-      <LineId Id="231" Count="0" />
-      <LineId Id="69" Count="0" />
-      <LineId Id="72" Count="0" />
-      <LineId Id="71" Count="0" />
-      <LineId Id="93" Count="0" />
-      <LineId Id="92" Count="0" />
-      <LineId Id="95" Count="1" />
-      <LineId Id="105" Count="0" />
-      <LineId Id="94" Count="0" />
-      <LineId Id="43" Count="0" />
-      <LineId Id="42" Count="0" />
-      <LineId Id="49" Count="0" />
-      <LineId Id="52" Count="1" />
-      <LineId Id="68" Count="0" />
-      <LineId Id="67" Count="0" />
-      <LineId Id="73" Count="1" />
-      <LineId Id="87" Count="0" />
-      <LineId Id="54" Count="0" />
-      <LineId Id="41" Count="0" />
-      <LineId Id="40" Count="0" />
-      <LineId Id="55" Count="0" />
-      <LineId Id="75" Count="1" />
-      <LineId Id="144" Count="0" />
-      <LineId Id="102" Count="0" />
-      <LineId Id="100" Count="0" />
-      <LineId Id="103" Count="0" />
-      <LineId Id="294" Count="0" />
-      <LineId Id="107" Count="0" />
-      <LineId Id="112" Count="0" />
-      <LineId Id="116" Count="0" />
-      <LineId Id="115" Count="0" />
-      <LineId Id="118" Count="0" />
-      <LineId Id="117" Count="0" />
-      <LineId Id="119" Count="1" />
-      <LineId Id="122" Count="0" />
-      <LineId Id="129" Count="1" />
-      <LineId Id="121" Count="0" />
-      <LineId Id="124" Count="0" />
-      <LineId Id="142" Count="1" />
-      <LineId Id="123" Count="0" />
-      <LineId Id="125" Count="2" />
-      <LineId Id="138" Count="1" />
-      <LineId Id="114" Count="0" />
-      <LineId Id="113" Count="0" />
-      <LineId Id="140" Count="0" />
-      <LineId Id="134" Count="0" />
-      <LineId Id="131" Count="0" />
-      <LineId Id="133" Count="0" />
-      <LineId Id="141" Count="0" />
-      <LineId Id="78" Count="2" />
-      <LineId Id="88" Count="0" />
-      <LineId Id="56" Count="0" />
-      <LineId Id="45" Count="0" />
-      <LineId Id="44" Count="0" />
-      <LineId Id="61" Count="0" />
-      <LineId Id="81" Count="5" />
-      <LineId Id="47" Count="0" />
-      <LineId Id="291" Count="0" />
-      <LineId Id="287" Count="0" />
-      <LineId Id="292" Count="0" />
-      <LineId Id="288" Count="1" />
-      <LineId Id="233" Count="0" />
-      <LineId Id="290" Count="0" />
-      <LineId Id="234" Count="1" />
-      <LineId Id="247" Count="0" />
-      <LineId Id="246" Count="0" />
-      <LineId Id="66" Count="0" />
-      <LineId Id="238" Count="0" />
-      <LineId Id="236" Count="1" />
-      <LineId Id="46" Count="0" />
-      <LineId Id="239" Count="6" />
+      <LineId Id="382" Count="22" />
+      <LineId Id="406" Count="19" />
+      <LineId Id="427" Count="67" />
+      <LineId Id="245" Count="0" />
     </LineIds>
     <LineIds Name="FB_Testsuite.addTestcase">
       <LineId Id="12" Count="1" />
@@ -387,13 +357,24 @@ END_VAR
       <LineId Id="9" Count="0" />
       <LineId Id="16" Count="1" />
       <LineId Id="11" Count="0" />
-      <LineId Id="14" Count="1" />
+      <LineId Id="14" Count="0" />
+      <LineId Id="43" Count="0" />
+      <LineId Id="42" Count="0" />
+      <LineId Id="15" Count="0" />
       <LineId Id="10" Count="0" />
     </LineIds>
     <LineIds Name="FB_Testsuite.FB_init">
       <LineId Id="10" Count="0" />
       <LineId Id="7" Count="0" />
       <LineId Id="11" Count="1" />
+    </LineIds>
+    <LineIds Name="FB_Testsuite.getExecuted">
+      <LineId Id="6" Count="0" />
+      <LineId Id="5" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_Testsuite.getFailed">
+      <LineId Id="6" Count="0" />
+      <LineId Id="5" Count="0" />
     </LineIds>
     <LineIds Name="FB_Testsuite.getFirstTestCase">
       <LineId Id="7" Count="0" />
@@ -408,6 +389,14 @@ END_VAR
       <LineId Id="8" Count="0" />
       <LineId Id="5" Count="0" />
       <LineId Id="9" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_Testsuite.getNoOfTests">
+      <LineId Id="6" Count="0" />
+      <LineId Id="5" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_Testsuite.getPassed">
+      <LineId Id="6" Count="0" />
+      <LineId Id="5" Count="0" />
     </LineIds>
     <LineIds Name="FB_Testsuite.register">
       <LineId Id="28" Count="0" />

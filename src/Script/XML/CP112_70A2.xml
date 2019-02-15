@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<Framework	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+			xmlns="http://hoox.software"
+			xmlns:Hardware="http://hoox.software/Sigmatek" 
+			xsi:schemaLocation="http://hoox.software ../Schema/FrameworkLasal.xsd">
+
+	<Project Name="CP112_70A2" />
+
+	<Hardware Disabled="false">
+		<!-- 1. Master direkt am der CPU -->
+		<Device>
+			<IoElement Typ="TS041" Bmk="A1100"/>
+			<IoElement Typ="ST151" Bmk="A1101"/>
+			<IoElement Typ="DM161" Bmk="A1200">
+                 <Channel>
+                     <Name/>
+                     <Bmk/>
+                     <Input/>
+                 </Channel>
+    			 <Channel>
+    			     <Name>Eingang</Name>
+    			     <Bmk>_1S01</Bmk>
+    			     <Input>eCustom01</Input>
+    			 </Channel>
+    			 <Channel>
+                     <Name>Ausgang</Name>
+                     <Bmk>_1K01</Bmk>
+                     <Output>eCustom01</Output>
+                 </Channel>
+	        </IoElement>
+			<IoElement Typ="AI043" Bmk="A1201">
+    			 <Channel>
+                     <Name>Analog1</Name>
+                     <Bmk>_1B01</Bmk>
+                     <Input>eCustom02</Input>
+                 </Channel>
+                 <Channel>
+                     <Name>Analog2</Name>
+                     <Bmk>_1B02</Bmk>
+                     <Input>eCustom03</Input>
+                 </Channel>
+            </IoElement>
+			<IoElement Typ="DI200" Bmk="A1202"/>
+			<IoElement Typ="TO161" Bmk="A1203">
+			     <Channel>
+                     <Name>Ausgang</Name>
+                     <Bmk>_2K01</Bmk>
+                     <Output>eCustom02</Output>
+                 </Channel>
+                 <Channel>
+                     <Name>Ausgang</Name>
+                     <Bmk>_2K02</Bmk>
+                     <Output>eCustom03</Output>
+                 </Channel>
+                 <Channel>
+                     <Name>Ausgang</Name>
+                     <Bmk>_2K03</Bmk>
+                     <Output>eCustom04</Output>
+                 </Channel>                                  
+			</IoElement>
+			<IoElement Typ="DI200" Bmk="A1204"/>
+		</Device>
+
+	</Hardware>
+
+	<Software>
+		<Modul Name="IoCopy1"      Typ="CIoCopy"        />
+	</Software>
+
+	<Unittest>
+		<TestSuite Name="TS1" Id="TS1.1">
+			<Test Name="IoCopy1"      Typ="CIoCopy"   Id="TF1.6"     />
+			<Test Name="IoCopy1"      Typ="CIoCopy"   Id="TF2.6"     />
+			<Test Name="IoCopy1"      Typ="CIoCopy"   Id="TF3.6"     />
+			<Test Name="IoCopy1"      Typ="CIoCopy"   Id="TF4.6"     />
+			<Test Name="IoCopy1"      Typ="CIoCopy"   Id="TF5.6"     />			
+		</TestSuite>
+		
+		<TestSuite Name="TS2" Id="TS1.2">
+			<Test Name="IoCopy1"      Typ="CIoCopy"   Id="TF6.6"     />
+			<Test Name="IoCopy1"      Typ="CIoCopy"   Id="TF7.6"     />
+			<Test Name="IoCopy1"      Typ="CIoCopy"   Id="TF8.6"     />
+			<Test Name="IoCopy1"      Typ="CIoCopy"   Id="TF9.6"     />
+			<Test Name="IoCopy1"      Typ="CIoCopy"   Id="TF10.6"     />			
+		</TestSuite>
+		
+	</Unittest>
+	
+</Framework>
+
+<!-- Liste aller möglichen Module
+	
+	# Name : Name der Instanz 
+	# Typ  : Name des Funktionsblocktyps (Frameworkmodul)
+	# Id   : Bei Mehrfachinstanzierung notwendige ID
+	         Nur bei Bausteinen die dies unterstützen notwendig
+	
+	<Modul Name="Lauflicht" Typ="FB_DemoLauflicht" Id=""/>
+	<Modul Name="Pumpe" Typ="FB_DemoPumpe" Id=""/>
+	<Modul Name="EventTest" Typ="FB_EventTest" Id=""/>
+
+-->
+
+
+
+
+
+

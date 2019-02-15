@@ -1,0 +1,7 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4022.12">
+  <DUT Name="NameHandle_t" Id="{0248a818-a04e-4af0-b892-03fd9d1e4ccf}">
+    <Declaration><![CDATA[TYPE NameHandle_t : Pointer to StrFileName_t; END_TYPE
+]]></Declaration>
+  </DUT>
+</TcPlcObject>

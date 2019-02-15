@@ -852,13 +852,17 @@ Input
 Output
 -
 ******************************************************************************)
-METHOD FINAL cleanup : BOOL
+METHOD PUBLIC cleanup : BOOL
 VAR_INPUT
 END_VAR
 ]]></Declaration>
       <Implementation>
         <ST><![CDATA[
-	o_eState  := EState_t.eStateCleanUp;]]></ST>
+	cleanup := TRUE;
+
+	
+	
+	]]></ST>
       </Implementation>
     </Method>
     <Method Name="execute" Id="{eaaea70b-9bf9-4b40-b05d-957421faa196}">
@@ -881,13 +885,14 @@ Input
 Output
 -
 ******************************************************************************)
-METHOD FINAL execute : BOOL
+METHOD PUBLIC execute : BOOL
 VAR_INPUT
 END_VAR
 ]]></Declaration>
       <Implementation>
         <ST><![CDATA[
-	o_eState  := EState_t.eStateExecute;]]></ST>
+	Execute := TRUE;	
+]]></ST>
       </Implementation>
     </Method>
     <Method Name="FB_init" Id="{4cb36c1a-3bd9-4b40-bdb1-0e89fb27e2fa}">
@@ -901,39 +906,56 @@ END_VAR
 ]]></Declaration>
       <Implementation>
         <ST><![CDATA[	
-	strId := i_strId;
-
+	strId 		:= i_strId;
+	pTestSuite 	:= i_pTestSuite;
+	
 	register();]]></ST>
       </Implementation>
     </Method>
-    <Method Name="getResult" Id="{3f3bc089-c817-4d4a-b249-9806d1ff7fc0}">
-      <Declaration><![CDATA[(******************************************************************************
-Baustein: FB_UnitTestBase.
-Spezifikation: doc/Spezifikation.pdf, Kap. x.y.z
--------------------------------------------------------------------------------
-erstellt:
-von:
-Geändert:
-von:
--------------------------------------------------------------------------------
-Beschreibung
-Diese Methode
-
--------------------------------------------------------------------------------
-Input
--
-
-Output
--
-******************************************************************************)
-METHOD FINAL getResult : SResult_t
+    <Method Name="getFailed" Id="{03b873b5-0f90-4435-8771-5dc65ef5e0d1}">
+      <Declaration><![CDATA[METHOD PUBLIC getFailed : UDINT
 VAR_INPUT
 END_VAR
 ]]></Declaration>
       <Implementation>
         <ST><![CDATA[
-	getResult.u32Failed := u32Failed;
-	getResult.u32Passed := u32Passed;]]></ST>
+	getFailed := u32Failed;]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="getPassed" Id="{2d53e756-4b16-44f6-b072-8c9bc39b56a8}">
+      <Declaration><![CDATA[METHOD PUBLIC getPassed : UDINT
+VAR_INPUT
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[
+	getPassed := u32Passed;]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="logError" Id="{16a351f0-cd4d-4e8b-bead-0c78616d52ea}">
+      <Declaration><![CDATA[METHOD PROTECTED logError : BOOL
+VAR_INPUT
+	i_strMessage : StrMessage_t;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[
+	ADSLOGSTR(msgCtrlMask 	:= ADSLOG_MSGTYPE_ERROR , 
+			  msgFmtStr 	:= i_strMessage, 
+			  strArg 		:= '');]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="logInfo" Id="{2a28e610-d91b-4870-a421-7bc6546ff390}">
+      <Declaration><![CDATA[METHOD PROTECTED logInfo : BOOL
+VAR_INPUT
+	i_strMessage : StrMessage_t;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[
+	ADSLOGSTR(msgCtrlMask 	:= ADSLOG_MSGTYPE_HINT , 
+			  msgFmtStr 	:= i_strMessage, 
+			  strArg 		:= '');]]></ST>
       </Implementation>
     </Method>
     <Method Name="prepare" Id="{571b8d1e-086f-4be7-aee6-f996b70e4b02}">
@@ -956,7 +978,7 @@ Input
 Output
 -
 ******************************************************************************)
-METHOD FINAL prepare : BOOL
+METHOD PUBLIC prepare : BOOL
 VAR_INPUT
 END_VAR
 ]]></Declaration>
@@ -964,7 +986,8 @@ END_VAR
         <ST><![CDATA[
 	u32Passed := 0;
 	u32Failed := 0;
-	o_eState  := EState_t.eStatePrepare;]]></ST>
+	
+	prepare := true;]]></ST>
       </Implementation>
     </Method>
     <Method Name="register" Id="{4a228bed-2579-4e19-893d-8dcd5cfaa8a3}">
@@ -1227,27 +1250,45 @@ END_VAR
       <LineId Id="5" Count="0" />
     </LineIds>
     <LineIds Name="FB_UnitTestBase.cleanup">
+      <LineId Id="70" Count="1" />
       <LineId Id="28" Count="0" />
       <LineId Id="5" Count="0" />
+      <LineId Id="51" Count="1" />
     </LineIds>
     <LineIds Name="FB_UnitTestBase.execute">
-      <LineId Id="28" Count="0" />
-      <LineId Id="5" Count="0" />
+      <LineId Id="60" Count="0" />
+      <LineId Id="58" Count="0" />
+      <LineId Id="52" Count="0" />
     </LineIds>
     <LineIds Name="FB_UnitTestBase.FB_init">
       <LineId Id="11" Count="1" />
       <LineId Id="9" Count="0" />
+      <LineId Id="20" Count="0" />
       <LineId Id="7" Count="0" />
     </LineIds>
-    <LineIds Name="FB_UnitTestBase.getResult">
+    <LineIds Name="FB_UnitTestBase.getFailed">
       <LineId Id="6" Count="0" />
       <LineId Id="5" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_UnitTestBase.getPassed">
+      <LineId Id="6" Count="0" />
+      <LineId Id="5" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_UnitTestBase.logError">
       <LineId Id="7" Count="0" />
+      <LineId Id="5" Count="0" />
+      <LineId Id="8" Count="1" />
+    </LineIds>
+    <LineIds Name="FB_UnitTestBase.logInfo">
+      <LineId Id="7" Count="0" />
+      <LineId Id="5" Count="0" />
+      <LineId Id="8" Count="1" />
     </LineIds>
     <LineIds Name="FB_UnitTestBase.prepare">
       <LineId Id="28" Count="0" />
       <LineId Id="5" Count="0" />
-      <LineId Id="29" Count="1" />
+      <LineId Id="29" Count="0" />
+      <LineId Id="54" Count="1" />
     </LineIds>
     <LineIds Name="FB_UnitTestBase.register">
       <LineId Id="7" Count="0" />

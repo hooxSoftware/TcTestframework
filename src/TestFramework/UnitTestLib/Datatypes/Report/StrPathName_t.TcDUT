@@ -1,0 +1,7 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4022.12">
+  <DUT Name="StrPathName_t" Id="{f7906ba5-63c0-45a1-8fcb-e419b849bbdb}">
+    <Declaration><![CDATA[TYPE StrPathName_t : String(255); END_TYPE
+]]></Declaration>
+  </DUT>
+</TcPlcObject>

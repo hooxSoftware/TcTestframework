@@ -26,8 +26,9 @@ VAR_INPUT
 	i_bStart : BOOL;
 END_VAR
 VAR_OUTPUT
-	o_eState  : EState_t;
-	o_eResult : EResult_t;
+	o_eState  		: EState_t;
+	o_eResult 		: EResult_t;
+	o_sStatistic	: SStatistic_t;
 END_VAR
 VAR
 	a_pTestSuite 	: ARRAY [0..255] OF TestSuiteHandle_t;
@@ -41,6 +42,10 @@ END_VAR
 	CASE o_eState OF 
 	
 	EState_t.eStateInit:	
+	
+		IF i_bStart = FALSE THEN
+			o_eState := EState_t.eStateIdle;
+		END_IF
 	
 	EState_t.eStateIdle:
 	
@@ -74,6 +79,9 @@ END_VAR
 			
 			o_eState := EState_t.eStateCleanUp;
 			
+			o_sStatistic.u32Executed := o_sStatistic.u32Executed + pActTestSuite^.getExecuted();
+			o_sStatistic.u32Passed   := o_sStatistic.u32Passed   + pActTestSuite^.getPassed();
+			o_sStatistic.u32Failed	 := o_sStatistic.u32Failed   + pActTestSuite^.getFailed();
 		END_IF
 	
 	EState_t.eStateCleanUp:
@@ -139,6 +147,9 @@ END_VAR
 		
 		u16TestSuites := u16TestSuites +1;
 	
+		o_sStatistic.u32TestSuites := o_sStatistic.u32TestSuites + 1;
+		o_sStatistic.u32TestCases  := o_sStatistic.u32TestCases + i_pTestSuite^.sStatistic.u32TestCases;
+		
 		addTestSuite := TRUE;
 	END_IF]]></ST>
       </Implementation>
@@ -211,7 +222,12 @@ END_VAR
       <LineId Id="41" Count="0" />
       <LineId Id="9" Count="0" />
       <LineId Id="42" Count="0" />
-      <LineId Id="45" Count="2" />
+      <LineId Id="45" Count="0" />
+      <LineId Id="163" Count="0" />
+      <LineId Id="160" Count="1" />
+      <LineId Id="46" Count="0" />
+      <LineId Id="162" Count="0" />
+      <LineId Id="47" Count="0" />
       <LineId Id="57" Count="3" />
       <LineId Id="48" Count="0" />
       <LineId Id="52" Count="0" />
@@ -226,12 +242,12 @@ END_VAR
       <LineId Id="70" Count="1" />
       <LineId Id="118" Count="0" />
       <LineId Id="120" Count="1" />
+      <LineId Id="175" Count="1" />
       <LineId Id="119" Count="0" />
-      <LineId Id="123" Count="0" />
-      <LineId Id="122" Count="0" />
-      <LineId Id="124" Count="0" />
+      <LineId Id="174" Count="0" />
       <LineId Id="74" Count="0" />
       <LineId Id="125" Count="0" />
+      <LineId Id="177" Count="2" />
       <LineId Id="75" Count="0" />
       <LineId Id="50" Count="1" />
       <LineId Id="77" Count="0" />
@@ -250,7 +266,11 @@ END_VAR
       <LineId Id="43" Count="0" />
     </LineIds>
     <LineIds Name="PRG_UnitTestLib.addTestSuite">
-      <LineId Id="7" Count="10" />
+      <LineId Id="7" Count="9" />
+      <LineId Id="41" Count="0" />
+      <LineId Id="43" Count="0" />
+      <LineId Id="42" Count="0" />
+      <LineId Id="17" Count="0" />
       <LineId Id="5" Count="0" />
     </LineIds>
     <LineIds Name="PRG_UnitTestLib.getFirstTestSuite">
