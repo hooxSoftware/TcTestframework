@@ -1,0 +1,12 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4022.12">
+  <DUT Name="UTime_t" Id="{49383c43-dc40-40bc-86d6-7fe4e4417591}">
+    <Declaration><![CDATA[TYPE UTime_t :
+UNION
+	dwValue  : ARRAY[0..1] OF DWORD;
+	u64Value : ULINT;
+END_UNION
+END_TYPE
+]]></Declaration>
+  </DUT>
+</TcPlcObject>

@@ -1,14 +1,19 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <TcSmProject xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.beckhoff.com/schemas/2012/07/TcSmProject" TcSmVersion="1.0" TcVersion="3.1.4022.22">
-	<Project ProjectGUID="{1C784FBE-D6EB-4032-B02F-6CAD4CB786BC}" Target64Bit="true" ShowHideConfigurations="#x306">
+	<Project ProjectGUID="{1C784FBE-D6EB-4032-B02F-6CAD4CB786BC}" ShowHideConfigurations="#x306">
 		<System>
 			<Settings MaxCpus="4" NonWinCpus="1">
 				<Cpu CpuId="3"/>
 			</Settings>
+			<Licenses>
+				<Target>
+					<ManualSelect>{9FD32FC8-0CF9-4C5B-95FB-F35423496A77}</ManualSelect>
+				</Target>
+			</Licenses>
 		</System>
 		<Plc>
 			<Project GUID="{37CA94EE-4E6E-465D-871D-B1B21714C527}" Name="UnitTestLib" PrjFilePath="UnitTestLib\UnitTestLib.plcproj" TmcFilePath="UnitTestLib\UnitTestLib.tmc" ReloadTmc="true" AmsPort="851" FileArchiveSettings="#x000e" SymbolicMapping="true">
-				<Instance Id="#x08502000" TcSmClass="TComPlcObjDef" KeepUnrestoredLinks="2" TmcPath="Source\Source.tmc">
+				<Instance Id="#x08502000" TcSmClass="TComPlcObjDef" KeepUnrestoredLinks="2" TmcPath="UnitTestLib\UnitTestLib.tmc">
 					<Name>UnitTestLib Instance</Name>
 					<CLSID ClassFactory="TcPlc30">{08500001-0000-0000-F000-000000000064}</CLSID>
 				</Instance>

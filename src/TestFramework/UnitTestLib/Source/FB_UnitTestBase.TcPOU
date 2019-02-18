@@ -73,6 +73,9 @@ END_VAR
 	
 	IF bFatal = true THEN
 		o_eResult := EResult_t.eStateFailedFatal;
+		logError(concat('Test Failed Fatal: ', strId));
+	ELSE
+		logError(concat('Test Failed : ', strId));
 	END_IF
 ]]></ST>
       </Implementation>
@@ -902,6 +905,7 @@ VAR_INPUT
 	bInCopyCode 	: BOOL;  // if TRUE, the instance afterwards gets moved into the copy code (online change)
 	i_strId	  		: ObjectId_t;
 	i_pTestSuite 	: TestSuiteHandle_t;
+	i_bExecute      : BOOL := true; 
 END_VAR
 ]]></Declaration>
       <Implementation>
@@ -1124,7 +1128,11 @@ END_VAR
       <LineId Id="7" Count="0" />
       <LineId Id="9" Count="0" />
       <LineId Id="18" Count="0" />
-      <LineId Id="12" Count="2" />
+      <LineId Id="12" Count="1" />
+      <LineId Id="44" Count="0" />
+      <LineId Id="43" Count="0" />
+      <LineId Id="42" Count="0" />
+      <LineId Id="14" Count="0" />
       <LineId Id="10" Count="0" />
     </LineIds>
     <LineIds Name="FB_UnitTestBase.addPassed">

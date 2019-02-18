@@ -1,0 +1,128 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4022.12">
+  <POU Name="FB_TextReport" Id="{7863b7fc-02bb-4d51-b44b-c16e99ea1d78}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION_BLOCK FB_TextReport EXTENDS FB_TestReportBase
+VAR_INPUT
+END_VAR
+VAR_OUTPUT
+END_VAR
+VAR
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[]]></ST>
+    </Implementation>
+    <Method Name="BuildFile" Id="{d0c26bf9-da94-4196-a14f-a62440de2cb5}">
+      <Declaration><![CDATA[(******************************************************************************
+Baustein: FB_TestReportBase.BuildFile
+Spezifikation: doc/Spezifikation.pdf, Kap. x.y.z
+-------------------------------------------------------------------------------
+erstellt:
+von:
+Geändert:
+von:
+-------------------------------------------------------------------------------
+Beschreibung
+Diese Methode muss vom ableitenden Baustein überschrieben werden und
+wird von der Basisklasse aus aufgerufen wenn der Report erstellt werden
+soll.
+
+-------------------------------------------------------------------------------
+Input
+-
+
+Output
+-
+******************************************************************************)
+METHOD PROTECTED BuildFile : ERetCode_t
+VAR_INPUT
+	i_u32Line : UDINT;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[
+	BuildFile := ERetCode_t.eRetBusy;
+
+	CASE i_u32Line OF
+
+	0: addString('Test Report ');
+	
+	1: addString('++++++++++++++++++++++++++++++++++++++++++++++++++');
+
+	2: addString('Ergebnis');
+	
+	3: addString('++++++++++++++++++++++++++++++++++++++++++++++++++');
+	
+	4: BuildFile := ERetCode_t.eRetDone;
+
+	END_CASE;
+
+
+
+	]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="getFileName" Id="{23c08ea4-8d7c-41a3-9b9c-45e8bdff5eea}">
+      <Declaration><![CDATA[(******************************************************************************
+Baustein: FB_TestReportBase.getFileName
+Spezifikation: doc/Spezifikation.pdf, Kap. x.y.z
+-------------------------------------------------------------------------------
+erstellt:
+von:
+Geändert:
+von:
+-------------------------------------------------------------------------------
+Beschreibung
+Diese Methode muss vom ableitenden Baustein überschrieben werden und
+wird von der Basisklasse aus aufgerufen wenn der Report erstellt werden
+soll.
+
+-------------------------------------------------------------------------------
+Input
+-
+
+Output
+-
+******************************************************************************)
+METHOD PROTECTED getFileName : ERetCode_t
+VAR_INPUT
+	i_pFileName : NameHandle_t;
+	i_pPath		: PathHandle_t;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[
+	i_pFileName^ := 'Export.txt';
+	i_pPath^ 	 := 'C:\Users\Administrator\Desktop\';]]></ST>
+      </Implementation>
+    </Method>
+    <LineIds Name="FB_TextReport">
+      <LineId Id="9" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_TextReport.BuildFile">
+      <LineId Id="55" Count="1" />
+      <LineId Id="43" Count="1" />
+      <LineId Id="46" Count="0" />
+      <LineId Id="45" Count="0" />
+      <LineId Id="36" Count="0" />
+      <LineId Id="38" Count="0" />
+      <LineId Id="37" Count="0" />
+      <LineId Id="32" Count="0" />
+      <LineId Id="31" Count="0" />
+      <LineId Id="40" Count="0" />
+      <LineId Id="35" Count="0" />
+      <LineId Id="54" Count="0" />
+      <LineId Id="57" Count="0" />
+      <LineId Id="49" Count="0" />
+      <LineId Id="51" Count="0" />
+      <LineId Id="50" Count="0" />
+      <LineId Id="34" Count="0" />
+      <LineId Id="30" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_TextReport.getFileName">
+      <LineId Id="29" Count="0" />
+      <LineId Id="28" Count="0" />
+      <LineId Id="30" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>

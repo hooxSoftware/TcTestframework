@@ -1,18 +1,16 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4022.12">
-  <DUT Name="EState_t" Id="{13bcc7bf-0c44-446c-8c7a-7c1c7cd30d15}">
+  <DUT Name="EExportState_t" Id="{e2b3d0d2-27df-4cd5-b2ce-fa95317235a2}">
     <Declaration><![CDATA[{attribute 'qualified_only'}
 {attribute 'strict'}
-TYPE EState_t :
+TYPE EExportState_t :
 (
-	eStateInit,
-	eStateIdle,
-	eStatePrepare,
-	eStateExecute,
-	eStateCleanUp,
-	eStateReady,
-	eStateExport,
-	eStateError
+	eExportIdle := 0,
+	eExportOpen,
+	eExportGetLine,
+	eExportWrite,
+	eExportClose,
+	eExportError
 );
 END_TYPE
 ]]></Declaration>

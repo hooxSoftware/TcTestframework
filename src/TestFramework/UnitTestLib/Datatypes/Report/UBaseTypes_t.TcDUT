@@ -1,0 +1,18 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4022.12">
+  <DUT Name="UBaseTypes_t" Id="{2f74f94e-53a5-409d-a590-03080c2d19b5}">
+    <Declaration><![CDATA[TYPE UBaseTypes_t :
+UNION
+	u8Value 	: USINT;
+	s8Value 	: SINT;
+	u16Value 	: UINT;
+	s16Value 	: INT;
+	u32Value 	: UDINT;
+	s32Value 	: DINT;
+	w16Value    : WORD;
+	w32Value    : DWORD;
+END_UNION
+END_TYPE
+]]></Declaration>
+  </DUT>
+</TcPlcObject>

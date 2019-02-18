@@ -55,6 +55,7 @@ END_VAR
 		u16Index := 0;
 
 		IF i_bStart = TRUE THEN
+			logInfo(CONCAT('Run Testsuite ', strId));
 			pTest 	 := getFirstTestCase();
 			o_eState  := EState_t.eStatePrepare;
 			o_eResult := EResult_t.eStatePassed;
@@ -260,6 +261,16 @@ END_VAR
 	getFirstTestCase := a_pTest[0];]]></ST>
       </Implementation>
     </Method>
+    <Method Name="getId" Id="{f75a7191-de66-4010-8dda-4a26aa6a90f4}">
+      <Declaration><![CDATA[METHOD PUBLIC getId : STRING
+VAR_INPUT
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[
+	getId := strId;]]></ST>
+      </Implementation>
+    </Method>
     <Method Name="getNextTestCase" Id="{caddd296-a017-4642-872a-27f49eaad75c}">
       <Declaration><![CDATA[(******************************************************************************
 Baustein: FB_UnitTestBase.
@@ -294,6 +305,16 @@ END_VAR
 	END_IF;]]></ST>
       </Implementation>
     </Method>
+    <Method Name="getNoOfAsserts" Id="{90c2aaf2-cbc5-46bd-85ef-aa252e2f8d0f}">
+      <Declaration><![CDATA[METHOD PUBLIC getNoOfAsserts : UDINT
+VAR_INPUT
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[
+	getNoOfAsserts := sStatistic.u32Asserts;]]></ST>
+      </Implementation>
+    </Method>
     <Method Name="getNoOfTests" Id="{5c45c94a-2ee3-4a94-bafd-ed5fe0d7c4f1}">
       <Declaration><![CDATA[METHOD PUBLIC getNoOfTests : UDINT
 VAR_INPUT
@@ -312,6 +333,19 @@ END_VAR
       <Implementation>
         <ST><![CDATA[
 	getPassed := sStatistic.u32Passed;]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="logInfo" Id="{4162b475-e111-4ea4-af72-09599d7cdb23}">
+      <Declaration><![CDATA[METHOD PROTECTED logInfo : BOOL
+VAR_INPUT
+	i_strMessage : StrMessage_t;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[
+	ADSLOGSTR(msgCtrlMask 	:= ADSLOG_MSGTYPE_HINT , 
+			  msgFmtStr 	:= i_strMessage, 
+			  strArg 		:= '');]]></ST>
       </Implementation>
     </Method>
     <Method Name="register" Id="{3a42094d-f3f7-40aa-9e2e-e1eb00f9e432}">
@@ -344,7 +378,9 @@ END_VAR
       </Implementation>
     </Method>
     <LineIds Name="FB_Testsuite">
-      <LineId Id="382" Count="22" />
+      <LineId Id="382" Count="14" />
+      <LineId Id="532" Count="0" />
+      <LineId Id="397" Count="7" />
       <LineId Id="406" Count="19" />
       <LineId Id="427" Count="67" />
       <LineId Id="245" Count="0" />
@@ -381,6 +417,10 @@ END_VAR
       <LineId Id="6" Count="0" />
       <LineId Id="5" Count="0" />
     </LineIds>
+    <LineIds Name="FB_Testsuite.getId">
+      <LineId Id="6" Count="0" />
+      <LineId Id="5" Count="0" />
+    </LineIds>
     <LineIds Name="FB_Testsuite.getNextTestCase">
       <LineId Id="10" Count="0" />
       <LineId Id="7" Count="0" />
@@ -390,6 +430,10 @@ END_VAR
       <LineId Id="5" Count="0" />
       <LineId Id="9" Count="0" />
     </LineIds>
+    <LineIds Name="FB_Testsuite.getNoOfAsserts">
+      <LineId Id="6" Count="0" />
+      <LineId Id="5" Count="0" />
+    </LineIds>
     <LineIds Name="FB_Testsuite.getNoOfTests">
       <LineId Id="6" Count="0" />
       <LineId Id="5" Count="0" />
@@ -397,6 +441,11 @@ END_VAR
     <LineIds Name="FB_Testsuite.getPassed">
       <LineId Id="6" Count="0" />
       <LineId Id="5" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_Testsuite.logInfo">
+      <LineId Id="7" Count="0" />
+      <LineId Id="5" Count="0" />
+      <LineId Id="8" Count="1" />
     </LineIds>
     <LineIds Name="FB_Testsuite.register">
       <LineId Id="28" Count="0" />

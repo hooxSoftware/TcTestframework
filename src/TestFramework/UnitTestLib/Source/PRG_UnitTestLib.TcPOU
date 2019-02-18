@@ -35,10 +35,16 @@ VAR
 	u16TestSuites 	: UINT;
 	u16Index	  	: UINT;
 	pActTestSuite 	: TestSuiteHandle_t;
+	pTestReport		: POINTER TO FB_TestReportBase;
+	eRetCode 		: ERetCode_t;
+
+	fbSystemTime 	: FB_LocalSystemTime;
 END_VAR
 ]]></Declaration>
     <Implementation>
       <ST><![CDATA[
+	fbSystemTime(bEnable := true, dwCycle := 5);
+
 	CASE o_eState OF 
 	
 	EState_t.eStateInit:	
@@ -50,13 +56,18 @@ END_VAR
 	EState_t.eStateIdle:
 	
 		IF i_bStart = TRUE THEN
+			logInfo('+++++++++++++ Testbeginn ++++++++++++++');
 			o_eState := EState_t.eStatePrepare;
 		END_IF
 	
 	EState_t.eStatePrepare:
 	
-		o_eResult 	  := EResult_t.eStatePassed;
-		
+		o_eResult 	  				:= EResult_t.eStatePassed;
+		o_sStatistic.u32Executed 	:= 0;
+		o_sStatistic.u32TestCases	:= 0;
+		o_sStatistic.u32Asserts  	:= 0;
+		o_sStatistic.u32Passed   	:= 0;
+		o_sStatistic.u32Failed	 	:= 0;		
 		pActTestSuite := getFirstTestSuite();
 		
 		IF pActTestSuite <> 0 THEN
@@ -79,9 +90,11 @@ END_VAR
 			
 			o_eState := EState_t.eStateCleanUp;
 			
-			o_sStatistic.u32Executed := o_sStatistic.u32Executed + pActTestSuite^.getExecuted();
-			o_sStatistic.u32Passed   := o_sStatistic.u32Passed   + pActTestSuite^.getPassed();
-			o_sStatistic.u32Failed	 := o_sStatistic.u32Failed   + pActTestSuite^.getFailed();
+			o_sStatistic.u32Executed 	:= o_sStatistic.u32Executed  + pActTestSuite^.getExecuted();
+			o_sStatistic.u32TestCases	:= o_sStatistic.u32TestCases + pActTestSuite^.getNoOfTests(); 
+			o_sStatistic.u32Asserts  	:= o_sStatistic.u32Asserts   + pActTestSuite^.getNoOfAsserts();
+			o_sStatistic.u32Passed   	:= o_sStatistic.u32Passed    + pActTestSuite^.getPassed();
+			o_sStatistic.u32Failed	 	:= o_sStatistic.u32Failed    + pActTestSuite^.getFailed();
 		END_IF
 	
 	EState_t.eStateCleanUp:
@@ -97,6 +110,7 @@ END_VAR
 				o_eState := EState_t.eStateExecute;
 			ELSE
 				o_eState := EState_t.eStateReady;
+				logInfo('+++++++++++++ Test Ende ++++++++++++++');
 			END_IF		
 			
 		END_IF
@@ -104,13 +118,40 @@ END_VAR
 	EState_t.eStateReady:
 
 		IF i_bStart = FALSE THEN
-			o_eState := EState_t.eStateIdle;
+			o_eState := EState_t.eStateExport;
 		END_IF
-				
+
+	EState_t.eStateExport:
+
+		IF pTestReport <> 0 THEN
+			eRetCode := pTestReport^.create();
+		ELSE
+			o_eState := EState_t.eStateError;
+		END_IF;
+
+		IF eRetCode = ERetCode_t.eRetDone THEN
+			o_eState := EState_t.eStateIdle;
+		END_IF;
+
+		IF eRetCode = ERetCode_t.eRetFailed THEN
+			o_eState := EState_t.eStateError;
+		END_IF;
+
 	EState_t.eStateError:
 	
 	END_CASE]]></ST>
     </Implementation>
+    <Method Name="addTestReport" Id="{01e7f184-904d-4319-bf24-cb63b7c8dbc8}">
+      <Declaration><![CDATA[METHOD PUBLIC addTestReport : BOOL
+VAR_INPUT
+	i_pTestReport : Pointer to FB_TestReportBase;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[
+	pTestReport := i_pTestReport;]]></ST>
+      </Implementation>
+    </Method>
     <Method Name="addTestSuite" Id="{4899b7f4-5457-4c86-b63d-9b10a5e33440}">
       <Declaration><![CDATA[(******************************************************************************
 Baustein: FB_UnitTestBase.
@@ -218,7 +259,34 @@ END_VAR
 	END_IF;]]></ST>
       </Implementation>
     </Method>
+    <Method Name="getTime" Id="{04976903-c590-4bd7-9b55-bd9bdde13ab5}">
+      <Declaration><![CDATA[METHOD getTime : TimeStruct
+VAR_INPUT
+END_VAR
+VAR
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[
+	getTime := fbSystemTime.systemTime;
+]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="logInfo" Id="{8bbf780e-46b8-44f0-9d7d-eeee4895fdf7}">
+      <Declaration><![CDATA[METHOD PROTECTED logInfo : BOOL
+VAR_INPUT
+	i_strMessage : StrMessage_t;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[
+	ADSLOGSTR(msgCtrlMask 	:= ADSLOG_MSGTYPE_HINT , 
+			  msgFmtStr 	:= i_strMessage, 
+			  strArg 		:= '');]]></ST>
+      </Implementation>
+    </Method>
     <LineIds Name="PRG_UnitTestLib">
+      <LineId Id="257" Count="1" />
       <LineId Id="41" Count="0" />
       <LineId Id="9" Count="0" />
       <LineId Id="42" Count="0" />
@@ -228,11 +296,15 @@ END_VAR
       <LineId Id="46" Count="0" />
       <LineId Id="162" Count="0" />
       <LineId Id="47" Count="0" />
-      <LineId Id="57" Count="3" />
+      <LineId Id="57" Count="1" />
+      <LineId Id="217" Count="0" />
+      <LineId Id="59" Count="1" />
       <LineId Id="48" Count="0" />
       <LineId Id="52" Count="0" />
       <LineId Id="63" Count="0" />
-      <LineId Id="114" Count="1" />
+      <LineId Id="114" Count="0" />
+      <LineId Id="251" Count="3" />
+      <LineId Id="115" Count="0" />
       <LineId Id="64" Count="3" />
       <LineId Id="108" Count="1" />
       <LineId Id="68" Count="0" />
@@ -247,7 +319,10 @@ END_VAR
       <LineId Id="174" Count="0" />
       <LineId Id="74" Count="0" />
       <LineId Id="125" Count="0" />
-      <LineId Id="177" Count="2" />
+      <LineId Id="177" Count="0" />
+      <LineId Id="216" Count="0" />
+      <LineId Id="215" Count="0" />
+      <LineId Id="178" Count="1" />
       <LineId Id="75" Count="0" />
       <LineId Id="50" Count="1" />
       <LineId Id="77" Count="0" />
@@ -255,15 +330,33 @@ END_VAR
       <LineId Id="99" Count="1" />
       <LineId Id="116" Count="0" />
       <LineId Id="102" Count="5" />
+      <LineId Id="220" Count="0" />
       <LineId Id="101" Count="0" />
       <LineId Id="117" Count="0" />
       <LineId Id="97" Count="0" />
       <LineId Id="93" Count="0" />
       <LineId Id="86" Count="0" />
       <LineId Id="88" Count="3" />
+      <LineId Id="223" Count="0" />
+      <LineId Id="222" Count="0" />
+      <LineId Id="246" Count="0" />
+      <LineId Id="240" Count="1" />
+      <LineId Id="247" Count="1" />
+      <LineId Id="230" Count="0" />
+      <LineId Id="250" Count="0" />
+      <LineId Id="229" Count="0" />
+      <LineId Id="232" Count="0" />
+      <LineId Id="231" Count="0" />
+      <LineId Id="245" Count="0" />
+      <LineId Id="243" Count="1" />
+      <LineId Id="242" Count="0" />
       <LineId Id="87" Count="0" />
       <LineId Id="54" Count="1" />
       <LineId Id="43" Count="0" />
+    </LineIds>
+    <LineIds Name="PRG_UnitTestLib.addTestReport">
+      <LineId Id="7" Count="0" />
+      <LineId Id="5" Count="0" />
     </LineIds>
     <LineIds Name="PRG_UnitTestLib.addTestSuite">
       <LineId Id="7" Count="9" />
@@ -280,6 +373,16 @@ END_VAR
     <LineIds Name="PRG_UnitTestLib.getNextTestSuite">
       <LineId Id="25" Count="5" />
       <LineId Id="5" Count="0" />
+    </LineIds>
+    <LineIds Name="PRG_UnitTestLib.getTime">
+      <LineId Id="21" Count="0" />
+      <LineId Id="14" Count="0" />
+      <LineId Id="7" Count="0" />
+    </LineIds>
+    <LineIds Name="PRG_UnitTestLib.logInfo">
+      <LineId Id="7" Count="0" />
+      <LineId Id="5" Count="0" />
+      <LineId Id="8" Count="1" />
     </LineIds>
   </POU>
 </TcPlcObject>
