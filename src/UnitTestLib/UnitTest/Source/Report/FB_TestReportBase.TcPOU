@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4022.12">
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4022.17">
   <POU Name="FB_TestReportBase" Id="{57a69a83-3743-4ea7-bdac-7bf43020bf6d}" SpecialFunc="None">
     <Declaration><![CDATA[(******************************************************************************
 Baustein: FB_TestReportBase
@@ -322,6 +322,18 @@ END_VAR]]></Declaration>
    ]]></ST>
       </Implementation>
     </Method>
+    <Method Name="FB_init" Id="{8246c5bf-27ec-4b44-890f-28602506afa3}">
+      <Declaration><![CDATA[METHOD FB_init : BOOL
+VAR_INPUT
+	bInitRetains : BOOL; // if TRUE, the retain variables are initialized (warm start / cold start)
+	bInCopyCode : BOOL;  // if TRUE, the instance afterwards gets moved into the copy code (online change)
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[
+	PRG_UnitTestLib.addTestReport(this);]]></ST>
+      </Implementation>
+    </Method>
     <Method Name="getFileName" Id="{9251c5ba-20de-428c-96f9-f4ec9b2c4f20}">
       <Declaration><![CDATA[(******************************************************************************
 Baustein: FB_TestReportBase.getFileName
@@ -587,6 +599,10 @@ END_VAR
       <LineId Id="71" Count="0" />
       <LineId Id="46" Count="8" />
       <LineId Id="11" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_TestReportBase.FB_init">
+      <LineId Id="8" Count="0" />
+      <LineId Id="7" Count="0" />
     </LineIds>
     <LineIds Name="FB_TestReportBase.getFileName">
       <LineId Id="5" Count="0" />

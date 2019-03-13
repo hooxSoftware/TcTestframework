@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4022.12">
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4022.17">
   <POU Name="PRG_UnitTestLib" Id="{dbeace52-75a3-4dfa-9955-9febf020e88e}" SpecialFunc="None">
     <Declaration><![CDATA[(******************************************************************************
 Baustein: PRG_TestLibrary
@@ -39,6 +39,8 @@ VAR
 	eRetCode 		: ERetCode_t;
 
 	fbSystemTime 	: FB_LocalSystemTime;
+	
+	
 END_VAR
 ]]></Declaration>
     <Implementation>

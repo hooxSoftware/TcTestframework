@@ -1,36 +1,40 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
-    <!-- <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>-->
     <FileVersion>1.0.0.0</FileVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{37ca94ee-4e6e-465d-871d-b1b21714c527}</ProjectGuid>
+    <ProjectGuid>{af5ea645-9f2e-4ae3-a77e-16ff20108cf1}</ProjectGuid>
     <SubObjectsSortedByName>True</SubObjectsSortedByName>
-    <Name>UnitTestLib</Name>
-    <ProgramVersion>3.1.4022.2</ProgramVersion>
-    <Application>{e7e371ed-5b46-4221-9897-924ed4a1d9f5}</Application>
-    <TypeSystem>{3ebceced-eb36-4a58-8c97-c6fa40676bde}</TypeSystem>
-    <Implicit_Task_Info>{9a553707-48ff-4eff-b6df-5c9c71a2c3ef}</Implicit_Task_Info>
-    <Implicit_KindOfTask>{83c12652-af4a-4bdd-82b7-f2cd88dbe03a}</Implicit_KindOfTask>
-    <Implicit_Jitter_Distribution>{c690d289-fcab-4240-90eb-33f6f22b5a2c}</Implicit_Jitter_Distribution>
-    <LibraryReferences>{f6b7a340-8984-4631-89f5-31e4caaabcce}</LibraryReferences>
+    <Name>UnitTest</Name>
+    <ProgramVersion>3.1.4022.6</ProgramVersion>
+    <Application>{72e5541d-009e-48df-895c-34cee1a4f0c2}</Application>
+    <TypeSystem>{38b1abbd-00b5-4f81-a4df-d04bc2ff93fb}</TypeSystem>
+    <Implicit_Task_Info>{23e2cfda-83c5-4d7e-861e-233fe8ba1647}</Implicit_Task_Info>
+    <Implicit_KindOfTask>{91546a08-ef25-498e-9401-b3dccd52b18c}</Implicit_KindOfTask>
+    <Implicit_Jitter_Distribution>{1a53eab1-e78f-4f24-b68f-95788199283a}</Implicit_Jitter_Distribution>
+    <LibraryReferences>{199b5c71-ba17-4cae-adaf-8a508f95e175}</LibraryReferences>
+    <Licenses>
+      <License>
+        <Key>{2ee7d233-337c-409c-bf0b-e2e1b33dcf9a}</Key>
+        <OemId>{87c99477-3389-dace-3a3c-4ff5e85f7211}</OemId>
+        <Comment />
+      </License>
+    </Licenses>
     <CombineIds>false</CombineIds>
     <Company>Hoox.Software</Company>
-    <Released>false</Released>
-    <Title>Unittest</Title>
-    <ProjectVersion>0.1</ProjectVersion>
+    <Released>true</Released>
+    <Title>UnitTest</Title>
+    <ProjectVersion>0.2</ProjectVersion>
     <Author>Patrick Dressel</Author>
-    <Description>Basisfunktion zur Erstellung von Unittest
-und Dokumentation.</Description>
-    <!--    <OutputType>Exe</OutputType>
-    <RootNamespace>MyApplication</RootNamespace>
-    <AssemblyName>MyApplication</AssemblyName>-->
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Datatypes\EResult_t.TcDUT">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Datatypes\EState_t.TcDUT">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Datatypes\IdHandle_t.TcDUT">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Datatypes\ObjectId_t.TcDUT">
@@ -69,9 +73,6 @@ und Dokumentation.</Description>
     <Compile Include="Datatypes\StringHandle_t.TcDUT">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Datatypes\IdHandle_t.TcDUT">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="Datatypes\StrMessage_t.TcDUT">
       <SubType>Code</SubType>
     </Compile>
@@ -79,6 +80,9 @@ und Dokumentation.</Description>
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Datatypes\TestSuiteHandle_t.TcDUT">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="PlcTask.TcTTO">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Source\FB_Testsuite.TcPOU">
@@ -96,7 +100,7 @@ und Dokumentation.</Description>
     <Compile Include="Source\Report\FB_TextReport.TcPOU">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Version\Global_Version.TcGVL">
+    <Compile Include="Source\Report\FB_TextReport2.TcPOU">
       <SubType>Code</SubType>
     </Compile>
   </ItemGroup>
@@ -105,12 +109,6 @@ und Dokumentation.</Description>
     <Folder Include="Datatypes\Report" />
     <Folder Include="Source" />
     <Folder Include="Source\Report" />
-    <Folder Include="Version" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="UnitTestLib.tmc">
-      <SubType>Content</SubType>
-    </None>
   </ItemGroup>
   <ItemGroup>
     <PlaceholderReference Include="Tc2_Standard">
@@ -125,17 +123,26 @@ und Dokumentation.</Description>
       <DefaultResolution>Tc2_Utilities, * (Beckhoff Automation GmbH)</DefaultResolution>
       <Namespace>Tc2_Utilities</Namespace>
     </PlaceholderReference>
+    <PlaceholderReference Include="Tc3_Module">
+      <DefaultResolution>Tc3_Module, * (Beckhoff Automation GmbH)</DefaultResolution>
+      <Namespace>Tc3_Module</Namespace>
+    </PlaceholderReference>
   </ItemGroup>
   <ItemGroup>
     <LibraryReference Include="Base Interfaces,newest,System">
       <Namespace>IBaseLibrary</Namespace>
     </LibraryReference>
   </ItemGroup>
+  <ItemGroup>
+    <None Include="UnitTest.tmc">
+      <SubType>Content</SubType>
+    </None>
+  </ItemGroup>
   <ProjectExtensions>
     <PlcProjectOptions>
       <XmlArchive>
-  <Data>
-    <o xml:space="preserve" t="OptionKey">
+        <Data>
+          <o xml:space="preserve" t="OptionKey">
       <v n="Name">"&lt;ProjectRoot&gt;"</v>
       <d n="SubKeys" t="Hashtable" ckt="String" cvt="OptionKey">
         <v>{192FAD59-8248-4824-A8DE-9177C94C195A}</v>
@@ -151,62 +158,7 @@ und Dokumentation.</Description>
             <v>Rules</v>
             <o>
               <v n="Name">"Rules"</v>
-              <d n="SubKeys" t="Hashtable" ckt="String" cvt="OptionKey">
-                <v>167</v>
-                <o>
-                  <v n="Name">"167"</v>
-                  <d n="SubKeys" t="Hashtable" />
-                  <d n="Values" t="Hashtable" ckt="String" cvt="Boolean">
-                    <v>bActive</v>
-                    <v>False</v>
-                  </d>
-                </o>
-                <v>4</v>
-                <o>
-                  <v n="Name">"4"</v>
-                  <d n="SubKeys" t="Hashtable" />
-                  <d n="Values" t="Hashtable" ckt="String" cvt="Boolean">
-                    <v>bActive</v>
-                    <v>False</v>
-                  </d>
-                </o>
-                <v>33</v>
-                <o>
-                  <v n="Name">"33"</v>
-                  <d n="SubKeys" t="Hashtable" />
-                  <d n="Values" t="Hashtable" ckt="String" cvt="Boolean">
-                    <v>bActive</v>
-                    <v>False</v>
-                  </d>
-                </o>
-                <v>6</v>
-                <o>
-                  <v n="Name">"6"</v>
-                  <d n="SubKeys" t="Hashtable" />
-                  <d n="Values" t="Hashtable" ckt="String" cvt="Boolean">
-                    <v>bActive</v>
-                    <v>False</v>
-                  </d>
-                </o>
-                <v>27</v>
-                <o>
-                  <v n="Name">"27"</v>
-                  <d n="SubKeys" t="Hashtable" />
-                  <d n="Values" t="Hashtable" ckt="String" cvt="Boolean">
-                    <v>bActive</v>
-                    <v>False</v>
-                  </d>
-                </o>
-                <v>28</v>
-                <o>
-                  <v n="Name">"28"</v>
-                  <d n="SubKeys" t="Hashtable" />
-                  <d n="Values" t="Hashtable" ckt="String" cvt="Boolean">
-                    <v>bActive</v>
-                    <v>False</v>
-                  </d>
-                </o>
-              </d>
+              <d n="SubKeys" t="Hashtable" />
               <d n="Values" t="Hashtable" />
             </o>
           </d>
@@ -230,26 +182,13 @@ und Dokumentation.</Description>
       </d>
       <d n="Values" t="Hashtable" />
     </o>
-  </Data>
-  <TypeList>
-    <Type n="Boolean">System.Boolean</Type>
-    <Type n="Hashtable">System.Collections.Hashtable</Type>
-    <Type n="OptionKey">{54dd0eac-a6d8-46f2-8c27-2f43c7e49861}</Type>
-    <Type n="String">System.String</Type>
-  </TypeList>
-</XmlArchive>
+        </Data>
+        <TypeList>
+          <Type n="Hashtable">System.Collections.Hashtable</Type>
+          <Type n="OptionKey">{54dd0eac-a6d8-46f2-8c27-2f43c7e49861}</Type>
+          <Type n="String">System.String</Type>
+        </TypeList>
+      </XmlArchive>
     </PlcProjectOptions>
   </ProjectExtensions>
-  <!-- 
-   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
-    <DebugSymbols>true</DebugSymbols>
-    <OutputPath>bin\Debug\</OutputPath>
-    <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
-    <DebugSymbols>true</DebugSymbols>
-    <OutputPath>bin\Release\</OutputPath>
-    <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
-  </PropertyGroup>
--->
 </Project>

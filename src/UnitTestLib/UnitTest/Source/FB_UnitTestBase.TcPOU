@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4022.12">
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4022.17">
   <POU Name="FB_UnitTestBase" Id="{77b52f8d-9a49-403a-aba1-80915f687878}" SpecialFunc="None">
     <Declaration><![CDATA[(******************************************************************************
 Baustein: FB_UnitTestBase
@@ -176,9 +176,9 @@ END_VAR
       <Implementation>
         <ST><![CDATA[
 	IF bValue = FALSE THEN
-		u32Passed := u32Passed + 1;
+		addPassed();
 	ELSE
-		u32Failed := u32Failed + 1;
+		addFailed(bFatal := FALSE);
 	END_IF]]></ST>
       </Implementation>
     </Method>
@@ -1103,15 +1103,15 @@ END_VAR
         <ST><![CDATA[
 	validate := FALSE;
 	
-	IF (var1.pValue = 0 OR var1.pValue = 0) THEN
+	IF (var1.pValue = 0 OR var2.pValue = 0) THEN
 		RETURN;
 	END_IF
 
-	IF (var1.TypeClass <> var1.TypeClass) THEN
+	IF (var1.TypeClass <> var2.TypeClass) THEN
 		RETURN;
 	END_IF;	
 	
-	IF (var1.diSize <> var1.diSize) THEN
+	IF (var1.diSize <> var2.diSize) THEN
 		RETURN;
 	END_IF;	
 	
@@ -1157,8 +1157,8 @@ END_VAR
     <LineIds Name="FB_UnitTestBase.assertFALSE">
       <LineId Id="8" Count="0" />
       <LineId Id="5" Count="0" />
-      <LineId Id="9" Count="0" />
-      <LineId Id="11" Count="1" />
+      <LineId Id="36" Count="1" />
+      <LineId Id="12" Count="0" />
       <LineId Id="10" Count="0" />
     </LineIds>
     <LineIds Name="FB_UnitTestBase.assertFALSE_Fatal">
