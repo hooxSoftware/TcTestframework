@@ -1,0 +1,7 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4022.18">
+  <DUT Name="TestReportHandle_t" Id="{7106b689-a75c-400e-a8fa-9e258dd8cf30}">
+    <Declaration><![CDATA[TYPE TestReportHandle_t : Pointer to FB_TestReportBase; END_TYPE
+]]></Declaration>
+  </DUT>
+</TcPlcObject>

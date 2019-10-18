@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4022.17">
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4022.18">
   <POU Name="PRG_UnitTestLib" Id="{dbeace52-75a3-4dfa-9955-9febf020e88e}" SpecialFunc="None">
     <Declaration><![CDATA[(******************************************************************************
 Baustein: PRG_TestLibrary
@@ -15,10 +15,12 @@ Dieser Baustein etnhält alle Testsuites und führt diese aus.
 
 -------------------------------------------------------------------------------
 Input
--
+	i_bStart : mit positiver Flanke werden die registrierten Testsuites ausgeführt
 
 Output
--
+	o_eState  		: EState_t;
+	o_eResult 		: EResult_t;
+	o_sStatistic	: SStatistic_t;
 ******************************************************************************)
 {attribute 'global_init_slot' := '41000'}
 PROGRAM PRG_UnitTestLib
@@ -40,20 +42,26 @@ VAR
 
 	fbSystemTime 	: FB_LocalSystemTime;
 	
-	
+	fbLicense : FB_CheckLicense;
 END_VAR
 ]]></Declaration>
     <Implementation>
       <ST><![CDATA[
-	fbSystemTime(bEnable := true, dwCycle := 5);
+	fbSystemTime(bEnable := TRUE, dwCycle := 5);
+
+
 
 	CASE o_eState OF 
 	
 	EState_t.eStateInit:	
-	
-		IF i_bStart = FALSE THEN
-			o_eState := EState_t.eStateIdle;
-		END_IF
+
+		IF checkLicense() = ERetCode_t.eRetDone THEN
+			
+			IF i_bStart 						= FALSE THEN 
+				o_eState := EState_t.eStateIdle; 
+			END_IF
+			
+		END_IF;
 	
 	EState_t.eStateIdle:
 	
@@ -126,37 +134,32 @@ END_VAR
 	EState_t.eStateExport:
 
 		IF pTestReport <> 0 THEN
+			
 			eRetCode := pTestReport^.create();
+			
+			CASE eRetCode OF
+
+			 ERetCode_t.eRetDone :
+				o_eState := EState_t.eStateIdle;
+			
+			ERetCode_t.eRetFailed :
+				o_eState := EState_t.eStateError;
+				
+			END_CASE;			
+			
 		ELSE
-			o_eState := EState_t.eStateError;
-		END_IF;
-
-		IF eRetCode = ERetCode_t.eRetDone THEN
 			o_eState := EState_t.eStateIdle;
-		END_IF;
-
-		IF eRetCode = ERetCode_t.eRetFailed THEN
-			o_eState := EState_t.eStateError;
 		END_IF;
 
 	EState_t.eStateError:
 	
+	EState_t.eStateLicenseError:
+	
 	END_CASE]]></ST>
     </Implementation>
     <Method Name="addTestReport" Id="{01e7f184-904d-4319-bf24-cb63b7c8dbc8}">
-      <Declaration><![CDATA[METHOD PUBLIC addTestReport : BOOL
-VAR_INPUT
-	i_pTestReport : Pointer to FB_TestReportBase;
-END_VAR
-]]></Declaration>
-      <Implementation>
-        <ST><![CDATA[
-	pTestReport := i_pTestReport;]]></ST>
-      </Implementation>
-    </Method>
-    <Method Name="addTestSuite" Id="{4899b7f4-5457-4c86-b63d-9b10a5e33440}">
       <Declaration><![CDATA[(******************************************************************************
-Baustein: FB_UnitTestBase.
+Baustein: PRG_UnitTestLib.addTestReport
 Spezifikation: doc/Spezifikation.pdf, Kap. x.y.z
 -------------------------------------------------------------------------------
 erstellt:
@@ -169,7 +172,37 @@ Diese Methode
 
 -------------------------------------------------------------------------------
 Input
+i_pTestReport
+
+Output
 -
+******************************************************************************)
+METHOD PUBLIC addTestReport : BOOL
+VAR_INPUT
+	i_pTestReport : TestReportHandle_t;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[
+	pTestReport := i_pTestReport;]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="addTestSuite" Id="{4899b7f4-5457-4c86-b63d-9b10a5e33440}">
+      <Declaration><![CDATA[(******************************************************************************
+Baustein: PRG_UnitTestLib.addTestSuite
+Spezifikation: doc/Spezifikation.pdf, Kap. x.y.z
+-------------------------------------------------------------------------------
+erstellt:
+von:
+Geändert:
+von:
+-------------------------------------------------------------------------------
+Beschreibung
+Diese Methode
+
+-------------------------------------------------------------------------------
+Input
+i_pTestSuite
 
 Output
 -
@@ -197,9 +230,49 @@ END_VAR
 	END_IF]]></ST>
       </Implementation>
     </Method>
+    <Method Name="checkLicense" Id="{4a84bc62-8e71-4e6c-af93-ad6435b19559}">
+      <Declaration><![CDATA[(******************************************************************************
+Baustein: PRG_UnitTestLib.checkLicense
+Spezifikation: doc/Spezifikation.pdf, Kap. x.y.z
+-------------------------------------------------------------------------------
+erstellt:
+von:
+Geändert:
+von:
+-------------------------------------------------------------------------------
+Beschreibung
+Diese Methode
+
+-------------------------------------------------------------------------------
+Input
+-
+
+Output
+-
+******************************************************************************)
+METHOD checkLicense : ERetCode_t
+VAR_INPUT
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[
+	checkLicense := ERetCode_t.eRetBusy;
+	
+	fbLicense(bExecute    := TRUE, 
+		  stLicenseId := STRING_TO_GUID('994D9F0C-F802-4000-8582-229354A3CA39'));
+			  
+	IF fbLicense.bBusy =  FALSE THEN
+		IF fbLicense.stCheckLicense.eResult = E_LHR_LicenseOK THEN
+			checkLicense := ERetCode_t.eRetDone;
+		ELSE
+			checkLicense := ERetCode_t.eRetFailed;	
+		END_IF
+	END_IF;]]></ST>
+      </Implementation>
+    </Method>
     <Method Name="getFirstTestSuite" Id="{6dd3fe68-4fa4-401b-93b4-4e9d66a75960}">
       <Declaration><![CDATA[(******************************************************************************
-Baustein: FB_UnitTestBase.
+Baustein: PRG_UnitTestLib.getFirstTestSuite
 Spezifikation: doc/Spezifikation.pdf, Kap. x.y.z
 -------------------------------------------------------------------------------
 erstellt:
@@ -229,7 +302,7 @@ END_VAR
     </Method>
     <Method Name="getNextTestSuite" Id="{25155ea4-e257-4500-9294-2e5b075f342b}">
       <Declaration><![CDATA[(******************************************************************************
-Baustein: FB_UnitTestBase.
+Baustein: PRG_UnitTestLib.getNextTestSuite
 Spezifikation: doc/Spezifikation.pdf, Kap. x.y.z
 -------------------------------------------------------------------------------
 erstellt:
@@ -262,7 +335,26 @@ END_VAR
       </Implementation>
     </Method>
     <Method Name="getTime" Id="{04976903-c590-4bd7-9b55-bd9bdde13ab5}">
-      <Declaration><![CDATA[METHOD getTime : TimeStruct
+      <Declaration><![CDATA[(******************************************************************************
+Baustein: PRG_UnitTestLib.getTime
+Spezifikation: doc/Spezifikation.pdf, Kap. x.y.z
+-------------------------------------------------------------------------------
+erstellt:
+von:
+Geändert:
+von:
+-------------------------------------------------------------------------------
+Beschreibung
+Diese Methode
+
+-------------------------------------------------------------------------------
+Input
+-
+
+Output
+-
+******************************************************************************)
+METHOD getTime : TimeStruct
 VAR_INPUT
 END_VAR
 VAR
@@ -274,8 +366,59 @@ END_VAR
 ]]></ST>
       </Implementation>
     </Method>
+    <Method Name="logError" Id="{9690f9c4-e79c-461f-b5e8-03d0cd8a943f}">
+      <Declaration><![CDATA[(******************************************************************************
+Baustein: PRG_UnitTestLib.logError
+Spezifikation: doc/Spezifikation.pdf, Kap. x.y.z
+-------------------------------------------------------------------------------
+erstellt:
+von:
+Geändert:
+von:
+-------------------------------------------------------------------------------
+Beschreibung
+Diese Methode
+
+-------------------------------------------------------------------------------
+Input
+i_strMessage
+
+Output
+-
+******************************************************************************)
+METHOD PROTECTED logError : BOOL
+VAR_INPUT
+	i_strMessage : StrMessage_t;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[
+	ADSLOGSTR(msgCtrlMask 	:= ADSLOG_MSGTYPE_ERROR , 
+			  msgFmtStr 	:= i_strMessage, 
+			  strArg 		:= '');]]></ST>
+      </Implementation>
+    </Method>
     <Method Name="logInfo" Id="{8bbf780e-46b8-44f0-9d7d-eeee4895fdf7}">
-      <Declaration><![CDATA[METHOD PROTECTED logInfo : BOOL
+      <Declaration><![CDATA[(******************************************************************************
+Baustein: PRG_UnitTestLib.logInfo
+Spezifikation: doc/Spezifikation.pdf, Kap. x.y.z
+-------------------------------------------------------------------------------
+erstellt:
+von:
+Geändert:
+von:
+-------------------------------------------------------------------------------
+Beschreibung
+Diese Methode
+
+-------------------------------------------------------------------------------
+Input
+i_strMessage
+
+Output
+-
+******************************************************************************)
+METHOD PROTECTED logInfo : BOOL
 VAR_INPUT
 	i_strMessage : StrMessage_t;
 END_VAR
@@ -289,13 +432,19 @@ END_VAR
     </Method>
     <LineIds Name="PRG_UnitTestLib">
       <LineId Id="257" Count="1" />
+      <LineId Id="300" Count="0" />
+      <LineId Id="317" Count="0" />
       <LineId Id="41" Count="0" />
       <LineId Id="9" Count="0" />
       <LineId Id="42" Count="0" />
       <LineId Id="45" Count="0" />
       <LineId Id="163" Count="0" />
+      <LineId Id="315" Count="0" />
+      <LineId Id="318" Count="0" />
       <LineId Id="160" Count="1" />
       <LineId Id="46" Count="0" />
+      <LineId Id="319" Count="0" />
+      <LineId Id="316" Count="0" />
       <LineId Id="162" Count="0" />
       <LineId Id="47" Count="0" />
       <LineId Id="57" Count="1" />
@@ -342,18 +491,26 @@ END_VAR
       <LineId Id="223" Count="0" />
       <LineId Id="222" Count="0" />
       <LineId Id="246" Count="0" />
-      <LineId Id="240" Count="1" />
+      <LineId Id="240" Count="0" />
+      <LineId Id="376" Count="0" />
+      <LineId Id="241" Count="0" />
+      <LineId Id="370" Count="0" />
+      <LineId Id="364" Count="0" />
+      <LineId Id="373" Count="0" />
+      <LineId Id="372" Count="0" />
+      <LineId Id="365" Count="0" />
+      <LineId Id="368" Count="0" />
+      <LineId Id="375" Count="0" />
+      <LineId Id="369" Count="0" />
+      <LineId Id="374" Count="0" />
+      <LineId Id="363" Count="0" />
+      <LineId Id="371" Count="0" />
       <LineId Id="247" Count="1" />
       <LineId Id="230" Count="0" />
-      <LineId Id="250" Count="0" />
-      <LineId Id="229" Count="0" />
-      <LineId Id="232" Count="0" />
-      <LineId Id="231" Count="0" />
-      <LineId Id="245" Count="0" />
-      <LineId Id="243" Count="1" />
-      <LineId Id="242" Count="0" />
       <LineId Id="87" Count="0" />
-      <LineId Id="54" Count="1" />
+      <LineId Id="54" Count="0" />
+      <LineId Id="311" Count="1" />
+      <LineId Id="55" Count="0" />
       <LineId Id="43" Count="0" />
     </LineIds>
     <LineIds Name="PRG_UnitTestLib.addTestReport">
@@ -368,6 +525,18 @@ END_VAR
       <LineId Id="17" Count="0" />
       <LineId Id="5" Count="0" />
     </LineIds>
+    <LineIds Name="PRG_UnitTestLib.checkLicense">
+      <LineId Id="6" Count="0" />
+      <LineId Id="5" Count="0" />
+      <LineId Id="17" Count="0" />
+      <LineId Id="7" Count="0" />
+      <LineId Id="15" Count="1" />
+      <LineId Id="13" Count="0" />
+      <LineId Id="8" Count="1" />
+      <LineId Id="11" Count="1" />
+      <LineId Id="10" Count="0" />
+      <LineId Id="14" Count="0" />
+    </LineIds>
     <LineIds Name="PRG_UnitTestLib.getFirstTestSuite">
       <LineId Id="25" Count="1" />
       <LineId Id="5" Count="0" />
@@ -380,6 +549,11 @@ END_VAR
       <LineId Id="21" Count="0" />
       <LineId Id="14" Count="0" />
       <LineId Id="7" Count="0" />
+    </LineIds>
+    <LineIds Name="PRG_UnitTestLib.logError">
+      <LineId Id="7" Count="0" />
+      <LineId Id="5" Count="0" />
+      <LineId Id="8" Count="1" />
     </LineIds>
     <LineIds Name="PRG_UnitTestLib.logInfo">
       <LineId Id="7" Count="0" />

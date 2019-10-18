@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4022.17">
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4022.18">
   <POU Name="FB_TestReportBase" Id="{57a69a83-3743-4ea7-bdac-7bf43020bf6d}" SpecialFunc="None">
     <Declaration><![CDATA[(******************************************************************************
 Baustein: FB_TestReportBase
@@ -48,7 +48,26 @@ END_VAR
       <ST><![CDATA[]]></ST>
     </Implementation>
     <Method Name="addCrlf" Id="{6faf1a6e-39fd-451b-960a-f3f929fc78f1}">
-      <Declaration><![CDATA[METHOD PROTECTED addCrlf : BOOL
+      <Declaration><![CDATA[(******************************************************************************
+Baustein: FB_TestReportBase.addCrlf
+Spezifikation: doc/Spezifikation.pdf, Kap. x.y.z
+-------------------------------------------------------------------------------
+erstellt:
+von:
+Geändert:
+von:
+-------------------------------------------------------------------------------
+Beschreibung
+
+
+-------------------------------------------------------------------------------
+Input
+-
+
+Output
+-
+******************************************************************************)
+METHOD PROTECTED addCrlf : BOOL
 VAR_INPUT
 END_VAR
 VAR
@@ -62,7 +81,25 @@ END_VAR
       </Implementation>
     </Method>
     <Method Name="addDate" Id="{0408941f-be17-4975-a4d3-81cf25601963}">
-      <Declaration><![CDATA[METHOD PROTECTED addDate : ERetCode_t
+      <Declaration><![CDATA[(******************************************************************************
+Baustein: FB_TestReportBase.addDate
+Spezifikation: doc/Spezifikation.pdf, Kap. x.y.z
+-------------------------------------------------------------------------------
+erstellt:
+von:
+Geändert:
+von:
+-------------------------------------------------------------------------------
+Beschreibung
+
+-------------------------------------------------------------------------------
+Input
+	i_sDate : TIMESTRUCT;
+
+Output
+-
+******************************************************************************)
+METHOD PROTECTED addDate : ERetCode_t
 VAR_INPUT
 	i_sDate : TIMESTRUCT;
 END_VAR
@@ -83,7 +120,25 @@ END_VAR
       </Implementation>
     </Method>
     <Method Name="addString" Id="{4c535bf5-3435-40c3-9f3f-025a5370c009}">
-      <Declaration><![CDATA[METHOD PROTECTED addString : ERetCode_t
+      <Declaration><![CDATA[(******************************************************************************
+Baustein: FB_TestReportBase.addString
+Spezifikation: doc/Spezifikation.pdf, Kap. x.y.z
+-------------------------------------------------------------------------------
+erstellt:
+von:
+Geändert:
+von:
+-------------------------------------------------------------------------------
+Beschreibung
+
+-------------------------------------------------------------------------------
+Input
+	i_strData : STRING(255);
+
+Output
+-
+******************************************************************************)
+METHOD PROTECTED addString : ERetCode_t
 VAR_INPUT
 	i_strData : STRING(255);
 END_VAR
@@ -96,7 +151,25 @@ END_VAR
       </Implementation>
     </Method>
     <Method Name="addTime" Id="{335d564d-668c-409c-81f2-8ba348ca2749}">
-      <Declaration><![CDATA[METHOD PROTECTED addTime : ERetCode_t
+      <Declaration><![CDATA[(******************************************************************************
+Baustein: FB_TestReportBase.addTime
+Spezifikation: doc/Spezifikation.pdf, Kap. x.y.z
+-------------------------------------------------------------------------------
+erstellt:
+von:
+Geändert:
+von:
+-------------------------------------------------------------------------------
+Beschreibung
+
+-------------------------------------------------------------------------------
+Input
+	i_sTime : TIMESTRUCT;
+
+Output
+-
+******************************************************************************)
+METHOD PROTECTED addTime : ERetCode_t
 VAR_INPUT
 	i_sTime : TIMESTRUCT;
 END_VAR
@@ -114,7 +187,25 @@ END_VAR
       </Implementation>
     </Method>
     <Method Name="addValue" Id="{080ec401-f73b-4e7c-a609-de9be077f506}">
-      <Declaration><![CDATA[METHOD PROTECTED addValue : ERetCode_t
+      <Declaration><![CDATA[(******************************************************************************
+Baustein: FB_TestReportBase.addValue
+Spezifikation: doc/Spezifikation.pdf, Kap. x.y.z
+-------------------------------------------------------------------------------
+erstellt:
+von:
+Geändert:
+von:
+-------------------------------------------------------------------------------
+Beschreibung
+
+-------------------------------------------------------------------------------
+Input
+	i_anyValue : ANY;
+
+Output
+-
+******************************************************************************)
+METHOD PROTECTED addValue : ERetCode_t
 VAR_INPUT
 	i_anyValue : ANY;
 END_VAR
@@ -209,7 +300,25 @@ END_VAR
       </Implementation>
     </Method>
     <Method Name="clearBuffer" Id="{1cda8ca9-da92-4299-9f1c-2c748176bb92}">
-      <Declaration><![CDATA[METHOD PROTECTED clearBuffer : ERetCode_t
+      <Declaration><![CDATA[(******************************************************************************
+Baustein: FB_TestReportBase.clearBuffer
+Spezifikation: doc/Spezifikation.pdf, Kap. x.y.z
+-------------------------------------------------------------------------------
+erstellt:
+von:
+Geändert:
+von:
+-------------------------------------------------------------------------------
+Beschreibung
+
+-------------------------------------------------------------------------------
+Input
+-
+
+Output
+-
+******************************************************************************)
+METHOD PROTECTED clearBuffer : ERetCode_t
 VAR_INPUT
 END_VAR
 ]]></Declaration>
@@ -221,7 +330,26 @@ END_VAR
       </Implementation>
     </Method>
     <Method Name="Close" Id="{5d9bee46-233e-412e-9191-8b8d1c795b05}">
-      <Declaration><![CDATA[METHOD PROTECTED Close : ERetCode_t
+      <Declaration><![CDATA[(******************************************************************************
+Baustein: FB_TestReportBase.Close
+Spezifikation: doc/Spezifikation.pdf, Kap. x.y.z
+-------------------------------------------------------------------------------
+erstellt:
+von:
+Geändert:
+von:
+-------------------------------------------------------------------------------
+Beschreibung
+
+
+-------------------------------------------------------------------------------
+Input
+-
+
+Output
+-
+******************************************************************************)
+METHOD PROTECTED Close : ERetCode_t
 VAR_INPUT
 END_VAR
 ]]></Declaration>
@@ -245,7 +373,26 @@ END_VAR
       </Implementation>
     </Method>
     <Method Name="create" Id="{53725c36-ea6e-4f37-9c78-095fc806a86d}">
-      <Declaration><![CDATA[METHOD PUBLIC create : ERetCode_t;
+      <Declaration><![CDATA[(******************************************************************************
+Baustein: FB_TestReportBase.create
+Spezifikation: doc/Spezifikation.pdf, Kap. x.y.z
+-------------------------------------------------------------------------------
+erstellt:
+von:
+Geändert:
+von:
+-------------------------------------------------------------------------------
+Beschreibung
+
+
+-------------------------------------------------------------------------------
+Input
+-
+
+Output
+-
+******************************************************************************)
+METHOD PUBLIC create : ERetCode_t;
 VAR_INPUT
 END_VAR
 VAR
@@ -323,7 +470,26 @@ END_VAR]]></Declaration>
       </Implementation>
     </Method>
     <Method Name="FB_init" Id="{8246c5bf-27ec-4b44-890f-28602506afa3}">
-      <Declaration><![CDATA[METHOD FB_init : BOOL
+      <Declaration><![CDATA[(******************************************************************************
+Baustein: FB_TestReportBase.FB_Init
+Spezifikation: doc/Spezifikation.pdf, Kap. x.y.z
+-------------------------------------------------------------------------------
+erstellt:
+von:
+Geändert:
+von:
+-------------------------------------------------------------------------------
+Beschreibung
+
+
+-------------------------------------------------------------------------------
+Input
+-
+
+Output
+-
+******************************************************************************)
+METHOD FB_init : BOOL
 VAR_INPUT
 	bInitRetains : BOOL; // if TRUE, the retain variables are initialized (warm start / cold start)
 	bInCopyCode : BOOL;  // if TRUE, the instance afterwards gets moved into the copy code (online change)
@@ -351,7 +517,8 @@ soll.
 
 -------------------------------------------------------------------------------
 Input
--
+	i_pFileName : NameHandle_t;
+	i_pPath		: PathHandle_t;
 
 Output
 -
@@ -367,7 +534,26 @@ END_VAR
       </Implementation>
     </Method>
     <Method Name="getTime" Id="{6044a87b-8223-4ac7-8712-94279689759d}">
-      <Declaration><![CDATA[METHOD PROTECTED getTime : TimeStruct
+      <Declaration><![CDATA[(******************************************************************************
+Baustein: FB_TestReportBase.getTime
+Spezifikation: doc/Spezifikation.pdf, Kap. x.y.z
+-------------------------------------------------------------------------------
+erstellt:
+von:
+Geändert:
+von:
+-------------------------------------------------------------------------------
+Beschreibung
+
+
+-------------------------------------------------------------------------------
+Input
+-
+
+Output
+-
+******************************************************************************)
+METHOD PROTECTED getTime : TimeStruct
 VAR_INPUT
 END_VAR
 VAR
@@ -381,7 +567,26 @@ END_VAR
       </Implementation>
     </Method>
     <Method Name="open" Id="{9fd78083-eb57-4d5e-afe2-d8c17aed742e}">
-      <Declaration><![CDATA[METHOD PROTECTED open : ERetCode_t
+      <Declaration><![CDATA[(******************************************************************************
+Baustein: FB_TestReportBase.Open
+Spezifikation: doc/Spezifikation.pdf, Kap. x.y.z
+-------------------------------------------------------------------------------
+erstellt:
+von:
+Geändert:
+von:
+-------------------------------------------------------------------------------
+Beschreibung
+
+
+-------------------------------------------------------------------------------
+Input
+-
+
+Output
+-
+******************************************************************************)
+METHOD PROTECTED open : ERetCode_t
 VAR_INPUT
 END_VAR
 ]]></Declaration>
@@ -408,7 +613,26 @@ END_VAR
       </Implementation>
     </Method>
     <Method Name="reset" Id="{e9e30890-91ac-49c8-8901-49ef1b4d34d0}">
-      <Declaration><![CDATA[METHOD PUBLIC reset : BOOL
+      <Declaration><![CDATA[(******************************************************************************
+Baustein: FB_TestReportBase.reset
+Spezifikation: doc/Spezifikation.pdf, Kap. x.y.z
+-------------------------------------------------------------------------------
+erstellt:
+von:
+Geändert:
+von:
+-------------------------------------------------------------------------------
+Beschreibung
+
+
+-------------------------------------------------------------------------------
+Input
+-
+
+Output
+-
+******************************************************************************)
+METHOD PUBLIC reset : BOOL
 VAR_INPUT
 END_VAR
 ]]></Declaration>
@@ -430,7 +654,26 @@ END_VAR
       </Implementation>
     </Method>
     <Method Name="writeBuffer" Id="{f084208a-f262-4a5d-aed7-4faef714123c}">
-      <Declaration><![CDATA[METHOD PROTECTED writeBuffer : ERetCode_t
+      <Declaration><![CDATA[(******************************************************************************
+Baustein: FB_TestReportBase.writeBuffer
+Spezifikation: doc/Spezifikation.pdf, Kap. x.y.z
+-------------------------------------------------------------------------------
+erstellt:
+von:
+Geändert:
+von:
+-------------------------------------------------------------------------------
+Beschreibung
+
+
+-------------------------------------------------------------------------------
+Input
+-
+
+Output
+-
+******************************************************************************)
+METHOD PROTECTED writeBuffer : ERetCode_t
 VAR_INPUT
 END_VAR
 VAR
@@ -452,7 +695,27 @@ END_VAR
       </Implementation>
     </Method>
     <Method Name="writeData" Id="{220bec13-b522-42c6-9b51-76b9580728dc}">
-      <Declaration><![CDATA[METHOD PROTECTED writeData : ERetCode_t
+      <Declaration><![CDATA[(******************************************************************************
+Baustein: FB_TestReportBase.writeData
+Spezifikation: doc/Spezifikation.pdf, Kap. x.y.z
+-------------------------------------------------------------------------------
+erstellt:
+von:
+Geändert:
+von:
+-------------------------------------------------------------------------------
+Beschreibung
+
+
+-------------------------------------------------------------------------------
+Input
+	i_pData : POINTER TO BYTE;
+	u32Size : UDINT;
+	
+Output
+-
+******************************************************************************)
+METHOD PROTECTED writeData : ERetCode_t
 VAR_INPUT
 	i_pData : POINTER TO BYTE;
 	u32Size : UDINT;

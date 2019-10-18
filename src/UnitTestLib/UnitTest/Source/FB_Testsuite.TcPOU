@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4022.17">
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4022.18">
   <POU Name="FB_Testsuite" Id="{ae8bbd51-73a9-4be0-b082-2ec8a068e7f6}" SpecialFunc="None">
     <Declaration><![CDATA[(******************************************************************************
 Baustein: FB_Testsuite
@@ -156,7 +156,7 @@ END_VAR
     </Implementation>
     <Method Name="addTestcase" Id="{80822225-6192-4f00-bbb8-24a92c6881f7}">
       <Declaration><![CDATA[(******************************************************************************
-Baustein: FB_UnitTestBase.
+Baustein: FB_Testsuite.addTestcase
 Spezifikation: doc/Spezifikation.pdf, Kap. x.y.z
 -------------------------------------------------------------------------------
 erstellt:
@@ -169,7 +169,7 @@ Diese Methode
 
 -------------------------------------------------------------------------------
 Input
--
+i_pTestCase
 
 Output
 -
@@ -197,7 +197,26 @@ END_VAR
       </Implementation>
     </Method>
     <Method Name="FB_init" Id="{cdfd5773-6fa2-4b78-87a3-142799abac6a}">
-      <Declaration><![CDATA[METHOD FB_init : BOOL
+      <Declaration><![CDATA[(******************************************************************************
+Baustein: FB_Testsuite.FB_init
+Spezifikation: doc/Spezifikation.pdf, Kap. x.y.z
+-------------------------------------------------------------------------------
+erstellt:
+von:
+Geändert:
+von:
+-------------------------------------------------------------------------------
+Beschreibung
+Diese Methode
+
+-------------------------------------------------------------------------------
+Input
+i_pTestCase
+
+Output
+-
+******************************************************************************)
+METHOD FB_init : BOOL
 VAR_INPUT
 	bInitRetains 	: BOOL; // if TRUE, the retain variables are initialized (warm start / cold start)
 	bInCopyCode 	: BOOL;  // if TRUE, the instance afterwards gets moved into the copy code (online change)
@@ -212,7 +231,26 @@ END_VAR
       </Implementation>
     </Method>
     <Method Name="getExecuted" Id="{804ee58b-a056-4a70-9969-b35be52cb2ce}">
-      <Declaration><![CDATA[METHOD PUBLIC getExecuted : UDINT
+      <Declaration><![CDATA[(******************************************************************************
+Baustein: FB_Testsuite.getExecuted
+Spezifikation: doc/Spezifikation.pdf, Kap. x.y.z
+-------------------------------------------------------------------------------
+erstellt:
+von:
+Geändert:
+von:
+-------------------------------------------------------------------------------
+Beschreibung
+Diese Methode
+
+-------------------------------------------------------------------------------
+Input
+-
+
+Output
+-
+******************************************************************************)
+METHOD PUBLIC getExecuted : UDINT
 VAR_INPUT
 END_VAR
 ]]></Declaration>
@@ -222,7 +260,26 @@ END_VAR
       </Implementation>
     </Method>
     <Method Name="getFailed" Id="{ce9f9fb8-dfbd-411b-9557-00a87161e21a}">
-      <Declaration><![CDATA[METHOD PUBLIC getFailed : UDINT
+      <Declaration><![CDATA[(******************************************************************************
+Baustein: FB_Testsuite.getFailed
+Spezifikation: doc/Spezifikation.pdf, Kap. x.y.z
+-------------------------------------------------------------------------------
+erstellt:
+von:
+Geändert:
+von:
+-------------------------------------------------------------------------------
+Beschreibung
+Diese Methode
+
+-------------------------------------------------------------------------------
+Input
+-
+
+Output
+-
+******************************************************************************)
+METHOD PUBLIC getFailed : UDINT
 VAR_INPUT
 END_VAR
 ]]></Declaration>
@@ -233,7 +290,7 @@ END_VAR
     </Method>
     <Method Name="getFirstTestCase" Id="{565a7440-2552-4228-bd2b-b6378bb5c8b9}">
       <Declaration><![CDATA[(******************************************************************************
-Baustein: FB_UnitTestBase.
+Baustein: FB_Testsuite.getFirstTestCase
 Spezifikation: doc/Spezifikation.pdf, Kap. x.y.z
 -------------------------------------------------------------------------------
 erstellt:
@@ -262,7 +319,26 @@ END_VAR
       </Implementation>
     </Method>
     <Method Name="getId" Id="{f75a7191-de66-4010-8dda-4a26aa6a90f4}">
-      <Declaration><![CDATA[METHOD PUBLIC getId : STRING
+      <Declaration><![CDATA[(******************************************************************************
+Baustein: FB_Testsuite.getId
+Spezifikation: doc/Spezifikation.pdf, Kap. x.y.z
+-------------------------------------------------------------------------------
+erstellt:
+von:
+Geändert:
+von:
+-------------------------------------------------------------------------------
+Beschreibung
+Diese Methode
+
+-------------------------------------------------------------------------------
+Input
+-
+
+Output
+-
+******************************************************************************)
+METHOD PUBLIC getId : STRING
 VAR_INPUT
 END_VAR
 ]]></Declaration>
@@ -273,7 +349,7 @@ END_VAR
     </Method>
     <Method Name="getNextTestCase" Id="{caddd296-a017-4642-872a-27f49eaad75c}">
       <Declaration><![CDATA[(******************************************************************************
-Baustein: FB_UnitTestBase.
+Baustein: FB_Testsuite.getNextTestCase
 Spezifikation: doc/Spezifikation.pdf, Kap. x.y.z
 -------------------------------------------------------------------------------
 erstellt:
@@ -306,7 +382,26 @@ END_VAR
       </Implementation>
     </Method>
     <Method Name="getNoOfAsserts" Id="{90c2aaf2-cbc5-46bd-85ef-aa252e2f8d0f}">
-      <Declaration><![CDATA[METHOD PUBLIC getNoOfAsserts : UDINT
+      <Declaration><![CDATA[(******************************************************************************
+Baustein: FB_Testsuite.getNoOfAsserts
+Spezifikation: doc/Spezifikation.pdf, Kap. x.y.z
+-------------------------------------------------------------------------------
+erstellt:
+von:
+Geändert:
+von:
+-------------------------------------------------------------------------------
+Beschreibung
+Diese Methode
+
+-------------------------------------------------------------------------------
+Input
+-
+
+Output
+-
+******************************************************************************)
+METHOD PUBLIC getNoOfAsserts : UDINT
 VAR_INPUT
 END_VAR
 ]]></Declaration>
@@ -316,7 +411,26 @@ END_VAR
       </Implementation>
     </Method>
     <Method Name="getNoOfTests" Id="{5c45c94a-2ee3-4a94-bafd-ed5fe0d7c4f1}">
-      <Declaration><![CDATA[METHOD PUBLIC getNoOfTests : UDINT
+      <Declaration><![CDATA[(******************************************************************************
+Baustein: FB_Testsuite.getNoOfTests
+Spezifikation: doc/Spezifikation.pdf, Kap. x.y.z
+-------------------------------------------------------------------------------
+erstellt:
+von:
+Geändert:
+von:
+-------------------------------------------------------------------------------
+Beschreibung
+Diese Methode
+
+-------------------------------------------------------------------------------
+Input
+-
+
+Output
+-
+******************************************************************************)
+METHOD PUBLIC getNoOfTests : UDINT
 VAR_INPUT
 END_VAR
 ]]></Declaration>
@@ -326,7 +440,26 @@ END_VAR
       </Implementation>
     </Method>
     <Method Name="getPassed" Id="{613bafe4-a0f5-4b42-965c-d87e0581e3fb}">
-      <Declaration><![CDATA[METHOD PUBLIC getPassed : UDINT
+      <Declaration><![CDATA[(******************************************************************************
+Baustein: FB_Testsuite.getPassed
+Spezifikation: doc/Spezifikation.pdf, Kap. x.y.z
+-------------------------------------------------------------------------------
+erstellt:
+von:
+Geändert:
+von:
+-------------------------------------------------------------------------------
+Beschreibung
+Diese Methode
+
+-------------------------------------------------------------------------------
+Input
+-
+
+Output
+-
+******************************************************************************)
+METHOD PUBLIC getPassed : UDINT
 VAR_INPUT
 END_VAR
 ]]></Declaration>
@@ -336,7 +469,26 @@ END_VAR
       </Implementation>
     </Method>
     <Method Name="logInfo" Id="{4162b475-e111-4ea4-af72-09599d7cdb23}">
-      <Declaration><![CDATA[METHOD PROTECTED logInfo : BOOL
+      <Declaration><![CDATA[(******************************************************************************
+Baustein: FB_Testsuite.logInfo
+Spezifikation: doc/Spezifikation.pdf, Kap. x.y.z
+-------------------------------------------------------------------------------
+erstellt:
+von:
+Geändert:
+von:
+-------------------------------------------------------------------------------
+Beschreibung
+Diese Methode
+
+-------------------------------------------------------------------------------
+Input
+i_strMessage
+
+Output
+-
+******************************************************************************)
+METHOD PROTECTED logInfo : BOOL
 VAR_INPUT
 	i_strMessage : StrMessage_t;
 END_VAR
@@ -350,7 +502,7 @@ END_VAR
     </Method>
     <Method Name="register" Id="{3a42094d-f3f7-40aa-9e2e-e1eb00f9e432}">
       <Declaration><![CDATA[(******************************************************************************
-Baustein: FB_UnitTestBase.
+Baustein: FB_Testsuite.register
 Spezifikation: doc/Spezifikation.pdf, Kap. x.y.z
 -------------------------------------------------------------------------------
 erstellt:
@@ -377,79 +529,69 @@ END_VAR
 	bRegistered := PRG_UnitTestLib.addTestSuite(this);]]></ST>
       </Implementation>
     </Method>
+    <ObjectProperties>
+      <XmlArchive>
+        <Data>
+          <o xml:space="preserve" t="LicenseProperty">
+            <l2 n="Licenses" />
+          </o>
+        </Data>
+        <TypeList>
+          <Type n="LicenseProperty">{ec6b18ef-cd41-4646-b1b3-985c60f930b9}</Type>
+        </TypeList>
+      </XmlArchive>
+    </ObjectProperties>
     <LineIds Name="FB_Testsuite">
-      <LineId Id="382" Count="14" />
-      <LineId Id="532" Count="0" />
-      <LineId Id="397" Count="7" />
-      <LineId Id="406" Count="19" />
-      <LineId Id="427" Count="67" />
-      <LineId Id="245" Count="0" />
+      <LineId Id="3" Count="111" />
+      <LineId Id="2" Count="0" />
     </LineIds>
     <LineIds Name="FB_Testsuite.addTestcase">
-      <LineId Id="12" Count="1" />
-      <LineId Id="8" Count="0" />
-      <LineId Id="5" Count="0" />
-      <LineId Id="18" Count="0" />
-      <LineId Id="9" Count="0" />
-      <LineId Id="16" Count="1" />
-      <LineId Id="11" Count="0" />
-      <LineId Id="14" Count="0" />
-      <LineId Id="43" Count="0" />
-      <LineId Id="42" Count="0" />
-      <LineId Id="15" Count="0" />
-      <LineId Id="10" Count="0" />
+      <LineId Id="3" Count="12" />
+      <LineId Id="2" Count="0" />
     </LineIds>
     <LineIds Name="FB_Testsuite.FB_init">
-      <LineId Id="10" Count="0" />
-      <LineId Id="7" Count="0" />
-      <LineId Id="11" Count="1" />
+      <LineId Id="3" Count="2" />
+      <LineId Id="2" Count="0" />
     </LineIds>
     <LineIds Name="FB_Testsuite.getExecuted">
-      <LineId Id="6" Count="0" />
-      <LineId Id="5" Count="0" />
+      <LineId Id="3" Count="0" />
+      <LineId Id="2" Count="0" />
     </LineIds>
     <LineIds Name="FB_Testsuite.getFailed">
-      <LineId Id="6" Count="0" />
-      <LineId Id="5" Count="0" />
+      <LineId Id="3" Count="0" />
+      <LineId Id="2" Count="0" />
     </LineIds>
     <LineIds Name="FB_Testsuite.getFirstTestCase">
-      <LineId Id="7" Count="0" />
-      <LineId Id="6" Count="0" />
-      <LineId Id="5" Count="0" />
+      <LineId Id="3" Count="1" />
+      <LineId Id="2" Count="0" />
     </LineIds>
     <LineIds Name="FB_Testsuite.getId">
-      <LineId Id="6" Count="0" />
-      <LineId Id="5" Count="0" />
+      <LineId Id="3" Count="0" />
+      <LineId Id="2" Count="0" />
     </LineIds>
     <LineIds Name="FB_Testsuite.getNextTestCase">
-      <LineId Id="10" Count="0" />
-      <LineId Id="7" Count="0" />
-      <LineId Id="6" Count="0" />
-      <LineId Id="11" Count="0" />
-      <LineId Id="8" Count="0" />
-      <LineId Id="5" Count="0" />
-      <LineId Id="9" Count="0" />
+      <LineId Id="3" Count="5" />
+      <LineId Id="2" Count="0" />
     </LineIds>
     <LineIds Name="FB_Testsuite.getNoOfAsserts">
-      <LineId Id="6" Count="0" />
-      <LineId Id="5" Count="0" />
+      <LineId Id="3" Count="0" />
+      <LineId Id="2" Count="0" />
     </LineIds>
     <LineIds Name="FB_Testsuite.getNoOfTests">
-      <LineId Id="6" Count="0" />
-      <LineId Id="5" Count="0" />
+      <LineId Id="3" Count="0" />
+      <LineId Id="2" Count="0" />
     </LineIds>
     <LineIds Name="FB_Testsuite.getPassed">
-      <LineId Id="6" Count="0" />
-      <LineId Id="5" Count="0" />
+      <LineId Id="3" Count="0" />
+      <LineId Id="2" Count="0" />
     </LineIds>
     <LineIds Name="FB_Testsuite.logInfo">
-      <LineId Id="7" Count="0" />
-      <LineId Id="5" Count="0" />
-      <LineId Id="8" Count="1" />
+      <LineId Id="3" Count="2" />
+      <LineId Id="2" Count="0" />
     </LineIds>
     <LineIds Name="FB_Testsuite.register">
-      <LineId Id="28" Count="0" />
-      <LineId Id="5" Count="0" />
+      <LineId Id="3" Count="0" />
+      <LineId Id="2" Count="0" />
     </LineIds>
   </POU>
 </TcPlcObject>
