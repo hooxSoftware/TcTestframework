@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4022.18">
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.3">
   <POU Name="PRG_UnitTestLib" Id="{dbeace52-75a3-4dfa-9955-9febf020e88e}" SpecialFunc="None">
     <Declaration><![CDATA[(******************************************************************************
 Baustein: PRG_TestLibrary
@@ -42,26 +42,32 @@ VAR
 
 	fbSystemTime 	: FB_LocalSystemTime;
 	
-	fbLicense : FB_CheckLicense;
+	fbLicense 		: FB_CheckLicense;
+	
+	
+	fbCoverage 		: FB_CoverageFile;
+	u16PouIdx  		: UINT;
+	u16LineIdx 		: UINT;
+	sCodeCoverage	: SCodeCoverage_t;
 END_VAR
 ]]></Declaration>
     <Implementation>
       <ST><![CDATA[
 	fbSystemTime(bEnable := TRUE, dwCycle := 5);
 
-
+	fbCoverage();
 
 	CASE o_eState OF 
 	
 	EState_t.eStateInit:	
 
-		IF checkLicense() = ERetCode_t.eRetDone THEN
+		//IF checkLicense() = ERetCode_t.eRetDone THEN
 			
-			IF i_bStart 						= FALSE THEN 
+			IF i_bStart = FALSE THEN 
 				o_eState := EState_t.eStateIdle; 
 			END_IF
 			
-		END_IF;
+		//END_IF;
 	
 	EState_t.eStateIdle:
 	
@@ -72,19 +78,24 @@ END_VAR
 	
 	EState_t.eStatePrepare:
 	
-		o_eResult 	  				:= EResult_t.eStatePassed;
-		o_sStatistic.u32Executed 	:= 0;
-		o_sStatistic.u32TestCases	:= 0;
-		o_sStatistic.u32Asserts  	:= 0;
-		o_sStatistic.u32Passed   	:= 0;
-		o_sStatistic.u32Failed	 	:= 0;		
-		pActTestSuite := getFirstTestSuite();
-		
-		IF pActTestSuite <> 0 THEN
-			o_eState := EState_t.eStateExecute;
-		ELSE
-			o_eState := EState_t.eStateError;	
-		END_IF
+		IF fbCoverage.open('C:\Users\Administrator\Desktop\TestResult\', 'Coverage.xml') = ERetCode_t.eRetDone THEN
+			
+			o_eResult 	  				:= EResult_t.eStatePassed;
+			o_sStatistic.u32Executed 	:= 0;
+			o_sStatistic.u32TestCases	:= 0;
+			o_sStatistic.u32Asserts  	:= 0;
+			o_sStatistic.u32Passed   	:= 0;
+			o_sStatistic.u32Failed	 	:= 0;	
+	
+			pActTestSuite := getFirstTestSuite();
+			
+			IF pActTestSuite      <> 0   THEN
+				o_eState := EState_t.eStateExecute;
+			ELSE
+				o_eState := EState_t.eStateError;	
+			END_IF
+			
+		END_IF;
 	
 	EState_t.eStateExecute:
 	
@@ -111,7 +122,7 @@ END_VAR
 	
 		IF pActTestSuite^.o_eResult = EResult_t.eStateFailedFatal THEN
 			o_eResult := EResult_t.eStateFailedFatal;
-			o_eState  := EState_t.eStateReady;
+			o_eState  := EState_t.eStateBuildCoverageFile;
 		ELSE
 			
 			pActTestSuite := getNextTestSuite();
@@ -119,14 +130,62 @@ END_VAR
 			IF pActTestSuite <> 0 THEN
 				o_eState := EState_t.eStateExecute;
 			ELSE
-				o_eState := EState_t.eStateReady;
+				o_eState := EState_t.eStateBuildCoverageFile;
 				logInfo('+++++++++++++ Test Ende ++++++++++++++');
 			END_IF		
 			
 		END_IF
+
+	EState_t.eStateBuildCoverageFile:
+
+		IF fbCoverage.o_bOpen THEN
+
+			fbCoverage.addString('<Result>');
+			fbCoverage.addCrlf();
+
+			FOR u16PouIdx := 1 TO sCodeCoverage.u16MaxIndex DO
+
+				fbCoverage.addString('<POU Id="');
+				fbCoverage.addValue(u16PouIdx);
+				fbCoverage.addString('">');
+				fbCoverage.addCrlf();
+
+				FOR u16LineIdx := 1 TO 1000 DO
+
+					IF sCodeCoverage.aPou[u16PouIdx][u16LineIdx] > 0 THEN
+
+						fbCoverage.addString('<Line Nb="');
+						fbCoverage.addValue(u16LineIdx);
+
+						fbCoverage.addString('" Count="');
+						fbCoverage.addValue(sCodeCoverage.aPou[u16PouIdx][u16LineIdx]);
+						
+						fbCoverage.addString('"/>');
+						fbCoverage.addCrlf();
+
+					END_IF;
+
+				END_FOR;
+
+				fbCoverage.addString('</POU>');
+				fbCoverage.addCrlf();
+
+			END_FOR;
+
+			fbCoverage.addString('</Result>');
+			fbCoverage.addCrlf();
 		
+		END_IF;	
+
+		o_eState := EState_t.eStateReady;
+	
 	EState_t.eStateReady:
 
+		IF fbCoverage.o_bOpen  = TRUE AND 
+		   fbCoverage.o_bEmpty = TRUE THEN
+			fbCoverage.close();
+		END_IF;
+		
 		IF i_bStart = FALSE THEN
 			o_eState := EState_t.eStateExport;
 		END_IF
@@ -152,7 +211,6 @@ END_VAR
 		END_IF;
 
 	EState_t.eStateError:
-	
 	EState_t.eStateLicenseError:
 	
 	END_CASE]]></ST>
@@ -366,6 +424,38 @@ END_VAR
 ]]></ST>
       </Implementation>
     </Method>
+    <Method Name="LineCovered" Id="{9bc155ab-6ca6-4d1c-a73e-4da1bd4ba034}">
+      <Declaration><![CDATA[METHOD PUBLIC LineCovered : BOOL
+VAR_INPUT
+	u16Pou  : UINT;
+	u16Line : UINT;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[
+	LineCovered := TRUE;
+	
+	IF o_eState = EState_t.eStateExecute THEN
+
+		IF (u16Pou  > 0 AND u16Pou  <= 2000) AND
+           (u16Line > 0 AND u16Line <= 1000) THEN
+
+			IF u16Pou > sCodeCoverage.u16MaxIndex THEN
+				sCodeCoverage.u16MaxIndex := u16Pou;
+			END_IF;
+
+			IF sCodeCoverage.aPou[u16Pou][u16Line] < 255 THEN
+				sCodeCoverage.aPou[u16Pou][u16Line] := sCodeCoverage.aPou[u16Pou][u16Line]+1;
+			END_IF;
+		END_IF;
+
+	END_IF;
+	
+	
+	
+]]></ST>
+      </Implementation>
+    </Method>
     <Method Name="logError" Id="{9690f9c4-e79c-461f-b5e8-03d0cd8a943f}">
       <Declaration><![CDATA[(******************************************************************************
 Baustein: PRG_UnitTestLib.logError
@@ -453,12 +543,17 @@ END_VAR
       <LineId Id="48" Count="0" />
       <LineId Id="52" Count="0" />
       <LineId Id="63" Count="0" />
+      <LineId Id="426" Count="0" />
+      <LineId Id="433" Count="0" />
       <LineId Id="114" Count="0" />
       <LineId Id="251" Count="3" />
       <LineId Id="115" Count="0" />
+      <LineId Id="435" Count="0" />
       <LineId Id="64" Count="3" />
       <LineId Id="108" Count="1" />
       <LineId Id="68" Count="0" />
+      <LineId Id="434" Count="0" />
+      <LineId Id="432" Count="0" />
       <LineId Id="53" Count="0" />
       <LineId Id="49" Count="0" />
       <LineId Id="72" Count="1" />
@@ -485,9 +580,53 @@ END_VAR
       <LineId Id="101" Count="0" />
       <LineId Id="117" Count="0" />
       <LineId Id="97" Count="0" />
+      <LineId Id="486" Count="0" />
+      <LineId Id="485" Count="0" />
+      <LineId Id="489" Count="0" />
+      <LineId Id="488" Count="0" />
+      <LineId Id="529" Count="0" />
+      <LineId Id="528" Count="0" />
+      <LineId Id="534" Count="0" />
+      <LineId Id="491" Count="1" />
+      <LineId Id="535" Count="0" />
+      <LineId Id="537" Count="0" />
+      <LineId Id="536" Count="0" />
+      <LineId Id="538" Count="0" />
+      <LineId Id="541" Count="0" />
+      <LineId Id="507" Count="0" />
+      <LineId Id="506" Count="0" />
+      <LineId Id="520" Count="0" />
+      <LineId Id="519" Count="0" />
+      <LineId Id="512" Count="2" />
+      <LineId Id="522" Count="1" />
+      <LineId Id="515" Count="0" />
+      <LineId Id="524" Count="0" />
+      <LineId Id="516" Count="0" />
+      <LineId Id="509" Count="0" />
+      <LineId Id="525" Count="0" />
+      <LineId Id="521" Count="0" />
+      <LineId Id="518" Count="0" />
+      <LineId Id="508" Count="0" />
+      <LineId Id="540" Count="0" />
+      <LineId Id="539" Count="0" />
+      <LineId Id="542" Count="0" />
+      <LineId Id="495" Count="0" />
+      <LineId Id="494" Count="0" />
+      <LineId Id="531" Count="0" />
+      <LineId Id="530" Count="0" />
+      <LineId Id="532" Count="0" />
+      <LineId Id="487" Count="0" />
       <LineId Id="93" Count="0" />
+      <LineId Id="527" Count="0" />
+      <LineId Id="526" Count="0" />
+      <LineId Id="490" Count="0" />
       <LineId Id="86" Count="0" />
-      <LineId Id="88" Count="3" />
+      <LineId Id="429" Count="0" />
+      <LineId Id="428" Count="0" />
+      <LineId Id="436" Count="0" />
+      <LineId Id="88" Count="0" />
+      <LineId Id="430" Count="1" />
+      <LineId Id="89" Count="2" />
       <LineId Id="223" Count="0" />
       <LineId Id="222" Count="0" />
       <LineId Id="246" Count="0" />
@@ -509,7 +648,7 @@ END_VAR
       <LineId Id="230" Count="0" />
       <LineId Id="87" Count="0" />
       <LineId Id="54" Count="0" />
-      <LineId Id="311" Count="1" />
+      <LineId Id="312" Count="0" />
       <LineId Id="55" Count="0" />
       <LineId Id="43" Count="0" />
     </LineIds>
@@ -549,6 +688,27 @@ END_VAR
       <LineId Id="21" Count="0" />
       <LineId Id="14" Count="0" />
       <LineId Id="7" Count="0" />
+    </LineIds>
+    <LineIds Name="PRG_UnitTestLib.LineCovered">
+      <LineId Id="8" Count="0" />
+      <LineId Id="5" Count="0" />
+      <LineId Id="34" Count="1" />
+      <LineId Id="45" Count="0" />
+      <LineId Id="44" Count="0" />
+      <LineId Id="48" Count="0" />
+      <LineId Id="60" Count="0" />
+      <LineId Id="56" Count="0" />
+      <LineId Id="58" Count="0" />
+      <LineId Id="57" Count="0" />
+      <LineId Id="59" Count="0" />
+      <LineId Id="49" Count="0" />
+      <LineId Id="47" Count="0" />
+      <LineId Id="50" Count="0" />
+      <LineId Id="46" Count="0" />
+      <LineId Id="36" Count="1" />
+      <LineId Id="22" Count="0" />
+      <LineId Id="27" Count="1" />
+      <LineId Id="10" Count="0" />
     </LineIds>
     <LineIds Name="PRG_UnitTestLib.logError">
       <LineId Id="7" Count="0" />

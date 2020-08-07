@@ -1,0 +1,824 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.3">
+  <POU Name="FB_FileBase" Id="{ae4044ad-0900-4102-9c63-f2ca7dc7882b}" SpecialFunc="None">
+    <Declaration><![CDATA[(******************************************************************************
+Baustein: FB_TestReportBase
+Spezifikation: doc/Spezifikation.pdf, Kap. x.y.z
+-------------------------------------------------------------------------------
+erstellt:
+von:
+Geändert:
+von:
+-------------------------------------------------------------------------------
+Beschreibung
+Dieser Baustein enthält alle zugeordneten Testfälle. Ein Testfall
+ist ein abgeleiteter Baustein (FB) von FB_UnitTestBase.
+
+-------------------------------------------------------------------------------
+Input
+-
+
+Output
+-
+******************************************************************************)
+FUNCTION_BLOCK FB_FileBase
+VAR_INPUT
+END_VAR
+VAR_OUTPUT
+	o_bOpen 	: BOOL;
+	o_bError 	: BOOL;
+	o_bEmpty 	: BOOL;
+END_VAR
+VAR
+	Buffer      : ARRAY[0..1024] OF BYTE;
+	u32RdIdx    : UDINT;
+	u32WrIdx    : UDINT;
+	u32MaxIdx   : UDINT := 1024;
+	
+	fbOpen      : FB_FileOpen;
+	fbClose     : FB_FileClose;
+	fbWrite	    : FB_FileWrite;
+	strFileName : StrFileName_t;
+	strFilePath : StrPathName_t;
+	
+	eState 		: EExportState_t;
+	u32Line     : UDINT;
+	
+	sStatistic  : SStatistic_t;
+
+	trgOpen 	: F_TRIG;
+	trgWrite 	: F_TRIG;
+	trgClose 	: F_TRIG;
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[
+	fbOpen();
+	fbWrite();
+	fbClose();
+	
+	trgOpen(CLK := fbOpen.bBusy);
+	IF trgOpen.Q = TRUE THEN
+		fbOpen.bExecute := FALSE;
+	END_IF;
+
+	trgWrite(CLK := fbWrite.bBusy);
+	IF trgWrite.Q = TRUE THEN
+		fbWrite.bExecute := FALSE;
+	END_IF;
+
+	trgClose(CLK := fbClose.bBusy);
+	IF trgClose.Q = TRUE THEN
+		fbClose.bExecute := FALSE;
+	END_IF;
+
+	o_bEmpty := (u32WrIdx = u32RdIdx);]]></ST>
+    </Implementation>
+    <Method Name="addCrlf" Id="{87e751ae-43bf-42cc-9a5b-1406edf6821d}">
+      <Declaration><![CDATA[(******************************************************************************
+Baustein: FB_TestReportBase.addCrlf
+Spezifikation: doc/Spezifikation.pdf, Kap. x.y.z
+-------------------------------------------------------------------------------
+erstellt:
+von:
+Geändert:
+von:
+-------------------------------------------------------------------------------
+Beschreibung
+
+
+-------------------------------------------------------------------------------
+Input
+-
+
+Output
+-
+******************************************************************************)
+METHOD PUBLIC addCrlf : ERetCode_t
+VAR_INPUT
+END_VAR
+VAR
+	strTemp : string := '$R$N';
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[
+	addData(adr(strTemp), 2);
+	
+	addCrlf := ERetCode_t.eRetDone;
+
+]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="addData" Id="{dc5bbd79-131e-449c-8aa9-a21e0c029bdd}">
+      <Declaration><![CDATA[METHOD PRIVATE addData : BOOL
+VAR_INPUT
+	pData   : POINTER TO BYTE;
+	u32Size : UDINT;
+END_VAR
+VAR
+	u32Part1 : UDINT;
+	u32Part2 : UDINT;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[
+	IF u32WrIdx + u32Size <= u32MaxIdx THEN
+		MemCpy(ADR(buffer)+u32WrIdx, pData, u32Size);
+		u32WrIdx := u32WrIdx + u32Size;
+	ELSE
+		// buffer bis maximum beschreiben und den rest
+		// vorne einfügen
+		u32Part1 := u32MaxIdx-u32WrIdx;
+		u32Part2 := u32Size - u32Part1;
+
+		MemCpy(ADR(buffer) + u32WrIdx, pData, u32Part1);
+		
+		MemCpy(ADR(buffer), pData+u32Part1, u32Part2);
+		// Schreibindex ist dann die Restgröße in Byte
+		u32WrIdx := u32Part2;
+	END_IF
+	
+	
+
+	
+	
+	]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="addString" Id="{9ba3d4d4-f543-4168-92a3-a04eafe3c218}">
+      <Declaration><![CDATA[(******************************************************************************
+Baustein: FB_TestReportBase.addString
+Spezifikation: doc/Spezifikation.pdf, Kap. x.y.z
+-------------------------------------------------------------------------------
+erstellt:
+von:
+Geändert:
+von:
+-------------------------------------------------------------------------------
+Beschreibung
+
+-------------------------------------------------------------------------------
+Input
+	i_strData : STRING(255);
+
+Output
+-
+******************************************************************************)
+METHOD PUBLIC addString : ERetCode_t
+VAR_INPUT
+	i_strData : STRING(255);
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[
+	addData(ADR(i_strData), len(i_strData));
+	
+	addString := ERetcode_t.eRetDone;]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="addValue" Id="{4763b747-b35d-40cf-ae56-8465970254b3}">
+      <Declaration><![CDATA[(******************************************************************************
+Baustein: FB_TestReportBase.addValue
+Spezifikation: doc/Spezifikation.pdf, Kap. x.y.z
+-------------------------------------------------------------------------------
+erstellt:
+von:
+Geändert:
+von:
+-------------------------------------------------------------------------------
+Beschreibung
+
+-------------------------------------------------------------------------------
+Input
+	i_anyValue : ANY;
+
+Output
+-
+******************************************************************************)
+METHOD PUBLIC addValue : ERetCode_t
+VAR_INPUT
+	i_anyValue : ANY;
+END_VAR
+VAR
+	uValue : UBaseTypes_t;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[
+	addValue  := ERetcode_t.eRetDone;
+	
+	IF i_anyValue.pValue = 0 THEN
+		addValue  := ERetcode_t.eRetFailed;
+		RETURN;
+	END_IF
+
+	MEMCPY(ADR(uValue),i_anyValue.pValue, TO_UDINT(i_anyValue.diSize)); 
+
+	CASE i_anyValue.TypeClass OF
+
+	IBaseLibrary.TYPE_SINT:
+
+		addString(SINT_TO_STRING(uValue.s8Value));
+
+	IBaseLibrary.TYPE_USINT:
+
+		addString(USINT_TO_STRING(uValue.u8Value));
+
+	IBaseLibrary.TYPE_INT:
+
+		addString(INT_TO_STRING(uValue.s16Value));
+
+	IBaseLibrary.TYPE_DINT:
+
+		addString(DINT_TO_STRING(uValue.s32Value));
+
+	IBaseLibrary.TYPE_UINT:
+
+		addString(UINT_TO_STRING(uValue.u16Value));
+
+	IBaseLibrary.TYPE_UDINT:
+
+		addString(UDINT_TO_STRING(uValue.u32Value));
+
+	IBaseLibrary.TYPE_WORD:
+
+		addString(WORD_TO_STRING(uValue.w16Value));
+
+	IBaseLibrary.TYPE_DWORD:
+
+		addString(DWORD_TO_STRING(uValue.w32Value));
+
+	IBaseLibrary.TYPE_BYTE:
+
+		addString(BYTE_TO_STRING(uValue.u8Value));
+
+	IBaseLibrary.TYPE_BOOL:
+		
+		IF (uValue.bValue = TRUE) THEN
+			addString('TRUE');
+		ELSE
+			addString('FALSE');
+		END_IF;
+
+	IBaseLibrary.TYPE_REAL:
+		
+		addString(REAL_TO_STRING(uValue.r32Value));
+	
+	ELSE
+		ADSLOGSTR(msgCtrlMask 	:= ADSLOG_MSGTYPE_ERROR , 
+				  msgFmtStr 	:= 'TestReportBase.AddValue: Unbekannter Datentyp!', 
+				  strArg 		:= '');
+	END_CASE;
+	
+	]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="clearBuffer" Id="{5dfaa680-7bea-4746-bf0e-4660536af9df}">
+      <Declaration><![CDATA[(******************************************************************************
+Baustein: FB_TestReportBase.clearBuffer
+Spezifikation: doc/Spezifikation.pdf, Kap. x.y.z
+-------------------------------------------------------------------------------
+erstellt:
+von:
+Geändert:
+von:
+-------------------------------------------------------------------------------
+Beschreibung
+
+-------------------------------------------------------------------------------
+Input
+-
+
+Output
+-
+******************************************************************************)
+METHOD PUBLIC clearBuffer : ERetCode_t
+VAR_INPUT
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[
+	clearBuffer := ERetCode_t.eRetDone;
+	
+	MemSet(ADR(buffer), 0, SIZEOF(buffer));
+	
+	u32WrIdx := u32RdIdx := 0;]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="Close" Id="{03c998bc-5bf6-4151-a33b-ec883349b294}">
+      <Declaration><![CDATA[(******************************************************************************
+Baustein: FB_TestReportBase.Close
+Spezifikation: doc/Spezifikation.pdf, Kap. x.y.z
+-------------------------------------------------------------------------------
+erstellt:
+von:
+Geändert:
+von:
+-------------------------------------------------------------------------------
+Beschreibung
+
+
+-------------------------------------------------------------------------------
+Input
+-
+
+Output
+-
+******************************************************************************)
+METHOD PUBLIC Close : ERetCode_t
+VAR_INPUT
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[
+	Close := ERetCode_t.eRetFailed;
+	
+	fbClose.hFile 		:= fbOpen.hFile;
+
+	IF o_bEmpty = TRUE THEN
+
+		fbClose.bExecute 	:= TRUE; 
+
+		IF trgClose.Q = TRUE THEN
+			o_bOpen 			:= FALSE;
+			Close 				:= ERetCode_t.eRetDone;
+			fbClose.bExecute 	:= FALSE;		
+		ELSE	
+			Close := ERetCode_t.eRetBusy;
+		END_IF;	
+		
+		IF fbClose.bError = TRUE THEN
+			Close := eRetCode_t.eRetFailed;
+		END_IF;			
+
+	ELSE
+		Close := ERetCode_t.eRetBusy;
+	END_IF;]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="getFileName" Id="{7e1d2ee9-2256-4e5a-8158-937367f08b2c}">
+      <Declaration><![CDATA[(******************************************************************************
+Baustein: FB_TestReportBase.getFileName
+Spezifikation: doc/Spezifikation.pdf, Kap. x.y.z
+-------------------------------------------------------------------------------
+erstellt:
+von:
+Geändert:
+von:
+-------------------------------------------------------------------------------
+Beschreibung
+Diese Methode muss vom ableitenden Baustein überschrieben werden und
+wird von der Basisklasse aus aufgerufen wenn der Report erstellt werden
+soll.
+
+-------------------------------------------------------------------------------
+Input
+	i_pFileName : NameHandle_t;
+	i_pPath		: PathHandle_t;
+
+Output
+-
+******************************************************************************)
+METHOD PROTECTED getFileName : ERetCode_t
+VAR_INPUT
+	i_pFileName : NameHandle_t;
+	i_pPath		: PathHandle_t;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="getTime" Id="{d393fabf-7345-423a-9e35-8e600869be1d}">
+      <Declaration><![CDATA[(******************************************************************************
+Baustein: FB_TestReportBase.getTime
+Spezifikation: doc/Spezifikation.pdf, Kap. x.y.z
+-------------------------------------------------------------------------------
+erstellt:
+von:
+Geändert:
+von:
+-------------------------------------------------------------------------------
+Beschreibung
+
+
+-------------------------------------------------------------------------------
+Input
+-
+
+Output
+-
+******************************************************************************)
+METHOD PROTECTED getTime : TimeStruct
+VAR_INPUT
+END_VAR
+VAR
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[
+	getTime := PRG_UnitTestLib.getTime();
+	
+	]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="open" Id="{902b4c08-29bc-4d3a-8f22-681df2d06abd}">
+      <Declaration><![CDATA[(******************************************************************************
+Baustein: FB_TestReportBase.Open
+Spezifikation: doc/Spezifikation.pdf, Kap. x.y.z
+-------------------------------------------------------------------------------
+erstellt:
+von:
+Geändert:
+von:
+-------------------------------------------------------------------------------
+Beschreibung
+
+
+-------------------------------------------------------------------------------
+Input
+-
+
+Output
+-
+******************************************************************************)
+METHOD PUBLIC open : ERetCode_t
+VAR_INPUT
+	i_strPath : StrPathName_t;
+	i_strName : StrFileName_t;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[
+	open := ERetCode_t.eRetFailed;
+	
+	strFileName := i_strName;
+	strFilePath := i_strPath;
+
+	fbOpen.sPathName := CONCAT(strFilePath, strFileName);
+	fbOpen.nMode 	 := FOPEN_MODEWRITE OR FOPEN_MODEBINARY;	
+	fbOpen.bExecute  := TRUE;
+			
+	IF trgOpen.Q = TRUE THEN
+		o_bOpen := true;
+		open := ERetCode_t.eRetDone;
+		fbOpen.bExecute  := FALSE;		
+	ELSE	
+		open := ERetCode_t.eRetBusy;
+	END_IF;	
+	
+	IF fbOpen.bError = TRUE THEN
+		open := eRetCode_t.eRetFailed;
+	END_IF;				]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="reset" Id="{e1e2a994-d63a-4204-a9c4-0718d80f0ccf}">
+      <Declaration><![CDATA[(******************************************************************************
+Baustein: FB_TestReportBase.reset
+Spezifikation: doc/Spezifikation.pdf, Kap. x.y.z
+-------------------------------------------------------------------------------
+erstellt:
+von:
+Geändert:
+von:
+-------------------------------------------------------------------------------
+Beschreibung
+
+
+-------------------------------------------------------------------------------
+Input
+-
+
+Output
+-
+******************************************************************************)
+METHOD PUBLIC reset : BOOL
+VAR_INPUT
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[
+	IF fbOpen.hFile <> 0 THEN
+		close();
+	END_IF
+	
+	clearBuffer();
+
+	fbOpen(sPathName := '', bExecute := FALSE);
+	
+	fbWrite(bExecute := FALSE);
+	
+	fbClose(bExecute := FALSE);
+	
+	o_bOpen := false;]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="writeBuffer" Id="{ffe30870-323c-4ba5-b165-beb9ce4f98c7}">
+      <Declaration><![CDATA[(******************************************************************************
+Baustein: FB_TestReportBase.writeBuffer
+Spezifikation: doc/Spezifikation.pdf, Kap. x.y.z
+-------------------------------------------------------------------------------
+erstellt:
+von:
+Geändert:
+von:
+-------------------------------------------------------------------------------
+Beschreibung
+
+
+-------------------------------------------------------------------------------
+Input
+-
+
+Output
+-
+******************************************************************************)
+METHOD PUBLIC writeBuffer : ERetCode_t
+VAR_INPUT
+END_VAR
+VAR
+	u32Len : UDINT;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[
+	writeBuffer := eRetCode_t.eRetBusy;
+
+	IF fbWrite.bBusy = TRUE THEN
+		RETURN;	
+	ELSIF u32WrIdx = u32RdIdx THEN
+		writeBuffer := eRetCode_t.eRetDone;
+		RETURN;	
+	END_IF
+	
+	IF u32WrIdx > u32RdIdx THEN
+		u32Len := u32WrIdx - u32RdIdx; 
+		writeBuffer := writeData(i_pData := ADR(Buffer)+u32RdIdx, u32Size := u32Len);	
+	ELSE
+		u32Len := u32MaxIdx - u32RdIdx; 
+		writeBuffer := writeData(i_pData := ADR(Buffer)+ u32RdIdx, u32Size := u32Len);
+		writeBuffer := writeData(i_pData := ADR(Buffer), u32Size := u32WrIdx);	
+	END_IF;
+
+	
+
+	
+
+	
+
+	
+
+	]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="writeData" Id="{8feaea14-66b2-4bf1-abf3-f924d7301621}">
+      <Declaration><![CDATA[(******************************************************************************
+Baustein: FB_TestReportBase.writeData
+Spezifikation: doc/Spezifikation.pdf, Kap. x.y.z
+-------------------------------------------------------------------------------
+erstellt:
+von:
+Geändert:
+von:
+-------------------------------------------------------------------------------
+Beschreibung
+
+
+-------------------------------------------------------------------------------
+Input
+	i_pData : POINTER TO BYTE;
+	u32Size : UDINT;
+	
+Output
+-
+******************************************************************************)
+METHOD PROTECTED writeData : ERetCode_t
+VAR_INPUT
+	i_pData : POINTER TO BYTE;
+	u32Size : UDINT;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[
+	writeData := ERetCode_t.eRetFailed;
+	
+	IF u32Size = 0 OR i_pData = 0 THEN
+		RETURN;
+	END_IF
+	
+	fbWrite.pWriteBuff 	:= i_pData; 
+	fbWrite.cbWriteLen 	:= u32Size; 
+	fbWrite.hFile 		:= fbOpen.hFile; 
+
+	fbWrite(bExecute 	:= TRUE);
+			
+	IF fbWrite.bBusy = FALSE THEN
+		fbWrite(bExecute 	:= FALSE);	
+		writeData 	:= ERetCode_t.eRetDone;
+		u32RdIdx 	:= u32WrIdx;
+	ELSE	
+		writeData := ERetCode_t.eRetBusy;
+	END_IF;	
+
+	IF fbWrite.bError = TRUE THEN
+		writeData := eRetCode_t.eRetFailed;
+	END_IF;					]]></ST>
+      </Implementation>
+    </Method>
+    <LineIds Name="FB_FileBase">
+      <LineId Id="57" Count="2" />
+      <LineId Id="54" Count="0" />
+      <LineId Id="60" Count="0" />
+      <LineId Id="55" Count="0" />
+      <LineId Id="120" Count="1" />
+      <LineId Id="118" Count="0" />
+      <LineId Id="122" Count="0" />
+      <LineId Id="56" Count="0" />
+      <LineId Id="111" Count="0" />
+      <LineId Id="113" Count="0" />
+      <LineId Id="112" Count="0" />
+      <LineId Id="119" Count="0" />
+      <LineId Id="9" Count="0" />
+      <LineId Id="115" Count="1" />
+      <LineId Id="114" Count="0" />
+      <LineId Id="125" Count="0" />
+      <LineId Id="124" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_FileBase.addCrlf">
+      <LineId Id="51" Count="2" />
+      <LineId Id="19" Count="0" />
+      <LineId Id="12" Count="1" />
+    </LineIds>
+    <LineIds Name="FB_FileBase.addData">
+      <LineId Id="17" Count="0" />
+      <LineId Id="8" Count="0" />
+      <LineId Id="18" Count="0" />
+      <LineId Id="26" Count="0" />
+      <LineId Id="20" Count="0" />
+      <LineId Id="24" Count="1" />
+      <LineId Id="41" Count="2" />
+      <LineId Id="21" Count="0" />
+      <LineId Id="23" Count="0" />
+      <LineId Id="22" Count="0" />
+      <LineId Id="30" Count="0" />
+      <LineId Id="29" Count="0" />
+      <LineId Id="19" Count="0" />
+      <LineId Id="27" Count="1" />
+      <LineId Id="9" Count="1" />
+      <LineId Id="5" Count="0" />
+      <LineId Id="16" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_FileBase.addString">
+      <LineId Id="40" Count="2" />
+      <LineId Id="5" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_FileBase.addValue">
+      <LineId Id="7" Count="0" />
+      <LineId Id="5" Count="0" />
+      <LineId Id="8" Count="0" />
+      <LineId Id="13" Count="0" />
+      <LineId Id="16" Count="0" />
+      <LineId Id="18" Count="0" />
+      <LineId Id="17" Count="0" />
+      <LineId Id="75" Count="0" />
+      <LineId Id="74" Count="0" />
+      <LineId Id="36" Count="0" />
+      <LineId Id="35" Count="0" />
+      <LineId Id="77" Count="2" />
+      <LineId Id="39" Count="1" />
+      <LineId Id="76" Count="0" />
+      <LineId Id="42" Count="0" />
+      <LineId Id="41" Count="0" />
+      <LineId Id="43" Count="2" />
+      <LineId Id="38" Count="0" />
+      <LineId Id="48" Count="2" />
+      <LineId Id="47" Count="0" />
+      <LineId Id="51" Count="6" />
+      <LineId Id="46" Count="0" />
+      <LineId Id="67" Count="2" />
+      <LineId Id="59" Count="0" />
+      <LineId Id="70" Count="0" />
+      <LineId Id="60" Count="1" />
+      <LineId Id="58" Count="0" />
+      <LineId Id="106" Count="1" />
+      <LineId Id="109" Count="0" />
+      <LineId Id="108" Count="0" />
+      <LineId Id="135" Count="2" />
+      <LineId Id="139" Count="0" />
+      <LineId Id="66" Count="0" />
+      <LineId Id="140" Count="0" />
+      <LineId Id="142" Count="0" />
+      <LineId Id="141" Count="0" />
+      <LineId Id="144" Count="0" />
+      <LineId Id="143" Count="0" />
+      <LineId Id="145" Count="1" />
+      <LineId Id="138" Count="0" />
+      <LineId Id="62" Count="0" />
+      <LineId Id="64" Count="1" />
+      <LineId Id="63" Count="0" />
+      <LineId Id="37" Count="0" />
+      <LineId Id="15" Count="0" />
+      <LineId Id="30" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_FileBase.clearBuffer">
+      <LineId Id="6" Count="0" />
+      <LineId Id="5" Count="0" />
+      <LineId Id="7" Count="1" />
+      <LineId Id="30" Count="1" />
+    </LineIds>
+    <LineIds Name="FB_FileBase.Close">
+      <LineId Id="6" Count="3" />
+      <LineId Id="77" Count="0" />
+      <LineId Id="76" Count="0" />
+      <LineId Id="83" Count="0" />
+      <LineId Id="82" Count="0" />
+      <LineId Id="25" Count="1" />
+      <LineId Id="53" Count="0" />
+      <LineId Id="27" Count="3" />
+      <LineId Id="11" Count="0" />
+      <LineId Id="17" Count="0" />
+      <LineId Id="19" Count="1" />
+      <LineId Id="18" Count="0" />
+      <LineId Id="80" Count="0" />
+      <LineId Id="79" Count="0" />
+      <LineId Id="81" Count="0" />
+      <LineId Id="78" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_FileBase.getFileName">
+      <LineId Id="5" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_FileBase.getTime">
+      <LineId Id="6" Count="0" />
+      <LineId Id="5" Count="0" />
+      <LineId Id="7" Count="1" />
+    </LineIds>
+    <LineIds Name="FB_FileBase.open">
+      <LineId Id="6" Count="0" />
+      <LineId Id="5" Count="0" />
+      <LineId Id="53" Count="2" />
+      <LineId Id="7" Count="2" />
+      <LineId Id="14" Count="0" />
+      <LineId Id="10" Count="1" />
+      <LineId Id="56" Count="0" />
+      <LineId Id="28" Count="0" />
+      <LineId Id="27" Count="0" />
+      <LineId Id="15" Count="1" />
+      <LineId Id="12" Count="0" />
+      <LineId Id="18" Count="0" />
+      <LineId Id="20" Count="1" />
+      <LineId Id="19" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_FileBase.reset">
+      <LineId Id="14" Count="5" />
+      <LineId Id="8" Count="0" />
+      <LineId Id="6" Count="0" />
+      <LineId Id="5" Count="0" />
+      <LineId Id="11" Count="0" />
+      <LineId Id="13" Count="0" />
+      <LineId Id="9" Count="0" />
+      <LineId Id="7" Count="0" />
+      <LineId Id="46" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_FileBase.writeBuffer">
+      <LineId Id="6" Count="0" />
+      <LineId Id="5" Count="0" />
+      <LineId Id="163" Count="1" />
+      <LineId Id="22" Count="0" />
+      <LineId Id="89" Count="1" />
+      <LineId Id="165" Count="0" />
+      <LineId Id="91" Count="1" />
+      <LineId Id="132" Count="0" />
+      <LineId Id="93" Count="0" />
+      <LineId Id="166" Count="0" />
+      <LineId Id="134" Count="1" />
+      <LineId Id="167" Count="1" />
+      <LineId Id="133" Count="0" />
+      <LineId Id="94" Count="0" />
+      <LineId Id="102" Count="1" />
+      <LineId Id="88" Count="0" />
+      <LineId Id="83" Count="0" />
+      <LineId Id="81" Count="0" />
+      <LineId Id="52" Count="0" />
+      <LineId Id="78" Count="1" />
+      <LineId Id="40" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_FileBase.writeData">
+      <LineId Id="11" Count="0" />
+      <LineId Id="5" Count="0" />
+      <LineId Id="12" Count="0" />
+      <LineId Id="19" Count="3" />
+      <LineId Id="39" Count="2" />
+      <LineId Id="101" Count="0" />
+      <LineId Id="29" Count="0" />
+      <LineId Id="42" Count="0" />
+      <LineId Id="30" Count="0" />
+      <LineId Id="102" Count="0" />
+      <LineId Id="49" Count="0" />
+      <LineId Id="75" Count="0" />
+      <LineId Id="32" Count="0" />
+      <LineId Id="34" Count="4" />
+      <LineId Id="18" Count="0" />
+    </LineIds>
+  </POU>
+</TcPlcObject>

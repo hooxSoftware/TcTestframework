@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4022.18">
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.3">
   <POU Name="FB_UnitTestBase" Id="{77b52f8d-9a49-403a-aba1-80915f687878}" SpecialFunc="None">
     <Declaration><![CDATA[(******************************************************************************
 Baustein: FB_UnitTestBase
@@ -681,7 +681,7 @@ VAR_INPUT
 END_VAR
 ]]></Declaration>
       <Implementation>
-        <ST><![CDATA[s
+        <ST><![CDATA[
 	assertTRUE(ABS(r32Actual-r32Expected) > ABS(r32Granularity));]]></ST>
       </Implementation>
     </Method>
