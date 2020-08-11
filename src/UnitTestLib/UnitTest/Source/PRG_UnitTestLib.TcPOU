@@ -46,9 +46,13 @@ VAR
 	
 	
 	fbCoverage 		: FB_CoverageFile;
+	fbUnittest 		: FB_CoverageFile;
 	u16PouIdx  		: UINT;
 	u16LineIdx 		: UINT;
+	u16ReportState  : UINT;
+	u16TestSuitIdx	: UINT;
 	sCodeCoverage	: SCodeCoverage_t;
+	pTestCase  		: TestCaseHandle_t;
 END_VAR
 ]]></Declaration>
     <Implementation>
@@ -56,6 +60,8 @@ END_VAR
 	fbSystemTime(bEnable := TRUE, dwCycle := 5);
 
 	fbCoverage();
+
+	fbUnittest();
 
 	CASE o_eState OF 
 	
@@ -77,25 +83,21 @@ END_VAR
 		END_IF
 	
 	EState_t.eStatePrepare:
-	
-		IF fbCoverage.open('C:\Users\Administrator\Desktop\TestResult\', 'Coverage.xml') = ERetCode_t.eRetDone THEN
-			
-			o_eResult 	  				:= EResult_t.eStatePassed;
-			o_sStatistic.u32Executed 	:= 0;
-			o_sStatistic.u32TestCases	:= 0;
-			o_sStatistic.u32Asserts  	:= 0;
-			o_sStatistic.u32Passed   	:= 0;
-			o_sStatistic.u32Failed	 	:= 0;	
-	
-			pActTestSuite := getFirstTestSuite();
-			
-			IF pActTestSuite      <> 0   THEN
-				o_eState := EState_t.eStateExecute;
-			ELSE
-				o_eState := EState_t.eStateError;	
-			END_IF
-			
-		END_IF;
+		
+		o_eResult 	  				:= EResult_t.eStatePassed;
+		o_sStatistic.u32Executed 	:= 0;
+		o_sStatistic.u32TestCases	:= 0;
+		o_sStatistic.u32Asserts  	:= 0;
+		o_sStatistic.u32Passed   	:= 0;
+		o_sStatistic.u32Failed	 	:= 0;	
+
+		pActTestSuite := getFirstTestSuite();
+		
+		IF pActTestSuite      <> 0   THEN
+			o_eState := EState_t.eStateExecute;
+		ELSE
+			o_eState := EState_t.eStateError;	
+		END_IF
 	
 	EState_t.eStateExecute:
 	
@@ -138,81 +140,33 @@ END_VAR
 
 	EState_t.eStateBuildCoverageFile:
 
-		IF fbCoverage.o_bOpen THEN
+		IF createReport(EReporttype_t.eCoverageReport) = ERetCode_t.eRetDone THEN
+			o_eState := EState_t.eStateBuildUnitTestFile;
+		END_IF;
 
-			fbCoverage.addString('<Result>');
-			fbCoverage.addCrlf();
+	EState_t.eStateBuildUnitTestFile:
 
-			FOR u16PouIdx := 1 TO sCodeCoverage.u16MaxIndex DO
+		IF createReport(EReporttype_t.eUnitTestReport) = ERetCode_t.eRetDone THEN
+			o_eState := EState_t.eStateReady;
+		END_IF;
 
-				fbCoverage.addString('<POU Id="');
-				fbCoverage.addValue(u16PouIdx);
-				fbCoverage.addString('">');
-				fbCoverage.addCrlf();
-
-				FOR u16LineIdx := 1 TO 1000 DO
-
-					IF sCodeCoverage.aPou[u16PouIdx][u16LineIdx] > 0 THEN
-
-						fbCoverage.addString('<Line Nb="');
-						fbCoverage.addValue(u16LineIdx);
-
-						fbCoverage.addString('" Count="');
-						fbCoverage.addValue(sCodeCoverage.aPou[u16PouIdx][u16LineIdx]);
-						
-						fbCoverage.addString('"/>');
-						fbCoverage.addCrlf();
-
-					END_IF;
-
-				END_FOR;
-
-				fbCoverage.addString('</POU>');
-				fbCoverage.addCrlf();
-
-			END_FOR;
-
-			fbCoverage.addString('</Result>');
-			fbCoverage.addCrlf();
-		
-		END_IF;	
-
-		o_eState := EState_t.eStateReady;
-	
 	EState_t.eStateReady:
 
-		IF fbCoverage.o_bOpen  = TRUE AND 
-		   fbCoverage.o_bEmpty = TRUE THEN
-			fbCoverage.close();
-		END_IF;
-		
 		IF i_bStart = FALSE THEN
 			o_eState := EState_t.eStateExport;
 		END_IF
 
 	EState_t.eStateExport:
 
-		IF pTestReport <> 0 THEN
-			
-			eRetCode := pTestReport^.create();
-			
-			CASE eRetCode OF
-
-			 ERetCode_t.eRetDone :
-				o_eState := EState_t.eStateIdle;
-			
-			ERetCode_t.eRetFailed :
-				o_eState := EState_t.eStateError;
-				
-			END_CASE;			
-			
-		ELSE
+		IF createReport(EReporttype_t.eExternalReport) = ERetCode_t.eRetDone THEN
 			o_eState := EState_t.eStateIdle;
 		END_IF;
 
-	EState_t.eStateError:
+	EState_t.eStateError,
 	EState_t.eStateLicenseError:
 	
+		o_eState := EState_t.eStateError;
+
 	END_CASE]]></ST>
     </Implementation>
     <Method Name="addTestReport" Id="{01e7f184-904d-4319-bf24-cb63b7c8dbc8}">
@@ -235,6 +189,7 @@ i_pTestReport
 Output
 -
 ******************************************************************************)
+{attribute 'hide'} 
 METHOD PUBLIC addTestReport : BOOL
 VAR_INPUT
 	i_pTestReport : TestReportHandle_t;
@@ -265,6 +220,7 @@ i_pTestSuite
 Output
 -
 ******************************************************************************)
+{attribute 'hide'} 
 METHOD PUBLIC addTestSuite : BOOL
 VAR_INPUT
 	i_pTestSuite : TestSuiteHandle_t;
@@ -308,6 +264,7 @@ Input
 Output
 -
 ******************************************************************************)
+{attribute 'hide'} 
 METHOD checkLicense : ERetCode_t
 VAR_INPUT
 END_VAR
@@ -326,6 +283,276 @@ END_VAR
 			checkLicense := ERetCode_t.eRetFailed;	
 		END_IF
 	END_IF;]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="createReport" Id="{d9afc7ed-2e81-46b0-adaa-c3b998a94e06}">
+      <Declaration><![CDATA[{attribute 'hide'} 
+METHOD PRIVATE createReport : ERetCode_t
+VAR_INPUT
+	i_eReporttype : EReportType_t;
+END_VAR
+VAR
+	eRetcode : ERetCode_t;
+	u32Temp : UDINT;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[
+	createReport := ERetCode_t.eRetBusy;
+
+	CASE u16ReportState OF
+
+	0: 
+		IF i_eReporttype = EReportType_t.eCoverageReport THEN
+			u16ReportState := 10;
+		END_IF;
+
+		IF i_eReporttype = EReportType_t.eUnitTestReport THEN
+			u16ReportState := 20;
+		END_IF;
+
+		IF i_eReporttype = EReportType_t.eExternalReport THEN
+			u16ReportState := 100;
+		END_IF;
+
+// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+//
+// Export Codeabdeckung
+// 
+// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+	10:
+		eRetcode := fbCoverage.open('C:\Users\Administrator\Desktop\TestResult\', 'Coverage.xml');
+
+		IF eRetcode = ERetCode_t.eRetDone THEN
+
+			u16ReportState := 11;
+
+		ELSIF eRetcode = ERetCode_t.eRetFailed THEN
+
+			logError('createReport Coverage.xml : Datei nicht geöffnet');
+			u16ReportState := 12;
+
+		END_IF;		
+
+	11:
+
+		fbCoverage.addString('<?xml version="1.0" ?>');
+		fbCoverage.addCrlf();
+
+		fbCoverage.addString('<Result>');
+		fbCoverage.addCrlf();
+
+		FOR u16PouIdx := 1 TO sCodeCoverage.u16MaxIndex DO
+
+			fbCoverage.addString('<POU Id="');
+			fbCoverage.addValue(u16PouIdx);
+			fbCoverage.addString('">');
+			fbCoverage.addCrlf();
+
+			FOR u16LineIdx := 1 TO 1000 DO
+
+				IF sCodeCoverage.aPou[u16PouIdx][u16LineIdx] > 0 THEN
+
+					fbCoverage.addString('<Line Nb="');
+					fbCoverage.addValue(u16LineIdx);
+
+					fbCoverage.addString('" Count="');
+					fbCoverage.addValue(sCodeCoverage.aPou[u16PouIdx][u16LineIdx]);
+					
+					fbCoverage.addString('"/>');
+					fbCoverage.addCrlf();
+
+				END_IF;
+
+			END_FOR;
+
+			fbCoverage.addString('</POU>');
+			fbCoverage.addCrlf();
+
+		END_FOR;
+
+		fbCoverage.addString('</Result>');
+		fbCoverage.addCrlf();
+		u16ReportState := 12;
+
+
+	12:
+
+		IF fbCoverage.o_bOpen  = TRUE AND 
+		   fbCoverage.o_bEmpty = TRUE THEN
+			fbCoverage.close();
+		END_IF;
+
+		IF fbCoverage.o_bOpen  = FALSE THEN
+			createReport 	:= ERetCode_t.eRetDone;
+		END_IF;
+
+// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+//
+// Export Unittest Ergebnisse
+// 
+// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+	20:		
+
+		eRetcode := fbUnitTest.open('C:\Users\Administrator\Desktop\TestResult\', 'Unittest.xml');
+
+		IF eRetcode = ERetCode_t.eRetDone THEN
+
+			u16ReportState := 21;
+
+		ELSIF eRetcode = ERetCode_t.eRetFailed THEN
+
+			logError('createReport Unittest.xml : Datei nicht geöffnet');
+			u16ReportState := 22;
+
+		END_IF;	
+
+	21:
+
+		u16TestSuitIdx := 0;
+
+		fbUnitTest.addString('<?xml version="1.0" ?>');
+		fbUnitTest.addCrlf();
+
+		fbUnitTest.addString('<testsuites>');
+		fbUnitTest.addCrlf();
+
+		pActTestSuite := getFirstTestSuite();
+
+		WHILE (pActTestSuite <> 0) DO
+
+			u16TestSuitIdx := u16TestSuitIdx+1;
+
+			fbUnitTest.addString('<testsuite');
+			fbUnitTest.addString(' name="');
+			fbUnitTest.addString(pActTestSuite^.getId());
+			fbUnitTest.addString('" tests="');
+			u32Temp := pActTestSuite^.getNoOfTests();
+			fbUnitTest.addValue(u32Temp);
+			fbUnitTest.addString('" disabled="');
+			u32Temp := 0;
+			fbUnitTest.addValue(u32Temp);
+			fbUnitTest.addString('" errors="');
+			fbUnitTest.addValue(u32Temp);
+			fbUnitTest.addString('" failures="');
+			u32Temp := pActTestSuite^.getFailed();
+			fbUnitTest.addValue(u32Temp);
+			fbUnitTest.addString('" hostname="');
+			fbUnitTest.addString('" id="');
+			fbUnitTest.addvalue(u16TestSuitIdx);
+			fbUnitTest.addString('" package="');
+			fbUnitTest.addString(pActTestSuite^.getPath());
+			fbUnitTest.addString('">');
+			fbUnitTest.addCrlf();
+
+			pTestCase := pActTestSuite^.getFirstTestCase();
+
+			WHILE (pTestCase <> 0) DO
+
+				fbUnitTest.addString('<testcase');
+				fbUnitTest.addString(' name="');
+				fbUnitTest.addString(pTestCase^.getId());
+				fbUnitTest.addString('" assertions="');
+				u32Temp := pTestCase^.getFailed() + pTestCase^.getPassed();
+				fbUnitTest.addValue(u32Temp);
+				fbUnitTest.addString('" classname="');
+				fbUnitTest.addString(pTestCase^.getPath());
+				fbUnitTest.addString(pTestCase^.getClassName());
+				fbUnitTest.addString('" time="');
+				u32Temp := pTestCase^.getTime();
+				fbUnitTest.addTimeMs(u32Temp);
+				fbUnitTest.addString('">');
+				fbUnitTest.addCrlf();
+
+				CASE pTestCase^.o_eResult OF
+
+				EResult_t.eStatePassed :
+
+					fbUnitTest.addString('<passed/>');
+
+				EResult_t.eStateFailed, 
+				EResult_t.eStateFailedFatal :
+			
+					fbUnitTest.addString('<failure/>');
+
+				EResult_t.eStateSkipped:
+
+					fbUnitTest.addString('<skipped/>');
+
+				END_CASE;
+				
+				fbUnitTest.addCrlf();	
+
+				fbUnitTest.addString('</testcase>');
+				fbUnitTest.addCrlf();		
+
+				pTestCase := pActTestSuite^.getNextTestCase();
+		
+			END_WHILE
+
+			fbUnitTest.addString('</testsuite>');
+			fbUnitTest.addCrlf();	
+
+			pActTestSuite := getNextTestSuite();
+
+		END_WHILE
+
+		fbUnitTest.addString('</testsuites>');
+		fbUnitTest.addCrlf();
+
+		u16ReportState := 22;
+
+	22:
+		IF fbUnitTest.o_bOpen  = TRUE AND 
+		   fbUnitTest.o_bEmpty = TRUE THEN
+			fbUnitTest.close();
+		END_IF;
+
+		IF fbUnitTest.o_bOpen  = FALSE THEN
+			createReport 	:= ERetCode_t.eRetDone;
+		END_IF;
+
+// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+//
+//
+// 
+// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+	100:
+
+		IF pTestReport <> 0 THEN
+			
+			createReport := pTestReport^.create();		
+			
+		ELSE
+
+			createReport := ERetCode_t.eRetDone;
+
+		END_IF;
+
+	ELSE
+		createReport := ERetCode_t.eRetFailed;
+	END_CASE;
+
+	IF createReport = ERetCode_t.eRetDone THEN
+		u16ReportState := 0;
+	END_IF;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+(**)]]></ST>
       </Implementation>
     </Method>
     <Method Name="getFirstTestSuite" Id="{6dd3fe68-4fa4-401b-93b4-4e9d66a75960}">
@@ -348,6 +575,7 @@ Input
 Output
 -
 ******************************************************************************)
+{attribute 'hide'} 
 METHOD PRIVATE getFirstTestSuite : TestSuiteHandle_t
 VAR_INPUT
 END_VAR
@@ -378,6 +606,7 @@ Input
 Output
 -
 ******************************************************************************)
+{attribute 'hide'} 
 METHOD PRIVATE getNextTestSuite : TestSuiteHandle_t
 VAR_INPUT
 END_VAR
@@ -412,6 +641,7 @@ Input
 Output
 -
 ******************************************************************************)
+{attribute 'hide'} 
 METHOD getTime : TimeStruct
 VAR_INPUT
 END_VAR
@@ -425,7 +655,8 @@ END_VAR
       </Implementation>
     </Method>
     <Method Name="LineCovered" Id="{9bc155ab-6ca6-4d1c-a73e-4da1bd4ba034}">
-      <Declaration><![CDATA[METHOD PUBLIC LineCovered : BOOL
+      <Declaration><![CDATA[{attribute 'hide'} 
+METHOD PUBLIC LineCovered : BOOL
 VAR_INPUT
 	u16Pou  : UINT;
 	u16Line : UINT;
@@ -476,6 +707,7 @@ i_strMessage
 Output
 -
 ******************************************************************************)
+{attribute 'hide'} 
 METHOD PROTECTED logError : BOOL
 VAR_INPUT
 	i_strMessage : StrMessage_t;
@@ -508,7 +740,8 @@ i_strMessage
 Output
 -
 ******************************************************************************)
-METHOD PROTECTED logInfo : BOOL
+{attribute 'hide'} 
+METHOD PUBLIC logInfo : BOOL
 VAR_INPUT
 	i_strMessage : StrMessage_t;
 END_VAR
@@ -524,6 +757,8 @@ END_VAR
       <LineId Id="257" Count="1" />
       <LineId Id="300" Count="0" />
       <LineId Id="317" Count="0" />
+      <LineId Id="838" Count="0" />
+      <LineId Id="837" Count="0" />
       <LineId Id="41" Count="0" />
       <LineId Id="9" Count="0" />
       <LineId Id="42" Count="0" />
@@ -542,8 +777,6 @@ END_VAR
       <LineId Id="59" Count="1" />
       <LineId Id="48" Count="0" />
       <LineId Id="52" Count="0" />
-      <LineId Id="63" Count="0" />
-      <LineId Id="426" Count="0" />
       <LineId Id="433" Count="0" />
       <LineId Id="114" Count="0" />
       <LineId Id="251" Count="3" />
@@ -552,8 +785,6 @@ END_VAR
       <LineId Id="64" Count="3" />
       <LineId Id="108" Count="1" />
       <LineId Id="68" Count="0" />
-      <LineId Id="434" Count="0" />
-      <LineId Id="432" Count="0" />
       <LineId Id="53" Count="0" />
       <LineId Id="49" Count="0" />
       <LineId Id="72" Count="1" />
@@ -582,74 +813,30 @@ END_VAR
       <LineId Id="97" Count="0" />
       <LineId Id="486" Count="0" />
       <LineId Id="485" Count="0" />
-      <LineId Id="489" Count="0" />
       <LineId Id="488" Count="0" />
-      <LineId Id="529" Count="0" />
-      <LineId Id="528" Count="0" />
-      <LineId Id="534" Count="0" />
-      <LineId Id="491" Count="1" />
-      <LineId Id="535" Count="0" />
-      <LineId Id="537" Count="0" />
-      <LineId Id="536" Count="0" />
-      <LineId Id="538" Count="0" />
-      <LineId Id="541" Count="0" />
-      <LineId Id="507" Count="0" />
-      <LineId Id="506" Count="0" />
-      <LineId Id="520" Count="0" />
-      <LineId Id="519" Count="0" />
-      <LineId Id="512" Count="2" />
-      <LineId Id="522" Count="1" />
-      <LineId Id="515" Count="0" />
-      <LineId Id="524" Count="0" />
-      <LineId Id="516" Count="0" />
-      <LineId Id="509" Count="0" />
-      <LineId Id="525" Count="0" />
-      <LineId Id="521" Count="0" />
-      <LineId Id="518" Count="0" />
-      <LineId Id="508" Count="0" />
-      <LineId Id="540" Count="0" />
-      <LineId Id="539" Count="0" />
-      <LineId Id="542" Count="0" />
-      <LineId Id="495" Count="0" />
-      <LineId Id="494" Count="0" />
-      <LineId Id="531" Count="0" />
-      <LineId Id="530" Count="0" />
-      <LineId Id="532" Count="0" />
-      <LineId Id="487" Count="0" />
-      <LineId Id="93" Count="0" />
+      <LineId Id="782" Count="1" />
       <LineId Id="527" Count="0" />
-      <LineId Id="526" Count="0" />
       <LineId Id="490" Count="0" />
+      <LineId Id="613" Count="0" />
+      <LineId Id="620" Count="0" />
+      <LineId Id="615" Count="0" />
+      <LineId Id="614" Count="0" />
+      <LineId Id="780" Count="0" />
+      <LineId Id="612" Count="0" />
       <LineId Id="86" Count="0" />
-      <LineId Id="429" Count="0" />
-      <LineId Id="428" Count="0" />
-      <LineId Id="436" Count="0" />
-      <LineId Id="88" Count="0" />
-      <LineId Id="430" Count="1" />
+      <LineId Id="779" Count="0" />
       <LineId Id="89" Count="2" />
       <LineId Id="223" Count="0" />
       <LineId Id="222" Count="0" />
       <LineId Id="246" Count="0" />
-      <LineId Id="240" Count="0" />
-      <LineId Id="376" Count="0" />
-      <LineId Id="241" Count="0" />
-      <LineId Id="370" Count="0" />
-      <LineId Id="364" Count="0" />
-      <LineId Id="373" Count="0" />
-      <LineId Id="372" Count="0" />
-      <LineId Id="365" Count="0" />
-      <LineId Id="368" Count="0" />
-      <LineId Id="375" Count="0" />
-      <LineId Id="369" Count="0" />
-      <LineId Id="374" Count="0" />
-      <LineId Id="363" Count="0" />
-      <LineId Id="371" Count="0" />
-      <LineId Id="247" Count="1" />
+      <LineId Id="892" Count="1" />
       <LineId Id="230" Count="0" />
       <LineId Id="87" Count="0" />
       <LineId Id="54" Count="0" />
       <LineId Id="312" Count="0" />
       <LineId Id="55" Count="0" />
+      <LineId Id="895" Count="0" />
+      <LineId Id="894" Count="0" />
       <LineId Id="43" Count="0" />
     </LineIds>
     <LineIds Name="PRG_UnitTestLib.addTestReport">
@@ -675,6 +862,102 @@ END_VAR
       <LineId Id="11" Count="1" />
       <LineId Id="10" Count="0" />
       <LineId Id="14" Count="0" />
+    </LineIds>
+    <LineIds Name="PRG_UnitTestLib.createReport">
+      <LineId Id="99" Count="1" />
+      <LineId Id="70" Count="1" />
+      <LineId Id="104" Count="0" />
+      <LineId Id="103" Count="0" />
+      <LineId Id="228" Count="1" />
+      <LineId Id="227" Count="0" />
+      <LineId Id="230" Count="0" />
+      <LineId Id="73" Count="0" />
+      <LineId Id="109" Count="0" />
+      <LineId Id="108" Count="0" />
+      <LineId Id="436" Count="2" />
+      <LineId Id="118" Count="0" />
+      <LineId Id="457" Count="4" />
+      <LineId Id="439" Count="0" />
+      <LineId Id="119" Count="0" />
+      <LineId Id="122" Count="0" />
+      <LineId Id="372" Count="0" />
+      <LineId Id="123" Count="1" />
+      <LineId Id="279" Count="0" />
+      <LineId Id="162" Count="0" />
+      <LineId Id="231" Count="0" />
+      <LineId Id="374" Count="0" />
+      <LineId Id="232" Count="0" />
+      <LineId Id="280" Count="0" />
+      <LineId Id="373" Count="0" />
+      <LineId Id="121" Count="0" />
+      <LineId Id="236" Count="1" />
+      <LineId Id="240" Count="38" />
+      <LineId Id="238" Count="0" />
+      <LineId Id="164" Count="1" />
+      <LineId Id="179" Count="0" />
+      <LineId Id="174" Count="2" />
+      <LineId Id="169" Count="0" />
+      <LineId Id="221" Count="0" />
+      <LineId Id="215" Count="0" />
+      <LineId Id="220" Count="0" />
+      <LineId Id="173" Count="0" />
+      <LineId Id="452" Count="4" />
+      <LineId Id="113" Count="0" />
+      <LineId Id="72" Count="0" />
+      <LineId Id="375" Count="3" />
+      <LineId Id="380" Count="7" />
+      <LineId Id="6" Count="0" />
+      <LineId Id="366" Count="0" />
+      <LineId Id="282" Count="0" />
+      <LineId Id="365" Count="0" />
+      <LineId Id="283" Count="20" />
+      <LineId Id="406" Count="0" />
+      <LineId Id="403" Count="0" />
+      <LineId Id="304" Count="0" />
+      <LineId Id="404" Count="0" />
+      <LineId Id="305" Count="0" />
+      <LineId Id="407" Count="0" />
+      <LineId Id="405" Count="0" />
+      <LineId Id="306" Count="3" />
+      <LineId Id="401" Count="0" />
+      <LineId Id="310" Count="13" />
+      <LineId Id="402" Count="0" />
+      <LineId Id="392" Count="0" />
+      <LineId Id="325" Count="0" />
+      <LineId Id="391" Count="0" />
+      <LineId Id="390" Count="0" />
+      <LineId Id="326" Count="27" />
+      <LineId Id="355" Count="8" />
+      <LineId Id="94" Count="0" />
+      <LineId Id="389" Count="0" />
+      <LineId Id="388" Count="0" />
+      <LineId Id="364" Count="0" />
+      <LineId Id="75" Count="0" />
+      <LineId Id="105" Count="2" />
+      <LineId Id="98" Count="0" />
+      <LineId Id="226" Count="0" />
+      <LineId Id="223" Count="0" />
+      <LineId Id="225" Count="0" />
+      <LineId Id="222" Count="0" />
+      <LineId Id="447" Count="0" />
+      <LineId Id="416" Count="0" />
+      <LineId Id="448" Count="3" />
+      <LineId Id="417" Count="0" />
+      <LineId Id="419" Count="3" />
+      <LineId Id="433" Count="1" />
+      <LineId Id="446" Count="0" />
+      <LineId Id="435" Count="0" />
+      <LineId Id="445" Count="0" />
+      <LineId Id="418" Count="0" />
+      <LineId Id="117" Count="0" />
+      <LineId Id="95" Count="0" />
+      <LineId Id="76" Count="1" />
+      <LineId Id="442" Count="0" />
+      <LineId Id="441" Count="0" />
+      <LineId Id="444" Count="0" />
+      <LineId Id="443" Count="0" />
+      <LineId Id="78" Count="15" />
+      <LineId Id="74" Count="0" />
     </LineIds>
     <LineIds Name="PRG_UnitTestLib.getFirstTestSuite">
       <LineId Id="25" Count="1" />

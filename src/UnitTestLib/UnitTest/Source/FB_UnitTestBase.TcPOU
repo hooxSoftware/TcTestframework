@@ -31,16 +31,123 @@ VAR_OUTPUT
 END_VAR
 VAR
 	strId	  		: ObjectId_t;
+	strClassName	: ObjectId_t;
+	strPath			: ObjectId_t;
+	bSkipTest		: BOOL;
 	pTestSuite      : TestSuiteHandle_t;
 	bRegistered 	: BOOL;
 	u32Passed 		: UDINT;
 	u32Failed 		: UDINT;
+	u32StartTime	: UDINT;
+	u32EndTime		: UDINT;
 END_VAR
 ]]></Declaration>
     <Implementation>
       <ST><![CDATA[
 	]]></ST>
     </Implementation>
+    <Method Name="_cleanup" Id="{344aee8e-b817-4cb6-9aba-783306fb7b3f}">
+      <Declaration><![CDATA[(******************************************************************************
+Baustein: FB_UnitTestBase.cleanup
+Spezifikation: doc/Spezifikation.pdf, Kap. x.y.z
+-------------------------------------------------------------------------------
+erstellt:
+von:
+Geändert:
+von:
+-------------------------------------------------------------------------------
+Beschreibung
+Diese Methode...
+
+-------------------------------------------------------------------------------
+Input
+-
+
+Output
+-
+******************************************************************************)
+{attribute 'hide'} 
+METHOD INTERNAL _cleanup : BOOL
+VAR_INPUT
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[
+
+	_cleanup := cleanup();
+
+	
+	
+	]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="_execute" Id="{7a2e47ea-4d60-41f0-a3d6-a81f0185c513}">
+      <Declaration><![CDATA[(******************************************************************************
+Baustein: FB_UnitTestBase.execute
+Spezifikation: doc/Spezifikation.pdf, Kap. x.y.z
+-------------------------------------------------------------------------------
+erstellt:
+von:
+Geändert:
+von:
+-------------------------------------------------------------------------------
+Beschreibung
+Diese Methode...
+
+-------------------------------------------------------------------------------
+Input
+-
+
+Output
+-
+******************************************************************************)
+{attribute 'hide'} 
+METHOD INTERNAL _execute : BOOL
+VAR_INPUT
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[
+	_execute := execute();	
+]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="_prepare" Id="{542f6515-c2b9-44d6-8c08-2dee2ccb31ed}">
+      <Declaration><![CDATA[(******************************************************************************
+Baustein: FB_UnitTestBase.prepare
+Spezifikation: doc/Spezifikation.pdf, Kap. x.y.z
+-------------------------------------------------------------------------------
+erstellt:
+von:
+Geändert:
+von:
+-------------------------------------------------------------------------------
+Beschreibung
+Diese Methode...
+
+-------------------------------------------------------------------------------
+Input
+-
+
+Output
+-
+******************************************************************************)
+{attribute 'hide'} 
+METHOD INTERNAL _prepare : BOOL
+VAR_INPUT
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[
+	u32Passed 		:= 0;
+	u32Failed 		:= 0;
+	u32StartTime 	:= 0;
+	u32EndTime 		:= 0;
+	o_eResult 		:= EResult_t.eStateSkipped;
+
+	_prepare := prepare();]]></ST>
+      </Implementation>
+    </Method>
     <Method Name="addFailed" Id="{877265ac-7517-465d-8046-dbd413ab22a9}">
       <Declaration><![CDATA[(******************************************************************************
 Baustein: FB_UnitTestBase.addFailed
@@ -61,7 +168,8 @@ Input
 Output
 -
 ******************************************************************************)
-METHOD PRIVATE addFailed : BOOL
+{attribute 'hide'} 
+METHOD INTERNAL addFailed : BOOL
 VAR_INPUT
 	bFatal : BOOL;
 END_VAR
@@ -101,13 +209,18 @@ Input
 Output
 -
 ******************************************************************************)
-METHOD PRIVATE addPassed : BOOL
+{attribute 'hide'} 
+METHOD INTERNAL addPassed : BOOL
 VAR_INPUT
 END_VAR
 ]]></Declaration>
       <Implementation>
         <ST><![CDATA[
-	u32Passed := u32Passed + 1;]]></ST>
+	u32Passed := u32Passed + 1;
+
+	IF o_eResult = eResult_t.eStateSkipped THEN
+		o_eResult := eResult_t.eStatePassed;
+	END_IF;]]></ST>
       </Implementation>
     </Method>
     <Method Name="assertEQUAL" Id="{ad51daad-5695-45d0-ad00-7926bcc015fa}">
@@ -958,7 +1071,8 @@ END_VAR
 ]]></Declaration>
       <Implementation>
         <ST><![CDATA[
-	cleanup := TRUE;
+
+	cleanup := false;
 
 	
 	
@@ -991,7 +1105,7 @@ END_VAR
 ]]></Declaration>
       <Implementation>
         <ST><![CDATA[
-	Execute := TRUE;	
+	Execute := false;	
 ]]></ST>
       </Implementation>
     </Method>
@@ -1015,21 +1129,57 @@ Input
 Output
 -
 ******************************************************************************)
+{attribute 'hide'} 
 METHOD FB_init : BOOL
 VAR_INPUT
 	bInitRetains 	: BOOL; // if TRUE, the retain variables are initialized (warm start / cold start)
 	bInCopyCode 	: BOOL;  // if TRUE, the instance afterwards gets moved into the copy code (online change)
 	i_strId	  		: ObjectId_t;
+	i_strClassName	: ObjectId_t;
+	i_strPath 		: ObjectId_t;
 	i_pTestSuite 	: TestSuiteHandle_t;
 	i_bExecute      : BOOL := true; 
 END_VAR
 ]]></Declaration>
       <Implementation>
         <ST><![CDATA[	
-	strId 		:= i_strId;
-	pTestSuite 	:= i_pTestSuite;
+	strId 		 := i_strId;
+	strClassName := i_strClassName;
+	strPath 	 := i_strPath;
+	bSkipTest  	 := (i_bExecute = false);
+	pTestSuite 	 := i_pTestSuite;
 	
 	register();]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="getClassName" Id="{fe0c9224-6b8f-4968-bd60-2e0b1dc4c7d8}">
+      <Declaration><![CDATA[(******************************************************************************
+Baustein: FB_UnitTestBase.getId
+Spezifikation: doc/Spezifikation.pdf, Kap. x.y.z
+-------------------------------------------------------------------------------
+erstellt:
+von:
+Geändert:
+von:
+-------------------------------------------------------------------------------
+Beschreibung
+Diese Methode
+
+-------------------------------------------------------------------------------
+Input
+-
+
+Output
+-
+******************************************************************************)
+{attribute 'hide'} 
+METHOD PUBLIC getClassName : ObjectId_t
+VAR_INPUT
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[
+	getClassName := strClassName;]]></ST>
       </Implementation>
     </Method>
     <Method Name="getFailed" Id="{03b873b5-0f90-4435-8771-5dc65ef5e0d1}">
@@ -1052,6 +1202,7 @@ Input
 Output
 -
 ******************************************************************************)
+{attribute 'hide'} 
 METHOD PUBLIC getFailed : UDINT
 VAR_INPUT
 END_VAR
@@ -1059,6 +1210,36 @@ END_VAR
       <Implementation>
         <ST><![CDATA[
 	getFailed := u32Failed;]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="getId" Id="{3201004a-c0ba-477e-8045-eedf4c12dcd0}">
+      <Declaration><![CDATA[(******************************************************************************
+Baustein: FB_UnitTestBase.getId
+Spezifikation: doc/Spezifikation.pdf, Kap. x.y.z
+-------------------------------------------------------------------------------
+erstellt:
+von:
+Geändert:
+von:
+-------------------------------------------------------------------------------
+Beschreibung
+Diese Methode
+
+-------------------------------------------------------------------------------
+Input
+-
+
+Output
+-
+******************************************************************************)
+{attribute 'hide'} 
+METHOD PUBLIC getId : ObjectId_t
+VAR_INPUT
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[
+	getId := strId;]]></ST>
       </Implementation>
     </Method>
     <Method Name="getPassed" Id="{2d53e756-4b16-44f6-b072-8c9bc39b56a8}">
@@ -1081,6 +1262,7 @@ Input
 Output
 -
 ******************************************************************************)
+{attribute 'hide'} 
 METHOD PUBLIC getPassed : UDINT
 VAR_INPUT
 END_VAR
@@ -1088,6 +1270,135 @@ END_VAR
       <Implementation>
         <ST><![CDATA[
 	getPassed := u32Passed;]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="getPath" Id="{e3a99e4d-69cf-4522-86d0-57b9b9298cbb}">
+      <Declaration><![CDATA[(******************************************************************************
+Baustein: FB_UnitTestBase.getPassed
+Spezifikation: doc/Spezifikation.pdf, Kap. x.y.z
+-------------------------------------------------------------------------------
+erstellt:
+von:
+Geändert:
+von:
+-------------------------------------------------------------------------------
+Beschreibung
+Diese Methode
+
+-------------------------------------------------------------------------------
+Input
+-
+
+Output
+-
+******************************************************************************)
+{attribute 'hide'} 
+METHOD PUBLIC getPath : ObjectId_t
+VAR_INPUT
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[
+	getPath := strPath;]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="getSystemTime" Id="{dc291d5d-13e7-498d-ab24-a88e76a0f5f2}">
+      <Declaration><![CDATA[(******************************************************************************
+Baustein: FB_UnitTestBase.getPassed
+Spezifikation: doc/Spezifikation.pdf, Kap. x.y.z
+-------------------------------------------------------------------------------
+erstellt:
+von:
+Geändert:
+von:
+-------------------------------------------------------------------------------
+Beschreibung
+Diese Methode
+
+-------------------------------------------------------------------------------
+Input
+-
+
+Output
+-
+******************************************************************************)
+{attribute 'hide'} 
+METHOD PRIVATE getSystemTime : UDINT
+VAR_INPUT
+END_VAR
+VAR
+	u64Time : ULINT;
+END_VAR]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[
+	u64Time := F_GetSystemTime()/10000;
+
+
+	getSystemTime := to_udint(u64Time and 16#FFFFFFFF);]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="getTime" Id="{289a6643-aea8-41f4-9573-9f8f1e125c8e}">
+      <Declaration><![CDATA[(******************************************************************************
+Baustein: FB_UnitTestBase.getPassed
+Spezifikation: doc/Spezifikation.pdf, Kap. x.y.z
+-------------------------------------------------------------------------------
+erstellt:
+von:
+Geändert:
+von:
+-------------------------------------------------------------------------------
+Beschreibung
+Diese Methode
+
+-------------------------------------------------------------------------------
+Input
+-
+
+Output
+-
+******************************************************************************)
+{attribute 'hide'} 
+METHOD PUBLIC getTime : UDINT
+VAR_INPUT
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[
+	getTime := 0;
+
+	IF u32EndTime > u32StartTime THEN
+		getTime := u32EndTime - u32StartTime;
+	END_IF;]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="isSkipped" Id="{e2151300-eb3a-4ef7-9340-3371bd55a074}">
+      <Declaration><![CDATA[(******************************************************************************
+Baustein: FB_UnitTestBase.getPassed
+Spezifikation: doc/Spezifikation.pdf, Kap. x.y.z
+-------------------------------------------------------------------------------
+erstellt:
+von:
+Geändert:
+von:
+-------------------------------------------------------------------------------
+Beschreibung
+Diese Methode
+
+-------------------------------------------------------------------------------
+Input
+-
+
+Output
+-
+******************************************************************************)
+{attribute 'hide'} 
+METHOD INTERNAL isSkipped : BOOL
+VAR_INPUT
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[
+	isSkipped := bSkipTest;]]></ST>
       </Implementation>
     </Method>
     <Method Name="logError" Id="{16a351f0-cd4d-4e8b-bead-0c78616d52ea}">
@@ -1110,6 +1421,7 @@ Input
 Output
 -
 ******************************************************************************)
+{attribute 'hide'} 
 METHOD PROTECTED logError : BOOL
 VAR_INPUT
 	i_strMessage : StrMessage_t;
@@ -1142,7 +1454,8 @@ Input
 Output
 -
 ******************************************************************************)
-METHOD PROTECTED logInfo : BOOL
+{attribute 'hide'} 
+METHOD INTERNAL logInfo : BOOL
 VAR_INPUT
 	i_strMessage : StrMessage_t;
 END_VAR
@@ -1180,10 +1493,7 @@ END_VAR
 ]]></Declaration>
       <Implementation>
         <ST><![CDATA[
-	u32Passed := 0;
-	u32Failed := 0;
-	
-	prepare := true;]]></ST>
+	prepare := false;]]></ST>
       </Implementation>
     </Method>
     <Method Name="register" Id="{4a228bed-2579-4e19-893d-8dcd5cfaa8a3}">
@@ -1206,7 +1516,8 @@ Input
 Output
 -
 ******************************************************************************)
-METHOD PROTECTED register : BOOL
+{attribute 'hide'} 
+METHOD INTERNAL register : BOOL
 VAR_INPUT
 END_VAR
 ]]></Declaration>
@@ -1218,6 +1529,72 @@ END_VAR
 		bRegistered := pTestSuite^.addTestcase(THIS);
 	
 	END_IF]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="setEndTime" Id="{2f133e6d-150e-424a-a9c1-5a581e939cfa}">
+      <Declaration><![CDATA[(******************************************************************************
+Baustein: FB_UnitTestBase.getPassed
+Spezifikation: doc/Spezifikation.pdf, Kap. x.y.z
+-------------------------------------------------------------------------------
+erstellt:
+von:
+Geändert:
+von:
+-------------------------------------------------------------------------------
+Beschreibung
+Diese Methode
+
+-------------------------------------------------------------------------------
+Input
+-
+
+Output
+-
+******************************************************************************)
+{attribute 'hide'} 
+METHOD INTERNAL setEndTime : BOOL
+VAR_INPUT
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[
+	IF u32EndTime = 0 THEN
+		u32EndTime := getSystemTime();
+	END_IF;
+	setEndTime := true;]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="setStartTime" Id="{8cc3bd6c-8aa2-4c8c-8cf1-b74a81a48cb3}">
+      <Declaration><![CDATA[(******************************************************************************
+Baustein: FB_UnitTestBase.getPassed
+Spezifikation: doc/Spezifikation.pdf, Kap. x.y.z
+-------------------------------------------------------------------------------
+erstellt:
+von:
+Geändert:
+von:
+-------------------------------------------------------------------------------
+Beschreibung
+Diese Methode
+
+-------------------------------------------------------------------------------
+Input
+-
+
+Output
+-
+******************************************************************************)
+{attribute 'hide'} 
+METHOD INTERNAL setStartTime : BOOL
+VAR_INPUT
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[
+	IF u32StartTime = 0 THEN
+		u32StartTime   	:= getSystemTime();
+	END_IF;
+	setStartTime := true;]]></ST>
       </Implementation>
     </Method>
     <Method Name="strncmp" Id="{ba3fcb40-c976-48c8-9fd0-cd1feb115e5f}">
@@ -1242,6 +1619,7 @@ Input
 Output
 -
 ******************************************************************************)
+{attribute 'hide'} 
 METHOD PRIVATE strncmp : BOOL
 VAR_INPUT
 	strInput 	: StringHandle_t;
@@ -1307,6 +1685,7 @@ Input
 Output
 -
 ******************************************************************************)
+{attribute 'hide'} 
 METHOD PRIVATE validate : BOOL
 VAR_INPUT
 	var1 : ANY;
@@ -1336,6 +1715,25 @@ END_VAR
       <LineId Id="43" Count="0" />
       <LineId Id="9" Count="0" />
     </LineIds>
+    <LineIds Name="FB_UnitTestBase._cleanup">
+      <LineId Id="118" Count="0" />
+      <LineId Id="120" Count="4" />
+      <LineId Id="52" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_UnitTestBase._execute">
+      <LineId Id="60" Count="0" />
+      <LineId Id="58" Count="0" />
+      <LineId Id="52" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_UnitTestBase._prepare">
+      <LineId Id="28" Count="0" />
+      <LineId Id="5" Count="0" />
+      <LineId Id="29" Count="0" />
+      <LineId Id="78" Count="1" />
+      <LineId Id="102" Count="0" />
+      <LineId Id="125" Count="0" />
+      <LineId Id="55" Count="0" />
+    </LineIds>
     <LineIds Name="FB_UnitTestBase.addFailed">
       <LineId Id="6" Count="0" />
       <LineId Id="5" Count="0" />
@@ -1351,6 +1749,10 @@ END_VAR
     </LineIds>
     <LineIds Name="FB_UnitTestBase.addPassed">
       <LineId Id="6" Count="1" />
+      <LineId Id="32" Count="0" />
+      <LineId Id="31" Count="0" />
+      <LineId Id="30" Count="0" />
+      <LineId Id="33" Count="0" />
     </LineIds>
     <LineIds Name="FB_UnitTestBase.assertEQUAL">
       <LineId Id="9" Count="1" />
@@ -1472,10 +1874,9 @@ END_VAR
       <LineId Id="5" Count="0" />
     </LineIds>
     <LineIds Name="FB_UnitTestBase.cleanup">
-      <LineId Id="70" Count="1" />
-      <LineId Id="28" Count="0" />
-      <LineId Id="5" Count="0" />
-      <LineId Id="51" Count="1" />
+      <LineId Id="118" Count="0" />
+      <LineId Id="120" Count="4" />
+      <LineId Id="52" Count="0" />
     </LineIds>
     <LineIds Name="FB_UnitTestBase.execute">
       <LineId Id="60" Count="0" />
@@ -1484,15 +1885,47 @@ END_VAR
     </LineIds>
     <LineIds Name="FB_UnitTestBase.FB_init">
       <LineId Id="11" Count="1" />
+      <LineId Id="49" Count="0" />
+      <LineId Id="79" Count="0" />
+      <LineId Id="78" Count="0" />
       <LineId Id="9" Count="0" />
       <LineId Id="20" Count="0" />
       <LineId Id="7" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_UnitTestBase.getClassName">
+      <LineId Id="25" Count="0" />
+      <LineId Id="5" Count="0" />
     </LineIds>
     <LineIds Name="FB_UnitTestBase.getFailed">
       <LineId Id="6" Count="0" />
       <LineId Id="5" Count="0" />
     </LineIds>
+    <LineIds Name="FB_UnitTestBase.getId">
+      <LineId Id="25" Count="0" />
+      <LineId Id="5" Count="0" />
+    </LineIds>
     <LineIds Name="FB_UnitTestBase.getPassed">
+      <LineId Id="6" Count="0" />
+      <LineId Id="5" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_UnitTestBase.getPath">
+      <LineId Id="6" Count="0" />
+      <LineId Id="5" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_UnitTestBase.getSystemTime">
+      <LineId Id="6" Count="0" />
+      <LineId Id="5" Count="0" />
+      <LineId Id="10" Count="1" />
+      <LineId Id="9" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_UnitTestBase.getTime">
+      <LineId Id="9" Count="1" />
+      <LineId Id="7" Count="0" />
+      <LineId Id="6" Count="0" />
+      <LineId Id="5" Count="0" />
+      <LineId Id="8" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_UnitTestBase.isSkipped">
       <LineId Id="6" Count="0" />
       <LineId Id="5" Count="0" />
     </LineIds>
@@ -1507,10 +1940,8 @@ END_VAR
       <LineId Id="8" Count="1" />
     </LineIds>
     <LineIds Name="FB_UnitTestBase.prepare">
-      <LineId Id="28" Count="0" />
-      <LineId Id="5" Count="0" />
-      <LineId Id="29" Count="0" />
-      <LineId Id="54" Count="1" />
+      <LineId Id="102" Count="0" />
+      <LineId Id="55" Count="0" />
     </LineIds>
     <LineIds Name="FB_UnitTestBase.register">
       <LineId Id="7" Count="0" />
@@ -1519,6 +1950,18 @@ END_VAR
       <LineId Id="8" Count="0" />
       <LineId Id="10" Count="1" />
       <LineId Id="9" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_UnitTestBase.setEndTime">
+      <LineId Id="10" Count="0" />
+      <LineId Id="7" Count="2" />
+      <LineId Id="5" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_UnitTestBase.setStartTime">
+      <LineId Id="9" Count="0" />
+      <LineId Id="6" Count="0" />
+      <LineId Id="5" Count="0" />
+      <LineId Id="8" Count="0" />
+      <LineId Id="7" Count="0" />
     </LineIds>
     <LineIds Name="FB_UnitTestBase.strncmp">
       <LineId Id="11" Count="4" />

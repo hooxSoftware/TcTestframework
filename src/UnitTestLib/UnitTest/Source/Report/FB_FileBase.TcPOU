@@ -30,10 +30,10 @@ VAR_OUTPUT
 	o_bEmpty 	: BOOL;
 END_VAR
 VAR
-	Buffer      : ARRAY[0..1024] OF BYTE;
+	Buffer      : ARRAY[0..2048] OF BYTE;
 	u32RdIdx    : UDINT;
 	u32WrIdx    : UDINT;
-	u32MaxIdx   : UDINT := 1024;
+	u32MaxIdx   : UDINT := 2048;
 	
 	fbOpen      : FB_FileOpen;
 	fbClose     : FB_FileClose;
@@ -175,6 +175,39 @@ END_VAR
 	addData(ADR(i_strData), len(i_strData));
 	
 	addString := ERetcode_t.eRetDone;]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="addTimeMs" Id="{09890850-d355-4c09-a6ca-8b26f87f9775}">
+      <Declaration><![CDATA[METHOD PUBLIC addTimeMs : ERetCode_t
+VAR_INPUT
+	i_u32Value : UDINT;
+END_VAR
+VAR
+	strTemp  : STRING;
+	s16Len   : INT;
+END_VAR]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[
+
+		strTemp := UDINT_TO_STRING(i_u32Value);
+		s16Len  := len(strTemp);
+
+		IF s16Len < 4 THEN
+
+			WHILE s16Len < 3 DO
+				strTemp := concat('0', strTemp);
+				s16Len  := len(strTemp);
+			END_WHILE
+
+			strTemp := concat('.', strTemp);
+			strTemp := concat('0', strTemp);
+
+		END_IF;
+
+		PRG_UnitTestLib.logInfo(concat('addTimeMs : ' , strTemp));
+
+		addString(strTemp);
+]]></ST>
       </Implementation>
     </Method>
     <Method Name="addValue" Id="{4763b747-b35d-40cf-ae56-8465970254b3}">
@@ -332,7 +365,7 @@ END_VAR
 ]]></Declaration>
       <Implementation>
         <ST><![CDATA[
-	Close := ERetCode_t.eRetFailed;
+	Close := ERetCode_t.eRetBusy;
 	
 	fbClose.hFile 		:= fbOpen.hFile;
 
@@ -342,18 +375,17 @@ END_VAR
 
 		IF trgClose.Q = TRUE THEN
 			o_bOpen 			:= FALSE;
-			Close 				:= ERetCode_t.eRetDone;
-			fbClose.bExecute 	:= FALSE;		
-		ELSE	
-			Close := ERetCode_t.eRetBusy;
 		END_IF;	
 		
 		IF fbClose.bError = TRUE THEN
 			Close := eRetCode_t.eRetFailed;
 		END_IF;			
 
-	ELSE
-		Close := ERetCode_t.eRetBusy;
+	END_IF;
+
+	IF o_bOpen = FALSE THEN
+		Close 				:= ERetCode_t.eRetDone;
+		fbClose.bExecute 	:= FALSE;		
 	END_IF;]]></ST>
       </Implementation>
     </Method>
@@ -451,7 +483,7 @@ END_VAR
 ]]></Declaration>
       <Implementation>
         <ST><![CDATA[
-	open := ERetCode_t.eRetFailed;
+	open := ERetCode_t.eRetBusy;
 	
 	strFileName := i_strName;
 	strFilePath := i_strPath;
@@ -462,15 +494,16 @@ END_VAR
 			
 	IF trgOpen.Q = TRUE THEN
 		o_bOpen := true;
-		open := ERetCode_t.eRetDone;
 		fbOpen.bExecute  := FALSE;		
-	ELSE	
-		open := ERetCode_t.eRetBusy;
 	END_IF;	
 	
 	IF fbOpen.bError = TRUE THEN
 		open := eRetCode_t.eRetFailed;
-	END_IF;				]]></ST>
+	END_IF;	
+
+	IF o_bOpen = TRUE THEN
+		open := eRetCode_t.eRetDone;
+	END_IF;					]]></ST>
       </Implementation>
     </Method>
     <Method Name="reset" Id="{e1e2a994-d63a-4204-a9c4-0718d80f0ccf}">
@@ -673,6 +706,28 @@ END_VAR
       <LineId Id="40" Count="2" />
       <LineId Id="5" Count="0" />
     </LineIds>
+    <LineIds Name="FB_FileBase.addTimeMs">
+      <LineId Id="9" Count="0" />
+      <LineId Id="16" Count="0" />
+      <LineId Id="12" Count="0" />
+      <LineId Id="14" Count="0" />
+      <LineId Id="40" Count="0" />
+      <LineId Id="39" Count="0" />
+      <LineId Id="33" Count="0" />
+      <LineId Id="32" Count="0" />
+      <LineId Id="35" Count="1" />
+      <LineId Id="34" Count="0" />
+      <LineId Id="44" Count="0" />
+      <LineId Id="43" Count="0" />
+      <LineId Id="42" Count="0" />
+      <LineId Id="49" Count="0" />
+      <LineId Id="41" Count="0" />
+      <LineId Id="53" Count="0" />
+      <LineId Id="51" Count="0" />
+      <LineId Id="54" Count="0" />
+      <LineId Id="48" Count="0" />
+      <LineId Id="5" Count="0" />
+    </LineIds>
     <LineIds Name="FB_FileBase.addValue">
       <LineId Id="7" Count="0" />
       <LineId Id="5" Count="0" />
@@ -735,15 +790,17 @@ END_VAR
       <LineId Id="82" Count="0" />
       <LineId Id="25" Count="1" />
       <LineId Id="53" Count="0" />
-      <LineId Id="27" Count="3" />
       <LineId Id="11" Count="0" />
       <LineId Id="17" Count="0" />
       <LineId Id="19" Count="1" />
       <LineId Id="18" Count="0" />
-      <LineId Id="80" Count="0" />
-      <LineId Id="79" Count="0" />
       <LineId Id="81" Count="0" />
       <LineId Id="78" Count="0" />
+      <LineId Id="107" Count="0" />
+      <LineId Id="106" Count="0" />
+      <LineId Id="110" Count="0" />
+      <LineId Id="109" Count="0" />
+      <LineId Id="108" Count="0" />
     </LineIds>
     <LineIds Name="FB_FileBase.getFileName">
       <LineId Id="5" Count="0" />
@@ -761,13 +818,13 @@ END_VAR
       <LineId Id="14" Count="0" />
       <LineId Id="10" Count="1" />
       <LineId Id="56" Count="0" />
-      <LineId Id="28" Count="0" />
       <LineId Id="27" Count="0" />
-      <LineId Id="15" Count="1" />
       <LineId Id="12" Count="0" />
       <LineId Id="18" Count="0" />
       <LineId Id="20" Count="1" />
       <LineId Id="19" Count="0" />
+      <LineId Id="82" Count="2" />
+      <LineId Id="81" Count="0" />
     </LineIds>
     <LineIds Name="FB_FileBase.reset">
       <LineId Id="14" Count="5" />

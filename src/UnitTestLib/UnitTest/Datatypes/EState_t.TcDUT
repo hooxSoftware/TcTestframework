@@ -11,6 +11,7 @@ TYPE EState_t :
 	eStateExecute,
 	eStateCleanUp,
 	eStateBuildCoverageFile,
+	eStateBuildUnitTestFile,
 	eStateReady,
 	eStateExport,
 	eStateError,

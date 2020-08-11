@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4022.18">
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.3">
   <POU Name="FB_Testsuite" Id="{ae8bbd51-73a9-4be0-b082-2ec8a068e7f6}" SpecialFunc="None">
     <Declaration><![CDATA[(******************************************************************************
 Baustein: FB_Testsuite
@@ -31,6 +31,7 @@ VAR_OUTPUT
 END_VAR
 VAR
 	strId			: ObjectId_t;
+	strPath			: ObjectId_t;
 	bRegistered     : BOOL;
 	a_pTest  		: ARRAY [0..255] OF TestCaseHandle_t;
 	pTest     		: TestCaseHandle_t;
@@ -69,7 +70,7 @@ END_VAR
 		sStatistic.u32Asserts 	:= 0;
 
 		IF pTest <> 0 THEN
-			IF pTest^.prepare() = TRUE THEN
+			IF pTest^._prepare() = TRUE THEN
 				pTest 	:= getNextTestCase();
 			END_IF;
 		ELSE
@@ -80,41 +81,49 @@ END_VAR
 	EState_t.eStateExecute:
 
 		IF pTest <> 0 THEN
-			IF pTest^.execute() = TRUE THEN
 
-				sStatistic.u32Executed := sStatistic.u32Executed + 1;	
-			
-				sStatistic.u32Passed 	:= sStatistic.u32Passed + pTest^.getPassed();
-				sStatistic.u32Failed 	:= sStatistic.u32Failed + pTest^.getFailed();
-				sStatistic.u32Asserts   := sStatistic.u32Passed + sStatistic.u32Failed;
+			IF pTest^.isSkipped() = FALSE THEN
+
+				pTest^.setStartTime();
+
+				IF pTest^._execute() = TRUE THEN
+					pTest^.setEndTime();
+					sStatistic.u32Executed := sStatistic.u32Executed + 1;	
 				
-				CASE o_eResult OF 
-
-				EResult_t.eStatePassed:
-					// Status des letzen Tests übernehmen
-					o_eResult := pTest^.o_eResult;
-
-				EResult_t.eStateFailed:
-					// Status nur übernehmen wenn ein Fatal-Status
-					// ermittelt wird und der Test sofort abgebrochen
-					// werden soll.
-					IF pTest^.o_eResult = EResult_t.eStateFailedFatal THEN
+					sStatistic.u32Passed 	:= sStatistic.u32Passed + pTest^.getPassed();
+					sStatistic.u32Failed 	:= sStatistic.u32Failed + pTest^.getFailed();
+					sStatistic.u32Asserts   := sStatistic.u32Passed + sStatistic.u32Failed;
+					
+					CASE o_eResult OF 
+	
+					EResult_t.eStatePassed:
+						// Status des letzen Tests übernehmen
 						o_eResult := pTest^.o_eResult;
-						o_eState  := EState_t.eStateCleanUp;
-						pTest 	  := getFirstTestCase();	
+	
+					EResult_t.eStateFailed:
+						// Status nur übernehmen wenn ein Fatal-Status
+						// ermittelt wird und der Test sofort abgebrochen
+						// werden soll.
+						IF pTest^.o_eResult = EResult_t.eStateFailedFatal THEN
+							o_eResult := pTest^.o_eResult;
+							o_eState  := EState_t.eStateCleanUp;
+							pTest 	  := getFirstTestCase();	
+						END_IF;
+	
+					EResult_t.eStateFailedFatal:
+	
+						o_eState := EState_t.eStateCleanUp;
+						pTest 	:= getFirstTestCase();					
+	
+					END_CASE;
+	
+					IF o_eResult <> EResult_t.eStateFailedFatal THEN
+						pTest 	 := getNextTestCase();
 					END_IF;
-
-				EResult_t.eStateFailedFatal:
-
-					o_eState := EState_t.eStateCleanUp;
-					pTest 	:= getFirstTestCase();					
-
-				END_CASE;
-
-				IF o_eResult <> EResult_t.eStateFailedFatal THEN
-					pTest 	 := getNextTestCase();
+	
 				END_IF;
-
+			ELSE
+				pTest 	 := getNextTestCase();
 			END_IF;
 		ELSE
 			o_eState := EState_t.eStateCleanUp;
@@ -124,7 +133,7 @@ END_VAR
 	ESTate_t.eStateCleanUp:
 
 		IF pTest <> 0 THEN
-			IF pTest^.cleanup() = TRUE THEN
+			IF pTest^._cleanup() = TRUE THEN
 				pTest 	:= getNextTestCase();
 			END_IF;
 		ELSE
@@ -174,6 +183,7 @@ i_pTestCase
 Output
 -
 ******************************************************************************)
+{attribute 'hide'} 
 METHOD PUBLIC addTestcase : BOOL
 VAR_INPUT
 	i_pTestCase : TestCaseHandle_t;
@@ -216,17 +226,19 @@ i_pTestCase
 Output
 -
 ******************************************************************************)
+{attribute 'hide'} 
 METHOD FB_init : BOOL
 VAR_INPUT
 	bInitRetains 	: BOOL; // if TRUE, the retain variables are initialized (warm start / cold start)
 	bInCopyCode 	: BOOL;  // if TRUE, the instance afterwards gets moved into the copy code (online change)
 	i_strId	  		: ObjectId_t;
+	i_strPath		: ObjectId_t;
 END_VAR
 ]]></Declaration>
       <Implementation>
         <ST><![CDATA[
-	strId := i_StrId;
-	
+	strId 	:= i_StrId;
+	strPath := i_strPath;
 	register();]]></ST>
       </Implementation>
     </Method>
@@ -250,6 +262,7 @@ Input
 Output
 -
 ******************************************************************************)
+{attribute 'hide'} 
 METHOD PUBLIC getExecuted : UDINT
 VAR_INPUT
 END_VAR
@@ -279,6 +292,7 @@ Input
 Output
 -
 ******************************************************************************)
+{attribute 'hide'} 
 METHOD PUBLIC getFailed : UDINT
 VAR_INPUT
 END_VAR
@@ -308,7 +322,8 @@ Input
 Output
 -
 ******************************************************************************)
-METHOD PRIVATE getFirstTestCase : TestCaseHandle_t
+{attribute 'hide'} 
+METHOD PUBLIC getFirstTestCase : TestCaseHandle_t
 VAR_INPUT
 END_VAR
 ]]></Declaration>
@@ -338,6 +353,7 @@ Input
 Output
 -
 ******************************************************************************)
+{attribute 'hide'} 
 METHOD PUBLIC getId : STRING
 VAR_INPUT
 END_VAR
@@ -367,7 +383,8 @@ Input
 Output
 -
 ******************************************************************************)
-METHOD PRIVATE getNextTestCase : TestCaseHandle_t
+{attribute 'hide'} 
+METHOD PUBLIC getNextTestCase : TestCaseHandle_t
 VAR_INPUT
 END_VAR
 ]]></Declaration>
@@ -401,6 +418,7 @@ Input
 Output
 -
 ******************************************************************************)
+{attribute 'hide'} 
 METHOD PUBLIC getNoOfAsserts : UDINT
 VAR_INPUT
 END_VAR
@@ -430,6 +448,7 @@ Input
 Output
 -
 ******************************************************************************)
+{attribute 'hide'} 
 METHOD PUBLIC getNoOfTests : UDINT
 VAR_INPUT
 END_VAR
@@ -459,6 +478,7 @@ Input
 Output
 -
 ******************************************************************************)
+{attribute 'hide'} 
 METHOD PUBLIC getPassed : UDINT
 VAR_INPUT
 END_VAR
@@ -466,6 +486,17 @@ END_VAR
       <Implementation>
         <ST><![CDATA[
 	getPassed := sStatistic.u32Passed;]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="getPath" Id="{0c655e80-1810-4039-ac18-fb19e58b187c}">
+      <Declaration><![CDATA[{attribute 'hide'} 
+METHOD PUBLIC getPath : ObjectId_t
+VAR_INPUT
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[
+	getPath := strPath;]]></ST>
       </Implementation>
     </Method>
     <Method Name="logInfo" Id="{4162b475-e111-4ea4-af72-09599d7cdb23}">
@@ -488,6 +519,7 @@ i_strMessage
 Output
 -
 ******************************************************************************)
+{attribute 'hide'} 
 METHOD PROTECTED logInfo : BOOL
 VAR_INPUT
 	i_strMessage : StrMessage_t;
@@ -520,6 +552,7 @@ Input
 Output
 -
 ******************************************************************************)
+{attribute 'hide'} 
 METHOD PROTECTED register : BOOL
 VAR_INPUT
 END_VAR
@@ -542,7 +575,18 @@ END_VAR
       </XmlArchive>
     </ObjectProperties>
     <LineIds Name="FB_Testsuite">
-      <LineId Id="3" Count="111" />
+      <LineId Id="3" Count="29" />
+      <LineId Id="162" Count="0" />
+      <LineId Id="34" Count="8" />
+      <LineId Id="158" Count="0" />
+      <LineId Id="154" Count="0" />
+      <LineId Id="156" Count="0" />
+      <LineId Id="43" Count="0" />
+      <LineId Id="157" Count="0" />
+      <LineId Id="44" Count="35" />
+      <LineId Id="159" Count="1" />
+      <LineId Id="155" Count="0" />
+      <LineId Id="80" Count="35" />
       <LineId Id="2" Count="0" />
     </LineIds>
     <LineIds Name="FB_Testsuite.addTestcase">
@@ -582,6 +626,10 @@ END_VAR
       <LineId Id="2" Count="0" />
     </LineIds>
     <LineIds Name="FB_Testsuite.getPassed">
+      <LineId Id="3" Count="0" />
+      <LineId Id="2" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_Testsuite.getPath">
       <LineId Id="3" Count="0" />
       <LineId Id="2" Count="0" />
     </LineIds>
