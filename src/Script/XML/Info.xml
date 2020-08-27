@@ -1,0 +1,40 @@
+<Info>
+	<POU Id="1" Name="FB_MapRS511" Path="POUs/FB_MapRS511">
+		<Line Nb="1"/>
+		<Line Nb="18"/>
+		<Line Nb="26"/>
+		<Line Nb="29"/>
+		<Line Nb="32"/>
+		<Line Nb="41"/>	
+		<Line Nb="45"/>
+		<Line Nb="50"/>
+		<Line Nb="55"/>	
+		<Line Nb="61"/>
+		<Line Nb="63"/>	
+		<Line Nb="65"/>
+		<Line Nb="73"/>
+		<Line Nb="78"/>		
+		<Line Nb="80"/>
+		<Line Nb="88"/>
+		<Line Nb="92"/>		
+	</POU>
+	<POU Id="2" Name="PRG_SerialControl" Path="POUs/PRG_SerialControl">
+		<Line Nb="6"/>
+		<Line Nb="21"/>
+		<Line Nb="34"/>
+	</POU>
+	<POU Id="3" Name="fun_byte_to_proctype" Path="POUs/fun_byte_to_proctype">
+		<Line Nb="5"/>
+		<Line Nb="9"/>
+		<Line Nb="13"/>
+		<Line Nb="17"/>
+		<Line Nb="21"/>
+		<Line Nb="25"/>	
+		<Line Nb="29"/>
+		<Line Nb="33"/>
+		<Line Nb="37"/>		
+	</POU>
+	<POU Id="4" Name="PRG_Main" Path="POUs/PRG_Main">
+		<Line Nb="6"/>
+	</POU>
+</Info>

@@ -32,7 +32,13 @@
     <Folder Include="XML\" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Script.ps1" />
+    <Compile Include="BuildCoverageResult.ps1" />
+    <Compile Include="BuildResult.ps1" />
+    <Compile Include="CodeCheck.ps1" />
+    <Compile Include="CodeCoverage.ps1" />
+    <Compile Include="CreateXml.ps1" />
+    <Compile Include="Jenkins.ps1" />
+    <Compile Include="VisualStudio.ps1" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Schema\FrameworkLasal.xsd" />
@@ -40,7 +46,11 @@
     <Content Include="Schema\Hardware\Beckhoff.xsd" />
     <Content Include="Schema\Hardware\Sigmatek.xsd" />
     <Content Include="Schema\Identifier.xsd" />
+    <Content Include="XML\coverage.xml" />
+    <Content Include="XML\coverageResult.xml" />
     <Content Include="XML\CP112_70A2.xml" />
+    <Content Include="XML\Info.xml" />
+    <Content Include="XML\unittestResult.xml" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Target Name="Build" />

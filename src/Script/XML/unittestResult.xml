@@ -1,0 +1,24 @@
+<?xml version="1.0" ?>
+<testsuites>
+<testsuite name="Programme" tests="3" disabled="0" errors="0" failures="0" hostname="" id="1" package="Raumedic.TcWorkspace">
+<testcase name="TF_1.1" assertions="10" classname="Raumedic.POUs.PRG_Main" time="0.000">
+<passed/>
+</testcase>
+<testcase name="TF_1.3" assertions="1" classname="Raumedic.POUs.PRG_Main" time="0.510">
+<passed/>
+</testcase>
+<testcase name="TF_1.2" assertions="10" classname="Raumedic.POUs.PRG_SerialControl" time="0.000">
+<passed/>
+</testcase>
+</testsuite>
+<testsuite name="Funktionen" tests="1" disabled="0" errors="0" failures="0" hostname="" id="2" package="Raumedic.TcWorkspace">
+<testcase name="TF_2.1" assertions="10" classname="Raumedic.POUs.fun_byte_to_proctype" time="0.000">
+<passed/>
+</testcase>
+</testsuite>
+<testsuite name="Funktionsbausteine" tests="1" disabled="0" errors="0" failures="0" hostname="" id="3" package="Raumedic.TcWorkspace">
+<testcase name="TF_3.2" assertions="10" classname="Raumedic.POUs.FB_MapRs511" time="0.000">
+<passed/>
+</testcase>
+</testsuite>
+</testsuites>
