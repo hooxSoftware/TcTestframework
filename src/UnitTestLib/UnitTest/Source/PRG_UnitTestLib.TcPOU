@@ -33,6 +33,10 @@ VAR_OUTPUT
 	o_sStatistic	: SStatistic_t;
 END_VAR
 VAR
+	bHwStart AT %I* : BOOL;
+	bHwBusy  AT %Q* : BOOL;
+	bHwReady AT %Q* : BOOL;
+	
 	a_pTestSuite 	: ARRAY [0..255] OF TestSuiteHandle_t;
 	u16TestSuites 	: UINT;
 	u16Index	  	: UINT;
@@ -77,12 +81,15 @@ END_VAR
 	
 	EState_t.eStateIdle:
 	
-		IF i_bStart = TRUE THEN
+		IF i_bStart = TRUE OR bHwStart = TRUE THEN
 			logInfo('+++++++++++++ Testbeginn ++++++++++++++');
 			o_eState := EState_t.eStatePrepare;
+			bHwReady := FALSE;
 		END_IF
 	
 	EState_t.eStatePrepare:
+	
+		bHwBusy := TRUE;
 		
 		o_eResult 	  				:= EResult_t.eStatePassed;
 		o_sStatistic.u32Executed 	:= 0;
@@ -152,7 +159,10 @@ END_VAR
 
 	EState_t.eStateReady:
 
-		IF i_bStart = FALSE THEN
+		bHwReady := TRUE;
+		bHwBusy  := FALSE;
+		IF i_bStart  = FALSE AND 
+			bHwStart = FALSE THEN
 			o_eState := EState_t.eStateExport;
 		END_IF
 
@@ -164,7 +174,7 @@ END_VAR
 
 	EState_t.eStateError,
 	EState_t.eStateLicenseError:
-	
+		bHwBusy  := FALSE;
 		o_eState := EState_t.eStateError;
 
 	END_CASE]]></ST>
@@ -774,9 +784,12 @@ END_VAR
       <LineId Id="47" Count="0" />
       <LineId Id="57" Count="1" />
       <LineId Id="217" Count="0" />
-      <LineId Id="59" Count="1" />
+      <LineId Id="59" Count="0" />
+      <LineId Id="954" Count="0" />
+      <LineId Id="60" Count="0" />
       <LineId Id="48" Count="0" />
       <LineId Id="52" Count="0" />
+      <LineId Id="957" Count="1" />
       <LineId Id="433" Count="0" />
       <LineId Id="114" Count="0" />
       <LineId Id="251" Count="3" />
@@ -824,8 +837,12 @@ END_VAR
       <LineId Id="780" Count="0" />
       <LineId Id="612" Count="0" />
       <LineId Id="86" Count="0" />
+      <LineId Id="955" Count="0" />
       <LineId Id="779" Count="0" />
-      <LineId Id="89" Count="2" />
+      <LineId Id="956" Count="0" />
+      <LineId Id="89" Count="0" />
+      <LineId Id="959" Count="0" />
+      <LineId Id="90" Count="1" />
       <LineId Id="223" Count="0" />
       <LineId Id="222" Count="0" />
       <LineId Id="246" Count="0" />

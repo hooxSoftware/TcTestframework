@@ -3,11 +3,19 @@
 #
 Import-Module C:\TwinCAT\AdsApi\Powershell\TcXaeMgmt\TcXaeMgmt.psd1
 
+$Destination = 'C:\Users\Jenkins\Documents\BuildServer\workspace\1000_CoverageTest\Coverage'
+$Source1     = 'C:\Users\Administrator\Desktop\TestResult\Coverage.xml'
+$Source2     = 'C:\Users\Administrator\Desktop\TestResult\Info.xml'
+$Source3     = 'C:\Users\Administrator\Desktop\TestResult\UnitTest.xml'
+$Temp1       = 'C:\Users\Jenkins\Documents\BuildServer\workspace\1000_CoverageTest\Coverage\Coverage.xml'
+$Temp2       = 'C:\Users\Jenkins\Documents\BuildServer\workspace\1000_CoverageTest\Coverage\Info.xml'
+$Temp3       = 'C:\Users\Jenkins\Documents\BuildServer\workspace\1000_CoverageTest\Coverage\unittestResult.xml'
 
-$NetId = "192.168.102.121.1.1"
+
+$NetId      = "192.168.102.121.1.1"
 $PortNumber = 851
-$Variable = "PRG_UnitTestLib.i_bStart"
-$Variable2 = "PRG_UnitTestLib.o_eState"
+$Variable   = "PRG_UnitTestLib.i_bStart"
+$Variable2  = "PRG_UnitTestLib.o_eState"
 
 $TestReady = 0
 
@@ -43,16 +51,6 @@ if ($AdsRoute)
 }	
 
 
-
-$Destination = 'C:\Users\Jenkins\Documents\BuildServer\workspace\1000_CoverageTest\Coverage'
-$Source1 = 'C:\Users\Administrator\Desktop\TestResult\Coverage.xml'
-$Source2 = 'C:\Users\Administrator\Desktop\TestResult\Info.xml'
-$Source3 = 'C:\Users\Administrator\Desktop\TestResult\UnitTest.xml'
-$Temp1   = 'C:\Users\Jenkins\Documents\BuildServer\workspace\1000_CoverageTest\Coverage\Coverage.xml'
-$Temp2   = 'C:\Users\Jenkins\Documents\BuildServer\workspace\1000_CoverageTest\Coverage\Info.xml'
-$Temp3   = 'C:\Users\Jenkins\Documents\BuildServer\workspace\1000_CoverageTest\Coverage\unittestResult.xml'
-
-
 Push-Location $Destination
 
 
@@ -64,9 +62,6 @@ try
     Copy-AdsFile -Address CX-41C4F6 -Path $Source2 -Destination $Temp2 -Directory Generic -Force
 
     Copy-AdsFile -Address CX-41C4F6 -Path $Source3 -Destination $Temp3 -Directory Generic -Force
-
-
-
 
 }
 catch

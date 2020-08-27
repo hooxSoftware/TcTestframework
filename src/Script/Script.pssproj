@@ -27,18 +27,20 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Folder Include="Snippets\" />
     <Folder Include="Schema\" />
     <Folder Include="Schema\Hardware\" />
     <Folder Include="XML\" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="BuildCoverageResult.ps1" />
-    <Compile Include="BuildResult.ps1" />
-    <Compile Include="CodeCheck.ps1" />
+    <Compile Include="BuildProject.ps1" />
+    <Compile Include="Snippets\BuildCoverageResult.ps1" />
+    <Compile Include="CreateCoverageResult.ps1" />
+    <Compile Include="Snippets\CodeCheck.ps1" />
     <Compile Include="CodeCoverage.ps1" />
-    <Compile Include="CreateXml.ps1" />
-    <Compile Include="Jenkins.ps1" />
-    <Compile Include="VisualStudio.ps1" />
+    <Compile Include="Snippets\CreateXml.ps1" />
+    <Compile Include="Snippets\Jenkins.ps1" />
+    <Compile Include="Snippets\VisualStudio.ps1" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Schema\FrameworkLasal.xsd" />
