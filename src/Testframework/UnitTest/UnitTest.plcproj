@@ -113,6 +113,9 @@
     <Compile Include="Source\Report\FB_TextReport.TcPOU">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Test\FB_Test_Base.TcPOU">
+      <SubType>Code</SubType>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Datatypes" />
@@ -120,6 +123,7 @@
     <Folder Include="Datatypes\Report" />
     <Folder Include="Source" />
     <Folder Include="Source\Report" />
+    <Folder Include="Test" />
   </ItemGroup>
   <ItemGroup>
     <PlaceholderReference Include="Tc2_Standard">
