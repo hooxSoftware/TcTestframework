@@ -121,6 +121,7 @@
     <Folder Include="Datatypes" />
     <Folder Include="Datatypes\Coverage" />
     <Folder Include="Datatypes\Report" />
+    <Folder Include="GVLs" />
     <Folder Include="Source" />
     <Folder Include="Source\Report" />
     <Folder Include="Test" />
