@@ -300,7 +300,7 @@ END_VAR
 	
 	ELSE
 		ADSLOGSTR(msgCtrlMask 	:= ADSLOG_MSGTYPE_ERROR , 
-				  msgFmtStr 	:= 'TestReportBase.AddValue: Unbekannter Datentyp!', 
+				  msgFmtStr 	:= 'TestReportBase.AddValue - Unbekannter Datentyp!', 
 				  strArg 		:= '');
 	END_CASE;
 	

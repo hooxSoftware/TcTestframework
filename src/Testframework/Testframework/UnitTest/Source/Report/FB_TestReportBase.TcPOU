@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4022.18">
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.3">
   <POU Name="FB_TestReportBase" Id="{57a69a83-3743-4ea7-bdac-7bf43020bf6d}" SpecialFunc="None">
     <Declaration><![CDATA[(******************************************************************************
 Baustein: FB_TestReportBase
@@ -261,7 +261,7 @@ END_VAR
 
 	ELSE
 		ADSLOGSTR(msgCtrlMask 	:= ADSLOG_MSGTYPE_ERROR , 
-				  msgFmtStr 	:= 'TestReportBase.AddValue: Unbekannter Datentyp!', 
+				  msgFmtStr 	:= 'TestReportBase.AddValue - Unbekannter Datentyp!', 
 				  strArg 		:= '');
 	END_CASE;
 	
