@@ -682,7 +682,7 @@ END_VAR
         <ST><![CDATA[
 	LineCovered := TRUE;
 	
-	IF o_eState = EState_t.eStateExecute THEN
+	IF o_eState <> EState_t.eStateIdle THEN
 
 		IF (u16Pou  > 0 AND u16Pou  <= u32MaxPouIdx ) AND
            (u16Line > 0 AND u16Line <= u32MaxLineIdx) THEN
