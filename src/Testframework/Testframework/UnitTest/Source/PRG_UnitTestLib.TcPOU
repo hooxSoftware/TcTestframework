@@ -682,7 +682,9 @@ END_VAR
         <ST><![CDATA[
 	LineCovered := TRUE;
 	
-	IF o_eState <> EState_t.eStateIdle THEN
+	IF o_eState = EState_t.eStatePrepare OR 
+	   o_eState = EState_t.eStateExecute OR 
+	   o_eState = EState_t.eStateCleanUp THEN
 
 		IF (u16Pou  > 0 AND u16Pou  <= u32MaxPouIdx ) AND
            (u16Line > 0 AND u16Line <= u32MaxLineIdx) THEN
@@ -1005,6 +1007,7 @@ END_VAR
       <LineId Id="8" Count="0" />
       <LineId Id="5" Count="0" />
       <LineId Id="34" Count="1" />
+      <LineId Id="70" Count="1" />
       <LineId Id="45" Count="0" />
       <LineId Id="44" Count="0" />
       <LineId Id="48" Count="0" />
