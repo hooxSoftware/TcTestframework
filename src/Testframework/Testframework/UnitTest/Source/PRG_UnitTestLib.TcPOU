@@ -58,8 +58,8 @@ VAR
 	sCodeCoverage	: SCodeCoverage_t;
 	pTestCase  		: TestCaseHandle_t;
 	
-	u32MaxLineIdx   : UDINT;
-	u32MaxPouIdx    : UDINT;
+	u32MaxLineIdx   : UDINT; (* maximale Zeilenanzahl   *)
+	u32MaxPouIdx    : UDINT; (* maximale Bausteinanzahl *)
 END_VAR
 ]]></Declaration>
     <Implementation>
@@ -357,14 +357,14 @@ END_VAR
 		fbCoverage.addString('<Result>');
 		fbCoverage.addCrlf();
 
-		FOR u16PouIdx := 1 TO sCodeCoverage.u16MaxIndex DO
+		FOR u16PouIdx := 1 TO sCodeCoverage.u16MaxPouIndex DO
 
 			fbCoverage.addString('<POU Id="');
 			fbCoverage.addValue(u16PouIdx);
 			fbCoverage.addString('">');
 			fbCoverage.addCrlf();
 
-			FOR u16LineIdx := 1 TO 1000 DO
+			FOR u16LineIdx := 1 TO sCodeCoverage.u16MaxLineIndex DO
 
 				IF sCodeCoverage.aPou[u16PouIdx][u16LineIdx] > 0 THEN
 
@@ -687,10 +687,13 @@ END_VAR
 		IF (u16Pou  > 0 AND u16Pou  <= u32MaxPouIdx ) AND
            (u16Line > 0 AND u16Line <= u32MaxLineIdx) THEN
 
-			IF u16Pou > sCodeCoverage.u16MaxIndex THEN
-				sCodeCoverage.u16MaxIndex := u16Pou;
+			IF u16Pou > sCodeCoverage.u16MaxPouIndex THEN
+				sCodeCoverage.u16MaxPouIndex := u16Pou;
 			END_IF;
-
+			IF u16Line > sCodeCoverage.u16MaxLineIndex THEN
+				sCodeCoverage.u16MaxLineIndex := u16Line;
+			END_IF;
+			
 			IF sCodeCoverage.aPou[u16Pou][u16Line] < 255 THEN
 				sCodeCoverage.aPou[u16Pou][u16Line] := sCodeCoverage.aPou[u16Pou][u16Line]+1;
 			END_IF;
@@ -1009,7 +1012,9 @@ END_VAR
       <LineId Id="56" Count="0" />
       <LineId Id="58" Count="0" />
       <LineId Id="57" Count="0" />
+      <LineId Id="67" Count="1" />
       <LineId Id="59" Count="0" />
+      <LineId Id="69" Count="0" />
       <LineId Id="49" Count="0" />
       <LineId Id="47" Count="0" />
       <LineId Id="50" Count="0" />

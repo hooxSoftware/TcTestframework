@@ -3,7 +3,8 @@
   <DUT Name="SCodeCoverage_t" Id="{c8bc135b-fcda-4943-82cb-c41edf0c3723}">
     <Declaration><![CDATA[TYPE SCodeCoverage_t :
 STRUCT
-	u16MaxIndex 	: UINT;
+	u16MaxPouIndex 	: UINT; (* speichert den größten Bausteinindex *)
+	u16MaxLineIndex : UINT; (* Speichert den größten Zeilenindex*)
 	aPou 			: ARRAY[1..500] OF ALines_t;
 END_STRUCT
 END_TYPE
