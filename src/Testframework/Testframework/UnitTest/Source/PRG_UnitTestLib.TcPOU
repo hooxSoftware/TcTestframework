@@ -57,6 +57,9 @@ VAR
 	u16TestSuitIdx	: UINT;
 	sCodeCoverage	: SCodeCoverage_t;
 	pTestCase  		: TestCaseHandle_t;
+	
+	u32MaxLineIdx   : UDINT;
+	u32MaxPouIdx    : UDINT;
 END_VAR
 ]]></Declaration>
     <Implementation>
@@ -71,6 +74,8 @@ END_VAR
 	
 	EState_t.eStateInit:	
 
+		u32MaxPouIdx  := SIZEOF(sCodeCoverage.aPou)    / SIZEOF(sCodeCoverage.aPou[1]);
+		u32MaxLineIdx := SIZEOF(sCodeCoverage.aPou[1]) / SIZEOF(sCodeCoverage.aPou[1][1]);
 		//IF checkLicense() = ERetCode_t.eRetDone THEN
 			
 			IF i_bStart = FALSE THEN 
@@ -679,8 +684,8 @@ END_VAR
 	
 	IF o_eState = EState_t.eStateExecute THEN
 
-		IF (u16Pou  > 0 AND u16Pou  <= 2000) AND
-           (u16Line > 0 AND u16Line <= 1000) THEN
+		IF (u16Pou  > 0 AND u16Pou  <= u32MaxPouIdx ) AND
+           (u16Line > 0 AND u16Line <= u32MaxLineIdx) THEN
 
 			IF u16Pou > sCodeCoverage.u16MaxIndex THEN
 				sCodeCoverage.u16MaxIndex := u16Pou;
@@ -774,7 +779,9 @@ END_VAR
       <LineId Id="9" Count="0" />
       <LineId Id="42" Count="0" />
       <LineId Id="45" Count="0" />
+      <LineId Id="1020" Count="0" />
       <LineId Id="163" Count="0" />
+      <LineId Id="1021" Count="0" />
       <LineId Id="315" Count="0" />
       <LineId Id="318" Count="0" />
       <LineId Id="160" Count="1" />
