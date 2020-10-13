@@ -5,7 +5,7 @@
 STRUCT
 	u16MaxPouIndex 	: UINT; (* speichert den größten Bausteinindex *)
 	u16MaxLineIndex : UINT; (* Speichert den größten Zeilenindex*)
-	aPou 			: ARRAY[1..500] OF ALines_t;
+	aPou 			: ARRAY[1..PRG_UnitTestlib.u32MaxPouIdx] OF ALines_t;
 END_STRUCT
 END_TYPE
 ]]></Declaration>
