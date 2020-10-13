@@ -12,7 +12,7 @@ END_VAR
 ]]></Declaration>
     <Implementation>
       <ST><![CDATA[
-	fbDelay(PT := t#250ms);]]></ST>
+]]></ST>
     </Implementation>
     <Method Name="cleanup" Id="{bf46245b-2a10-4270-8cec-3e1701bea762}">
       <Declaration><![CDATA[(******************************************************************************
@@ -79,6 +79,8 @@ END_VAR
 ]]></Declaration>
       <Implementation>
         <ST><![CDATA[
+	fbDelay(PT := t#250ms);
+
 	bValue1 := TRUE;
 	bValue2 := TRUE;
 	assertEQUAL(bValue1, bValue2);
@@ -135,6 +137,7 @@ END_VAR
       <LineId Id="48" Count="1" />
     </LineIds>
     <LineIds Name="FB_Test_Base_Delay.execute">
+      <LineId Id="76" Count="1" />
       <LineId Id="40" Count="0" />
       <LineId Id="34" Count="0" />
       <LineId Id="41" Count="0" />
