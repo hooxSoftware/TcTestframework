@@ -1,20 +1,22 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.3">
-  <POU Name="FB_Test_Base" Id="{f4823231-d10b-40e2-9073-1f2bc0a0599a}" SpecialFunc="None">
-    <Declaration><![CDATA[FUNCTION_BLOCK FB_Test_Base EXTENDS FB_UnitTestBase
+  <POU Name="FB_Test_Base_Delay" Id="{e59d7c4a-e04d-4575-8e5a-1de80b51c7c7}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION_BLOCK FB_Test_Base_Delay EXTENDS FB_UnitTestBase
 VAR_INPUT
 END_VAR
 VAR_OUTPUT
 END_VAR
 VAR
+	fbDelay : TON;
 END_VAR
 ]]></Declaration>
     <Implementation>
-      <ST><![CDATA[]]></ST>
+      <ST><![CDATA[
+	fbDelay(PT := t#250ms);]]></ST>
     </Implementation>
-    <Method Name="cleanup" Id="{49bced59-0780-425b-9290-17b9f069ca47}">
+    <Method Name="cleanup" Id="{bf46245b-2a10-4270-8cec-3e1701bea762}">
       <Declaration><![CDATA[(******************************************************************************
-Baustein: FB_Test_Base.cleanup
+Baustein: FB_Test_Base_Delay.cleanup
 Spezifikation: doc/Spezifikation.pdf, Kap. x.y.z
 -------------------------------------------------------------------------------
 erstellt:
@@ -38,12 +40,14 @@ END_VAR
 ]]></Declaration>
       <Implementation>
         <ST><![CDATA[
-	cleanup := true;]]></ST>
+	cleanup := TRUE;
+	
+	fbDelay(IN := false);]]></ST>
       </Implementation>
     </Method>
-    <Method Name="execute" Id="{f50564e1-c200-4dfb-bffc-789888944368}">
+    <Method Name="execute" Id="{dcfa4b97-d205-4464-a7da-bba1c1b4f6f4}">
       <Declaration><![CDATA[(******************************************************************************
-Baustein: FB_Test_Base.execute
+Baustein: FB_Test_Base_Delay.execute
 Spezifikation: doc/Spezifikation.pdf, Kap. x.y.z
 -------------------------------------------------------------------------------
 erstellt:
@@ -87,12 +91,12 @@ END_VAR
 	r32Value2 := 5345.53245;
 	assertEQUAL(r32Value1, r32Value2);
 
-	execute := TRUE;]]></ST>
+	execute := fbDelay.Q;]]></ST>
       </Implementation>
     </Method>
-    <Method Name="prepare" Id="{e23e127a-3b2e-47a3-9516-8405d2c66c55}">
+    <Method Name="prepare" Id="{75766130-e927-4659-beb9-1c58ca136ce7}">
       <Declaration><![CDATA[(******************************************************************************
-Baustein: FB_Test_Base.prepare
+Baustein: FB_Test_Base_Delay.prepare
 Spezifikation: doc/Spezifikation.pdf, Kap. x.y.z
 -------------------------------------------------------------------------------
 erstellt:
@@ -116,17 +120,21 @@ END_VAR
 ]]></Declaration>
       <Implementation>
         <ST><![CDATA[
-	prepare := true;]]></ST>
+	prepare := TRUE;
+	
+	fbDelay.IN := true;]]></ST>
       </Implementation>
     </Method>
-    <LineIds Name="FB_Test_Base">
+    <LineIds Name="FB_Test_Base_Delay">
+      <LineId Id="25" Count="0" />
       <LineId Id="9" Count="0" />
     </LineIds>
-    <LineIds Name="FB_Test_Base.cleanup">
+    <LineIds Name="FB_Test_Base_Delay.cleanup">
       <LineId Id="25" Count="0" />
       <LineId Id="24" Count="0" />
+      <LineId Id="48" Count="1" />
     </LineIds>
-    <LineIds Name="FB_Test_Base.execute">
+    <LineIds Name="FB_Test_Base_Delay.execute">
       <LineId Id="40" Count="0" />
       <LineId Id="34" Count="0" />
       <LineId Id="41" Count="0" />
@@ -138,9 +146,10 @@ END_VAR
       <LineId Id="25" Count="0" />
       <LineId Id="24" Count="0" />
     </LineIds>
-    <LineIds Name="FB_Test_Base.prepare">
+    <LineIds Name="FB_Test_Base_Delay.prepare">
       <LineId Id="25" Count="0" />
       <LineId Id="24" Count="0" />
+      <LineId Id="48" Count="1" />
     </LineIds>
   </POU>
 </TcPlcObject>
