@@ -70,13 +70,11 @@ Output
 METHOD INTERNAL _cleanup : BOOL
 VAR_INPUT
 END_VAR
-VAR_STAT
-	bRetCode : BOOL;
-END_VAR]]></Declaration>
+]]></Declaration>
       <Implementation>
         <ST><![CDATA[
 
-	bRetCode := cleanup();
+	_cleanup := cleanup();
 
 	
 	
@@ -107,13 +105,10 @@ Output
 METHOD INTERNAL _execute : BOOL
 VAR_INPUT
 END_VAR
-VAR_STAT
-	bRetCode : BOOL;
-END_VAR
 ]]></Declaration>
       <Implementation>
         <ST><![CDATA[
-	bRetCode := execute();	
+	_execute := execute();	
 ]]></ST>
       </Implementation>
     </Method>
@@ -141,9 +136,7 @@ Output
 METHOD INTERNAL _prepare : BOOL
 VAR_INPUT
 END_VAR
-VAR_STAT
-	bRetCode : BOOL;
-END_VAR]]></Declaration>
+]]></Declaration>
       <Implementation>
         <ST><![CDATA[
 	u32Passed 		:= 0;
@@ -152,7 +145,7 @@ END_VAR]]></Declaration>
 	u32EndTime 		:= 0;
 	o_eResult 		:= EResult_t.eStateSkipped;
 
-	bRetCode := prepare();]]></ST>
+	_prepare := prepare();]]></ST>
       </Implementation>
     </Method>
     <Method Name="addFailed" Id="{877265ac-7517-465d-8046-dbd413ab22a9}">
@@ -1075,13 +1068,11 @@ Output
 METHOD PUBLIC cleanup : BOOL
 VAR_INPUT
 END_VAR
-VAR_STAT
-	bRetCode : BOOL;
-END_VAR]]></Declaration>
+]]></Declaration>
       <Implementation>
         <ST><![CDATA[
 
-	bRetCode := false;
+	cleanup := false;
 
 	
 	
@@ -1111,12 +1102,10 @@ Output
 METHOD PUBLIC execute : BOOL
 VAR_INPUT
 END_VAR
-VAR_STAT
-	bRetCode : BOOL;
-END_VAR]]></Declaration>
+]]></Declaration>
       <Implementation>
         <ST><![CDATA[
-	bRetcode := false;	
+	Execute := false;	
 ]]></ST>
       </Implementation>
     </Method>
@@ -1501,12 +1490,10 @@ Output
 METHOD PUBLIC prepare : BOOL
 VAR_INPUT
 END_VAR
-VAR_STAT
-	bRetCode : BOOL;
-END_VAR]]></Declaration>
+]]></Declaration>
       <Implementation>
         <ST><![CDATA[
-	bRetCode := false;]]></ST>
+	prepare := false;]]></ST>
       </Implementation>
     </Method>
     <Method Name="register" Id="{4a228bed-2579-4e19-893d-8dcd5cfaa8a3}">
