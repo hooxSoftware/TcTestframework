@@ -47,7 +47,7 @@ VAR
 	fbSystemTime 	: FB_LocalSystemTime;
 	
 	fbLicense 		: FB_CheckLicense;
-	
+	bLicenseCheck	: BOOL;
 	
 	fbCoverage 		: FB_CoverageFile;
 	fbUnittest 		: FB_CoverageFile;
@@ -69,9 +69,15 @@ END_VAR]]></Declaration>
       <ST><![CDATA[
 	fbSystemTime(bEnable := TRUE, dwCycle := 5);
 
-	fbCoverage();
+	IF checkLicense() = ERetcode_t.eRetDone THEN
+		bLicenseCheck := TRUE;
+	END_IF;
 
-	fbUnittest();
+	IF bLicenseCheck = TRUE THEN	
+		fbCoverage();
+	
+		fbUnittest();
+	END_IF;
 
 	CASE o_eState OF 
 	
@@ -145,7 +151,10 @@ END_VAR]]></Declaration>
 			IF pActTestSuite <> 0 THEN
 				o_eState := EState_t.eStateExecute;
 			ELSE
-				o_eState := EState_t.eStateBuildCoverageFile;
+				o_eState := EState_t.eStateReady;
+				IF bLicenseCheck = TRUE THEN
+					o_eState := EState_t.eStateBuildCoverageFile;
+				END_IF
 				logInfo('+++++++++++++ Test Ende ++++++++++++++');
 			END_IF		
 			
@@ -290,7 +299,7 @@ END_VAR
 	checkLicense := ERetCode_t.eRetBusy;
 	
 	fbLicense(bExecute    := TRUE, 
-		  stLicenseId := STRING_TO_GUID('994D9F0C-F802-4000-8582-229354A3CA39'));
+		      stLicenseId := STRING_TO_GUID('DB9CD44E-2613-41EF-BE9B-3B9FCF58D815'));
 			  
 	IF fbLicense.bBusy =  FALSE THEN
 		IF fbLicense.stCheckLicense.eResult = E_LHR_LicenseOK THEN
@@ -298,7 +307,9 @@ END_VAR
 		ELSE
 			checkLicense := ERetCode_t.eRetFailed;	
 		END_IF
-	END_IF;]]></ST>
+	END_IF;
+	
+	checkLicense := ERetCode_t.eRetDone;]]></ST>
       </Implementation>
     </Method>
     <Method Name="createReport" Id="{d9afc7ed-2e81-46b0-adaa-c3b998a94e06}">
@@ -337,7 +348,7 @@ END_VAR
 // 
 // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 	10:
-		eRetcode := fbCoverage.open('C:\Users\Administrator\Desktop\TestResult\', 'Coverage.xml');
+		eRetcode := fbCoverage.open('C:\TwinCAT\3.1\Boot\CurrentConfig\TestResult\', 'Coverage.xml');
 
 		IF eRetcode = ERetCode_t.eRetDone THEN
 
@@ -410,7 +421,7 @@ END_VAR
 // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 	20:		
 
-		eRetcode := fbUnitTest.open('C:\Users\Administrator\Desktop\TestResult\', 'Unittest.xml');
+		eRetcode := fbUnitTest.open('C:\TwinCAT\3.1\Boot\CurrentConfig\TestResult\', 'Unittest.xml');
 
 		IF eRetcode = ERetCode_t.eRetDone THEN
 
@@ -777,10 +788,15 @@ END_VAR
     </Method>
     <LineIds Name="PRG_UnitTestLib">
       <LineId Id="257" Count="1" />
+      <LineId Id="1085" Count="0" />
       <LineId Id="300" Count="0" />
+      <LineId Id="1087" Count="1" />
+      <LineId Id="1090" Count="0" />
+      <LineId Id="1089" Count="0" />
       <LineId Id="317" Count="0" />
       <LineId Id="838" Count="0" />
       <LineId Id="837" Count="0" />
+      <LineId Id="1086" Count="0" />
       <LineId Id="41" Count="0" />
       <LineId Id="9" Count="0" />
       <LineId Id="42" Count="0" />
@@ -831,7 +847,11 @@ END_VAR
       <LineId Id="95" Count="1" />
       <LineId Id="99" Count="1" />
       <LineId Id="116" Count="0" />
-      <LineId Id="102" Count="5" />
+      <LineId Id="102" Count="4" />
+      <LineId Id="1094" Count="0" />
+      <LineId Id="1092" Count="0" />
+      <LineId Id="107" Count="0" />
+      <LineId Id="1093" Count="0" />
       <LineId Id="220" Count="0" />
       <LineId Id="101" Count="0" />
       <LineId Id="117" Count="0" />
@@ -891,6 +911,7 @@ END_VAR
       <LineId Id="11" Count="1" />
       <LineId Id="10" Count="0" />
       <LineId Id="14" Count="0" />
+      <LineId Id="41" Count="1" />
     </LineIds>
     <LineIds Name="PRG_UnitTestLib.createReport">
       <LineId Id="99" Count="1" />
