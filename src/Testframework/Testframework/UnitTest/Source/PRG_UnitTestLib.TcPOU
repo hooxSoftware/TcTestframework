@@ -348,7 +348,7 @@ END_VAR
 // 
 // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 	10:
-		eRetcode := fbCoverage.open('C:\TwinCAT\3.1\Boot\CurrentConfig\TestResult\', 'Coverage.xml');
+		eRetcode := fbCoverage.open('C:\TwinCAT\3.1\Boot\CurrentConfig\', 'Coverage.xml');
 
 		IF eRetcode = ERetCode_t.eRetDone THEN
 
@@ -421,7 +421,7 @@ END_VAR
 // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 	20:		
 
-		eRetcode := fbUnitTest.open('C:\TwinCAT\3.1\Boot\CurrentConfig\TestResult\', 'Unittest.xml');
+		eRetcode := fbUnitTest.open('C:\TwinCAT\3.1\Boot\CurrentConfig\', 'Unittest.xml');
 
 		IF eRetcode = ERetCode_t.eRetDone THEN
 
