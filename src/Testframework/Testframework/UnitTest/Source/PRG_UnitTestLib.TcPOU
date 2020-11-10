@@ -83,13 +83,10 @@ END_VAR]]></Declaration>
 	
 	EState_t.eStateInit:	
 
-		//IF checkLicense() = ERetCode_t.eRetDone THEN
-			
-			IF i_bStart = FALSE THEN 
-				o_eState := EState_t.eStateIdle; 
-			END_IF
-			
-		//END_IF;
+		IF i_bStart = FALSE THEN 
+			o_eState := EState_t.eStateIdle; 
+		END_IF
+
 	
 	EState_t.eStateIdle:
 	
@@ -302,14 +299,14 @@ END_VAR
 		      stLicenseId := STRING_TO_GUID('DB9CD44E-2613-41EF-BE9B-3B9FCF58D815'));
 			  
 	IF fbLicense.bBusy =  FALSE THEN
-		IF fbLicense.stCheckLicense.eResult = E_LHR_LicenseOK THEN
+		IF fbLicense.stCheckLicense.eResult = E_LHR_LicenseOK 	    OR 
+		   fbLicense.stCheckLicense.eResult = E_LHR_LicenseOK_Demo  THEN
 			checkLicense := ERetCode_t.eRetDone;
 		ELSE
 			checkLicense := ERetCode_t.eRetFailed;	
 		END_IF
 	END_IF;
-	
-	checkLicense := ERetCode_t.eRetDone;]]></ST>
+]]></ST>
       </Implementation>
     </Method>
     <Method Name="createReport" Id="{d9afc7ed-2e81-46b0-adaa-c3b998a94e06}">
@@ -801,12 +798,9 @@ END_VAR
       <LineId Id="9" Count="0" />
       <LineId Id="42" Count="0" />
       <LineId Id="45" Count="0" />
-      <LineId Id="1021" Count="0" />
-      <LineId Id="315" Count="0" />
       <LineId Id="318" Count="0" />
       <LineId Id="160" Count="1" />
       <LineId Id="46" Count="0" />
-      <LineId Id="319" Count="0" />
       <LineId Id="316" Count="0" />
       <LineId Id="162" Count="0" />
       <LineId Id="47" Count="0" />
@@ -907,11 +901,13 @@ END_VAR
       <LineId Id="7" Count="0" />
       <LineId Id="15" Count="1" />
       <LineId Id="13" Count="0" />
-      <LineId Id="8" Count="1" />
+      <LineId Id="8" Count="0" />
+      <LineId Id="66" Count="0" />
+      <LineId Id="9" Count="0" />
       <LineId Id="11" Count="1" />
       <LineId Id="10" Count="0" />
       <LineId Id="14" Count="0" />
-      <LineId Id="41" Count="1" />
+      <LineId Id="42" Count="0" />
     </LineIds>
     <LineIds Name="PRG_UnitTestLib.createReport">
       <LineId Id="99" Count="1" />
