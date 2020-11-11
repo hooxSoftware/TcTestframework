@@ -501,7 +501,7 @@ END_VAR
 					fbUnitTest.addString('<failure');
 					fbUnitTest.addString(' message="');
 					fbUnitTest.addString(pTestCase^.getMessage());
-					fbUnitTest.addString('">');
+					fbUnitTest.addString('"/>');
 					
 				EResult_t.eStateSkipped:
 
