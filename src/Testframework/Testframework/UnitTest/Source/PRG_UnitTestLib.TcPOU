@@ -498,8 +498,11 @@ END_VAR
 				EResult_t.eStateFailed, 
 				EResult_t.eStateFailedFatal :
 			
-					fbUnitTest.addString('<failure/>');
-
+					fbUnitTest.addString('<failure');
+					fbUnitTest.addString(' message="');
+					fbUnitTest.addString(pTestCase^.getMessage());
+					fbUnitTest.addString('">');
+					
 				EResult_t.eStateSkipped:
 
 					fbUnitTest.addString('<skipped/>');
@@ -973,7 +976,11 @@ END_VAR
       <LineId Id="325" Count="0" />
       <LineId Id="391" Count="0" />
       <LineId Id="390" Count="0" />
-      <LineId Id="326" Count="27" />
+      <LineId Id="326" Count="12" />
+      <LineId Id="481" Count="1" />
+      <LineId Id="339" Count="0" />
+      <LineId Id="483" Count="0" />
+      <LineId Id="340" Count="13" />
       <LineId Id="355" Count="8" />
       <LineId Id="94" Count="0" />
       <LineId Id="389" Count="0" />

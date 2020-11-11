@@ -33,6 +33,7 @@ VAR
 	strId	  		: ObjectId_t;
 	strClassName	: ObjectId_t;
 	strPath			: ObjectId_t;
+	strMessage 	 	: StrMessage_t;
 	bSkipTest		: BOOL;
 	pTestSuite      : TestSuiteHandle_t;
 	bRegistered 	: BOOL;
@@ -1242,6 +1243,16 @@ END_VAR
 	getId := strId;]]></ST>
       </Implementation>
     </Method>
+    <Method Name="getMessage" Id="{afb1fb13-c5eb-4812-98a0-96deb4f8231a}">
+      <Declaration><![CDATA[METHOD PUBLIC getMessage : StrMessage_t
+VAR_INPUT
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[
+	getMessage := strMessage;]]></ST>
+      </Implementation>
+    </Method>
     <Method Name="getPassed" Id="{2d53e756-4b16-44f6-b072-8c9bc39b56a8}">
       <Declaration><![CDATA[(******************************************************************************
 Baustein: FB_UnitTestBase.getPassed
@@ -1562,6 +1573,17 @@ END_VAR
 		u32EndTime := getSystemTime();
 	END_IF;
 	setEndTime := true;]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="setMessage" Id="{5e945eba-6cfb-4739-8a87-efafbad421bc}">
+      <Declaration><![CDATA[METHOD PROTECTED setMessage
+VAR_INPUT
+	strValue : StrMessage_t;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[
+	strMessage := strValue;]]></ST>
       </Implementation>
     </Method>
     <Method Name="setStartTime" Id="{8cc3bd6c-8aa2-4c8c-8cf1-b74a81a48cb3}">
@@ -1904,6 +1926,10 @@ END_VAR
       <LineId Id="25" Count="0" />
       <LineId Id="5" Count="0" />
     </LineIds>
+    <LineIds Name="FB_UnitTestBase.getMessage">
+      <LineId Id="6" Count="0" />
+      <LineId Id="5" Count="0" />
+    </LineIds>
     <LineIds Name="FB_UnitTestBase.getPassed">
       <LineId Id="6" Count="0" />
       <LineId Id="5" Count="0" />
@@ -1954,6 +1980,10 @@ END_VAR
     <LineIds Name="FB_UnitTestBase.setEndTime">
       <LineId Id="10" Count="0" />
       <LineId Id="7" Count="2" />
+      <LineId Id="5" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_UnitTestBase.setMessage">
+      <LineId Id="7" Count="0" />
       <LineId Id="5" Count="0" />
     </LineIds>
     <LineIds Name="FB_UnitTestBase.setStartTime">
