@@ -89,15 +89,15 @@ END_VAR
         <ST><![CDATA[
 	bValue1[0] := TRUE;
 	bValue2[0] := TRUE;
-	assertEQUAL(bValue1, bValue2);
+	assertEQUAL(bValue1[0], bValue2[0]);
 
 	s8Value1[0] := 32;
 	s8Value2[0] := 32;
-	assertEQUAL(s32Value1, s32Value2);
+	assertEQUAL(s8Value1[0], s8Value2[0]);
 
 	u8Value1[0] := 34;
 	u8Value2[0] := 34;
-	assertEQUAL(s32Value1, s32Value2);
+	assertEQUAL(u8Value1[0], u8Value2[0]);
 	
 	s16Value1[0] := 4324;
 	s16Value2[0] := 4324;
@@ -105,23 +105,23 @@ END_VAR
 
 	u16Value1[0] := 4232;
 	u16Value2[0] := 4232;
-	assertEQUAL(s32Value1, s32Value2);
+	assertEQUAL(s16Value1[0], s16Value2[0]);
 	
 	s32Value1[0] := 1593;
 	s32Value2[0] := 1593;
-	assertEQUAL(s32Value1, s32Value2);
+	assertEQUAL(s32Value1[0], s32Value2[0]);
 
 	u32Value1[0] := 3424;
 	u32Value2[0] := 3424;
-	assertEQUAL(s32Value1, s32Value2);
+	assertEQUAL(u32Value1[0], u32Value2[0]);
 	
 	r32Value1[0] := 5345.53245;
 	r32Value2[0] := 5345.53245;
-	assertEQUAL(r32Value1, r32Value2);
+	assertEQUAL(r32Value1[0], r32Value2[0]);
 
 	r64Value1[0] := 1345.53325;
 	r64Value2[0] := 1345.53325;
-	assertEQUAL(r32Value1, r32Value2);
+	assertEQUAL(r64Value1[0], r64Value2[0]);
 	
 	execute := TRUE;]]></ST>
       </Implementation>
