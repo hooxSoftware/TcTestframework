@@ -481,7 +481,6 @@ END_VAR
 				fbUnitTest.addValue(u32Temp);
 				fbUnitTest.addString('" classname="');
 				fbUnitTest.addString(pTestCase^.getPath());
-				fbUnitTest.addString('.');
 				fbUnitTest.addString(pTestCase^.getClassName());
 				fbUnitTest.addString('" time="');
 				u32Temp := pTestCase^.getTime();
@@ -971,7 +970,6 @@ END_VAR
       <LineId Id="401" Count="0" />
       <LineId Id="310" Count="13" />
       <LineId Id="402" Count="0" />
-      <LineId Id="471" Count="0" />
       <LineId Id="392" Count="0" />
       <LineId Id="325" Count="0" />
       <LineId Id="391" Count="0" />
