@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.3">
-  <POU Name="FB_Test_Base" Id="{f4823231-d10b-40e2-9073-1f2bc0a0599a}" SpecialFunc="None">
-    <Declaration><![CDATA[FUNCTION_BLOCK FB_Test_Base EXTENDS FB_UnitTestBase
+  <POU Name="FB_Test_Base_Not" Id="{fcf08a4b-84b3-4de6-9021-24a73f13f2bf}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION_BLOCK FB_Test_Base_Not EXTENDS FB_UnitTestBase
 VAR_INPUT
 END_VAR
 VAR_OUTPUT
@@ -12,9 +12,9 @@ END_VAR
     <Implementation>
       <ST><![CDATA[]]></ST>
     </Implementation>
-    <Method Name="cleanup" Id="{49bced59-0780-425b-9290-17b9f069ca47}">
+    <Method Name="cleanup" Id="{65da6c5b-32cd-49b2-8efb-d7e2ddbdaf15}">
       <Declaration><![CDATA[(******************************************************************************
-Baustein: FB_Test_Base.cleanup
+Baustein: FB_Test_Base_Not.cleanup
 Spezifikation: doc/Spezifikation.pdf, Kap. x.y.z
 -------------------------------------------------------------------------------
 erstellt:
@@ -41,9 +41,9 @@ END_VAR
 	cleanup := true;]]></ST>
       </Implementation>
     </Method>
-    <Method Name="execute" Id="{f50564e1-c200-4dfb-bffc-789888944368}">
+    <Method Name="execute" Id="{787a6e5e-98af-47ae-8dc1-33d98cab30ec}">
       <Declaration><![CDATA[(******************************************************************************
-Baustein: FB_Test_Base.execute
+Baustein: FB_Test_Base_Not.execute
 Spezifikation: doc/Spezifikation.pdf, Kap. x.y.z
 -------------------------------------------------------------------------------
 erstellt:
@@ -87,48 +87,48 @@ END_VAR
 ]]></Declaration>
       <Implementation>
         <ST><![CDATA[
-	bValue1[0] := TRUE;
+	bValue1[0] := FALSE;
 	bValue2[0] := TRUE;
-	assertEQUAL(bValue1, bValue2);
+	assertNotEQUAL(bValue1, bValue2);
 
-	s8Value1[0] := 32;
+	s8Value1[0] := 31;
 	s8Value2[0] := 32;
-	assertEQUAL(s32Value1, s32Value2);
+	assertNotEQUAL(s32Value1, s32Value2);
 
-	u8Value1[0] := 34;
+	u8Value1[0] := 1;
 	u8Value2[0] := 34;
-	assertEQUAL(s32Value1, s32Value2);
+	assertNotEQUAL(s32Value1, s32Value2);
 	
-	s16Value1[0] := 4324;
+	s16Value1[0] := 1323;
 	s16Value2[0] := 4324;
-	assertEQUAL(s32Value1, s32Value2);
+	assertNotEQUAL(s32Value1, s32Value2);
 
-	u16Value1[0] := 4232;
+	u16Value1[0] := 3124;
 	u16Value2[0] := 4232;
-	assertEQUAL(s32Value1, s32Value2);
+	assertNotEQUAL(s32Value1, s32Value2);
 	
-	s32Value1[0] := 1593;
+	s32Value1[0] := 1244;
 	s32Value2[0] := 1593;
-	assertEQUAL(s32Value1, s32Value2);
+	assertNotEQUAL(s32Value1, s32Value2);
 
-	u32Value1[0] := 3424;
+	u32Value1[0] := 4344;
 	u32Value2[0] := 3424;
-	assertEQUAL(s32Value1, s32Value2);
+	assertNotEQUAL(s32Value1, s32Value2);
 	
-	r32Value1[0] := 5345.53245;
+	r32Value1[0] := 133.53245;
 	r32Value2[0] := 5345.53245;
-	assertEQUAL(r32Value1, r32Value2);
+	assertNotEQUAL(r32Value1, r32Value2);
 
-	r64Value1[0] := 1345.53325;
+	r64Value1[0] := 1232.53325;
 	r64Value2[0] := 1345.53325;
-	assertEQUAL(r32Value1, r32Value2);
+	assertNotEQUAL(r32Value1, r32Value2);
 	
 	execute := TRUE;]]></ST>
       </Implementation>
     </Method>
-    <Method Name="prepare" Id="{e23e127a-3b2e-47a3-9516-8405d2c66c55}">
+    <Method Name="prepare" Id="{6212eda2-4fb6-4cf5-a93a-1b3be7bda95e}">
       <Declaration><![CDATA[(******************************************************************************
-Baustein: FB_Test_Base.prepare
+Baustein: FB_Test_Base_Not.prepare
 Spezifikation: doc/Spezifikation.pdf, Kap. x.y.z
 -------------------------------------------------------------------------------
 erstellt:
@@ -155,14 +155,14 @@ END_VAR
 	prepare := true;]]></ST>
       </Implementation>
     </Method>
-    <LineIds Name="FB_Test_Base">
+    <LineIds Name="FB_Test_Base_Not">
       <LineId Id="9" Count="0" />
     </LineIds>
-    <LineIds Name="FB_Test_Base.cleanup">
+    <LineIds Name="FB_Test_Base_Not.cleanup">
       <LineId Id="25" Count="0" />
       <LineId Id="24" Count="0" />
     </LineIds>
-    <LineIds Name="FB_Test_Base.execute">
+    <LineIds Name="FB_Test_Base_Not.execute">
       <LineId Id="40" Count="0" />
       <LineId Id="34" Count="0" />
       <LineId Id="41" Count="0" />
@@ -185,7 +185,7 @@ END_VAR
       <LineId Id="111" Count="0" />
       <LineId Id="24" Count="0" />
     </LineIds>
-    <LineIds Name="FB_Test_Base.prepare">
+    <LineIds Name="FB_Test_Base_Not.prepare">
       <LineId Id="25" Count="0" />
       <LineId Id="24" Count="0" />
     </LineIds>

@@ -116,6 +116,9 @@
     <Compile Include="Test\FB_Test_Base.TcPOU">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Test\FB_Test_Base_Not.TcPOU">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Test\FB_Test_Base_Delay.TcPOU">
       <SubType>Code</SubType>
     </Compile>
