@@ -87,37 +87,55 @@ END_VAR
 ]]></Declaration>
       <Implementation>
         <ST><![CDATA[
+	setMessage('Teste Datentyp BOOL');
+
 	bValue1[0] := FALSE;
 	bValue2[0] := TRUE;
 	assertNotEQUAL(bValue1, bValue2);
+	
+	setMessage('Teste Datentyp SINT');
 
 	s8Value1[0] := 31;
 	s8Value2[0] := 32;
 	assertNotEQUAL(s32Value1, s32Value2);
+	
+	setMessage('Teste Datentyp USINT');
 
 	u8Value1[0] := 1;
 	u8Value2[0] := 34;
 	assertNotEQUAL(s32Value1, s32Value2);
 	
+	setMessage('Teste Datentyp INT');
+	
 	s16Value1[0] := 1323;
 	s16Value2[0] := 4324;
 	assertNotEQUAL(s32Value1, s32Value2);
+	
+	setMessage('Teste Datentyp UINT');
 
 	u16Value1[0] := 3124;
 	u16Value2[0] := 4232;
 	assertNotEQUAL(s32Value1, s32Value2);
 	
+	setMessage('Teste Datentyp DINT');
+	
 	s32Value1[0] := 1244;
 	s32Value2[0] := 1593;
 	assertNotEQUAL(s32Value1, s32Value2);
+	
+	setMessage('Teste Datentyp UDINT');
 
 	u32Value1[0] := 4344;
 	u32Value2[0] := 3424;
 	assertNotEQUAL(s32Value1, s32Value2);
 	
+	setMessage('Teste Datentyp REAL');
+	
 	r32Value1[0] := 133.53245;
 	r32Value2[0] := 5345.53245;
 	assertNotEQUAL(r32Value1, r32Value2);
+	
+	setMessage('Teste Datentyp LREAL');
 
 	r64Value1[0] := 1232.53325;
 	r64Value2[0] := 1345.53325;
@@ -163,23 +181,34 @@ END_VAR
       <LineId Id="24" Count="0" />
     </LineIds>
     <LineIds Name="FB_Test_Base_Not.execute">
+      <LineId Id="112" Count="1" />
       <LineId Id="40" Count="0" />
       <LineId Id="34" Count="0" />
       <LineId Id="41" Count="0" />
       <LineId Id="35" Count="0" />
-      <LineId Id="92" Count="6" />
+      <LineId Id="114" Count="1" />
+      <LineId Id="92" Count="3" />
+      <LineId Id="116" Count="1" />
+      <LineId Id="96" Count="2" />
       <LineId Id="36" Count="0" />
+      <LineId Id="118" Count="1" />
       <LineId Id="107" Count="0" />
-      <LineId Id="100" Count="5" />
+      <LineId Id="100" Count="2" />
+      <LineId Id="120" Count="1" />
+      <LineId Id="103" Count="2" />
       <LineId Id="99" Count="0" />
+      <LineId Id="122" Count="1" />
       <LineId Id="106" Count="0" />
       <LineId Id="42" Count="1" />
       <LineId Id="37" Count="0" />
+      <LineId Id="124" Count="1" />
       <LineId Id="88" Count="2" />
       <LineId Id="38" Count="0" />
+      <LineId Id="126" Count="1" />
       <LineId Id="91" Count="0" />
       <LineId Id="44" Count="1" />
       <LineId Id="39" Count="0" />
+      <LineId Id="128" Count="1" />
       <LineId Id="108" Count="2" />
       <LineId Id="25" Count="0" />
       <LineId Id="111" Count="0" />

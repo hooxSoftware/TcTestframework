@@ -1583,7 +1583,9 @@ END_VAR
 ]]></Declaration>
       <Implementation>
         <ST><![CDATA[
-	strMessage := strValue;]]></ST>
+	IF o_eResult <> EResult_t.eStateFailed THEN
+		strMessage := strValue;
+	END_IF;]]></ST>
       </Implementation>
     </Method>
     <Method Name="setStartTime" Id="{8cc3bd6c-8aa2-4c8c-8cf1-b74a81a48cb3}">
@@ -1983,8 +1985,10 @@ END_VAR
       <LineId Id="5" Count="0" />
     </LineIds>
     <LineIds Name="FB_UnitTestBase.setMessage">
+      <LineId Id="12" Count="0" />
       <LineId Id="7" Count="0" />
       <LineId Id="5" Count="0" />
+      <LineId Id="13" Count="0" />
     </LineIds>
     <LineIds Name="FB_UnitTestBase.setStartTime">
       <LineId Id="9" Count="0" />
