@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.3">
-  <POU Name="FB_Test_Base" Id="{f4823231-d10b-40e2-9073-1f2bc0a0599a}" SpecialFunc="None">
-    <Declaration><![CDATA[FUNCTION_BLOCK FB_Test_Base EXTENDS FB_UnitTestBase
+  <POU Name="FB_Test_Base_Ptr" Id="{18af484c-a194-47ec-b09e-eee8a132e9b6}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION_BLOCK FB_Test_Base_Ptr EXTENDS FB_UnitTestBase
 VAR_INPUT
 END_VAR
 VAR_OUTPUT
@@ -12,7 +12,7 @@ END_VAR
     <Implementation>
       <ST><![CDATA[]]></ST>
     </Implementation>
-    <Method Name="cleanup" Id="{49bced59-0780-425b-9290-17b9f069ca47}">
+    <Method Name="cleanup" Id="{1099d5c5-fa86-441e-94b1-b307d4acd3e2}">
       <Declaration><![CDATA[(******************************************************************************
 Baustein: FB_Test_Base.cleanup
 Spezifikation: doc/Spezifikation.pdf, Kap. x.y.z
@@ -41,7 +41,7 @@ END_VAR
 	cleanup := true;]]></ST>
       </Implementation>
     </Method>
-    <Method Name="execute" Id="{f50564e1-c200-4dfb-bffc-789888944368}">
+    <Method Name="execute" Id="{8fd83f8a-ddb5-450e-978e-89b220df3e19}">
       <Declaration><![CDATA[(******************************************************************************
 Baustein: FB_Test_Base.execute
 Spezifikation: doc/Spezifikation.pdf, Kap. x.y.z
@@ -91,98 +91,98 @@ END_VAR
 	bValue1[0] := TRUE;
 	bValue2[0] := TRUE;
 	
-	setMessage('Teste Datentyp BOOL');
-	assertEQUAL(bValue1[0], bValue2[0]);
+	setMessage('Teste Pointer to BOOL equal');
+	assertPtrEQUAL(ADR(bValue1[0]), ADR(bValue1[0]));
 	
-	setMessage('Teste Datentyp Array of BOOL');
-	assertEQUAL(bValue1, bValue2);
+	setMessage('Teste Pointer to BOOL NOT equal');
+	assertPtrNOTEQUAL(ADR(bValue1), ADR(bValue2));
 
 (**********************************************) 
 	
 	s8Value1[0] := 32;
 	s8Value2[0] := 32;
 	
-	setMessage('Teste Datentyp SINT');
-	assertEQUAL(s8Value1[0], s8Value2[0]);
+	setMessage('Teste Pointer to BOOL SINT equal');
+	assertPtrEQUAL(ADR(s8Value1[0]), ADR(s8Value1[0]));
 
-	setMessage('Teste Datentyp Array of SINT');
-	assertEQUAL(s8Value1, s8Value2);
+	setMessage('Teste Pointer to SINT not equal');
+	assertPtrNOTEQUAL(ADR(s8Value1), ADR(s8Value2));
 (**********************************************) 	
 
 	u8Value1[0] := 34;
 	u8Value2[0] := 34;
 	
-	setMessage('Teste Datentyp USINT');
-	assertEQUAL(u8Value1[0], u8Value2[0]);
+	setMessage('Teste Pointer to USINT equal');
+	assertPtrEQUAL(ADR(u8Value1[0]), ADR(u8Value1[0]));
 
-	setMessage('Teste Datentyp Array of USINT');
-	assertEQUAL(u8Value1, u8Value2);
+	setMessage('Teste Pointer to USINT not equal');
+	assertPtrNOTEQUAL(ADR(u8Value1), ADR(u8Value2));
 (**********************************************) 	
 	
 	s16Value1[0] := 1323;
 	s16Value2[0] := 1323;
 	
-	setMessage('Teste Datentyp INT');
-	assertEQUAL(s16Value1[0], s16Value2[0]);
+	setMessage('Teste Pointer to INT equal');
+	assertPtrEQUAL(ADR(s16Value1[0]), ADR(s16Value1[0]));
 
-	setMessage('Teste Datentyp Array of INT');
-	assertEQUAL(s16Value1, s16Value2);
+	setMessage('Teste Pointer to INT not equal');
+	assertPtrNOTEQUAL(ADR(s16Value1), ADR(s16Value2));
 (**********************************************) 	
 
 	u16Value1[0] := 3124;
 	u16Value2[0] := 3124;
 	
-	setMessage('Teste Datentyp UINT');
-	assertEQUAL(u16Value1[0] , u16Value2[0] );
+	setMessage('Teste Pointer to UINT equal');
+	assertPtrEQUAL(ADR(u16Value1[0]) , ADR(u16Value1[0]) );
 
-	setMessage('Teste Datentyp Array of UINT');
-	assertEQUAL(u16Value1 , u16Value2);
+	setMessage('Teste Pointer to  UINT not equal');
+	assertPtrNOTEQUAL(ADR(u16Value1) , ADR(u16Value2));
 (**********************************************) 	
 
 	s32Value1[0] := 1244;
 	s32Value2[0] := 1244;
 	
-	setMessage('Teste Datentyp DINT');
-	assertEQUAL(s32Value1[0], s32Value2[0]);
+	setMessage('Teste Pointer to DINT equal');
+	assertPtrEQUAL(ADR(s32Value1[0]), ADR(s32Value1[0]));
 
-	setMessage('Teste Datentyp Array of DINT');
-	assertEQUAL(s32Value1, s32Value2);
+	setMessage('Teste Pointer to  DINT not equal');
+	assertPtrNOTEQUAL(ADR(s32Value1), ADR(s32Value2));
 (**********************************************) 	
 
 	u32Value1[0] := 4344;
 	u32Value2[0] := 4344;
 	
-	setMessage('Teste Datentyp UDINT');
-	assertEQUAL(u32Value1[0], u32Value2[0]);
+	setMessage('Teste Pointer to UDINT equal');
+	assertPtrEQUAL(ADR(u32Value1[0]), ADR(u32Value1[0]));
 
-	setMessage('Teste Datentyp Array of UDINT');
-	assertEQUAL(u32Value1, u32Value2);
+	setMessage('Teste Pointer to  UDINT not equal');
+	assertPtrNOTEQUAL(ADR(u32Value1), ADR(u32Value2));
 (**********************************************) 	
 
 	r32Value1[0] := 133.53245;
 	r32Value2[0] := 133.53245;
 	
-	setMessage('Teste Datentyp REAL');
-	assertEQUAL(r32Value1[0], r32Value2[0]);
+	setMessage('Teste Pointer to REAL equal');
+	assertPtrEQUAL(ADR(r32Value1[0]), ADR(r32Value1[0]));
 
-	setMessage('Teste Datentyp Array of REAL');
-	assertEQUAL(r32Value1, r32Value2);
+	setMessage('Teste Pointer to  REAL not equal');
+	assertPtrNOTEQUAL(ADR(r32Value1), ADR(r32Value2));
 (**********************************************) 	
 
 	r64Value1[0] := 1232.53325;
 	r64Value2[0] := 1232.53325;
 
-	setMessage('Teste Datentyp LREAL');
-	assertEQUAL(r64Value1[0], r64Value2[0]);
+	setMessage('Teste Pointer to LREAL equal');
+	assertPtrEQUAL(ADR(r64Value1[0]), ADR(r64Value1[0]));
 
-	setMessage('Teste Datentyp Array of LREAL');
-	assertEQUAL(r64Value1, r64Value2);
+	setMessage('Teste Pointer to LREAL not equal');
+	assertPtrNOTEQUAL(ADR(r64Value1), ADR(r64Value2));
 
 (**********************************************) 	
 	execute := TRUE;]]></ST>
       </Implementation>
     </Method>
-    <Method Name="prepare" Id="{e23e127a-3b2e-47a3-9516-8405d2c66c55}">
+    <Method Name="prepare" Id="{3232e615-701e-4d31-ba3f-31bec248c2e2}">
       <Declaration><![CDATA[(******************************************************************************
 Baustein: FB_Test_Base.prepare
 Spezifikation: doc/Spezifikation.pdf, Kap. x.y.z
@@ -211,19 +211,19 @@ END_VAR
 	prepare := true;]]></ST>
       </Implementation>
     </Method>
-    <LineIds Name="FB_Test_Base">
+    <LineIds Name="FB_Test_Base_Ptr">
       <LineId Id="9" Count="0" />
     </LineIds>
-    <LineIds Name="FB_Test_Base.cleanup">
+    <LineIds Name="FB_Test_Base_Ptr.cleanup">
       <LineId Id="25" Count="0" />
       <LineId Id="24" Count="0" />
     </LineIds>
-    <LineIds Name="FB_Test_Base.execute">
+    <LineIds Name="FB_Test_Base_Ptr.execute">
       <LineId Id="112" Count="91" />
       <LineId Id="111" Count="0" />
       <LineId Id="24" Count="0" />
     </LineIds>
-    <LineIds Name="FB_Test_Base.prepare">
+    <LineIds Name="FB_Test_Base_Ptr.prepare">
       <LineId Id="25" Count="0" />
       <LineId Id="24" Count="0" />
     </LineIds>
