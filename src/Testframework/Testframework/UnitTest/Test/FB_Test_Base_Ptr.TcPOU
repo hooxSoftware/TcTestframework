@@ -178,7 +178,24 @@ END_VAR
 	setMessage('Teste Pointer to LREAL not equal');
 	assertPtrNOTEQUAL(ADR(r64Value1), ADR(r64Value2));
 
-(**********************************************) 	
+(**********************************************)
+
+	setMessage('Teste Pointer = 0');	
+	assertPtrNull(pActual := 0);
+	
+	setMessage('Teste Pointer <> 0');	
+	assertPtrNotNull(pActual := ADR(r32Value1[0]));	
+	
+(**********************************************)	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	execute := TRUE;]]></ST>
       </Implementation>
     </Method>
@@ -221,6 +238,11 @@ END_VAR
     <LineIds Name="FB_Test_Base_Ptr.execute">
       <LineId Id="112" Count="91" />
       <LineId Id="111" Count="0" />
+      <LineId Id="247" Count="0" />
+      <LineId Id="246" Count="0" />
+      <LineId Id="248" Count="1" />
+      <LineId Id="262" Count="0" />
+      <LineId Id="250" Count="11" />
       <LineId Id="24" Count="0" />
     </LineIds>
     <LineIds Name="FB_Test_Base_Ptr.prepare">

@@ -83,6 +83,8 @@ VAR
 	r32Value2 : ARRAY[0..10] OF REAL;
 	r64Value1 : ARRAY[0..10] OF LREAL;
 	r64Value2 : ARRAY[0..10] OF LREAL;
+	strValue1 : ARRAY[0..10] OF STRING;
+	strValue2 : ARRAY[0..10] OF STRING;
 END_VAR
 ]]></Declaration>
       <Implementation>
@@ -179,6 +181,31 @@ END_VAR
 	assertEQUAL(r64Value1, r64Value2);
 
 (**********************************************) 	
+
+	strValue1[0] := 'Hallo Welt';
+	strValue2[0] := 'Hallo Welt';
+
+	setMessage('Teste Datentyp String ist gleich');
+	assertStringEqual(ADR(strValue1[0]), ADR(strValue2[0]));
+
+	setMessage('Teste Datentyp Array of String ist gleich');
+	assertEQUAL(strValue1, strValue2);
+
+	strValue1[0] := 'Hallo Well';
+	strValue2[0] := 'Hallo Welt';
+	
+	setMessage('Teste Datentyp String ist ungleich');
+	assertStringNotEqual(ADR(strValue1[0]), ADR(strValue2[0]));
+
+	setMessage('Teste Datentyp Array of String ist ungleich');
+	assertNotEQUAL(strValue1, strValue2);
+	
+(**********************************************) 	
+
+
+
+
+
 	execute := TRUE;]]></ST>
       </Implementation>
     </Method>
@@ -221,6 +248,21 @@ END_VAR
     <LineIds Name="FB_Test_Base.execute">
       <LineId Id="112" Count="91" />
       <LineId Id="111" Count="0" />
+      <LineId Id="249" Count="0" />
+      <LineId Id="251" Count="4" />
+      <LineId Id="267" Count="1" />
+      <LineId Id="256" Count="0" />
+      <LineId Id="270" Count="1" />
+      <LineId Id="269" Count="0" />
+      <LineId Id="272" Count="0" />
+      <LineId Id="257" Count="1" />
+      <LineId Id="264" Count="0" />
+      <LineId Id="259" Count="0" />
+      <LineId Id="265" Count="1" />
+      <LineId Id="250" Count="0" />
+      <LineId Id="261" Count="2" />
+      <LineId Id="260" Count="0" />
+      <LineId Id="248" Count="0" />
       <LineId Id="24" Count="0" />
     </LineIds>
     <LineIds Name="FB_Test_Base.prepare">
