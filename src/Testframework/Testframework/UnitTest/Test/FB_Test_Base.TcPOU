@@ -188,8 +188,8 @@ END_VAR
 	setMessage('Teste Datentyp String ist gleich');
 	assertStringEqual(ADR(strValue1[0]), ADR(strValue2[0]));
 
-	setMessage('Teste Datentyp Array of String ist gleich');
-	assertEQUAL(strValue1, strValue2);
+	//setMessage('Teste Datentyp Array of String ist gleich');
+	//assertEQUAL(strValue1, strValue2);
 
 	strValue1[0] := 'Hallo Well';
 	strValue2[0] := 'Hallo Welt';
@@ -197,8 +197,8 @@ END_VAR
 	setMessage('Teste Datentyp String ist ungleich');
 	assertStringNotEqual(ADR(strValue1[0]), ADR(strValue2[0]));
 
-	setMessage('Teste Datentyp Array of String ist ungleich');
-	assertNotEQUAL(strValue1, strValue2);
+	//setMessage('Teste Datentyp Array of String ist ungleich');
+	//assertNotEQUAL(strValue1, strValue2);
 	
 (**********************************************) 	
 
