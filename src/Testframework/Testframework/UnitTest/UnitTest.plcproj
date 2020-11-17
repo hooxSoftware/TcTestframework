@@ -22,22 +22,30 @@
     <Licenses>
     </Licenses>
     <LibraryCategories>
-      <LibraryCategory xmlns="">
-        <Id>{47214238-9515-4492-9133-94b14aafcbe4}</Id>
+      <LibraryCategory>
+        <Id>{47214238-9515-dead-c0de-94b14aafcbe4}</Id>
         <Version>1.0.0.0</Version>
         <DefaultName>Hoox.Software</DefaultName>
       </LibraryCategory>
-      <LibraryCategory xmlns="">
-        <Id>{a5fb11f2-cfce-41ee-afc6-510f69f80427}</Id>
+      <LibraryCategory>
+        <Id>{a5fb11f2-cfce-dead-c0de-510f69f80427}</Id>
         <Version>1.0.0.0</Version>
         <ParentCategory>
-          <Id>{47214238-9515-4492-9133-94b14aafcbe4}</Id>
+          <Id>{47214238-9515-dead-c0de-94b14aafcbe4}</Id>
         </ParentCategory>
-        <DefaultName>MySubCategory</DefaultName>
+        <DefaultName>Application</DefaultName>
+      </LibraryCategory>
+      <LibraryCategory>
+        <Id>{a5fb11f2-cfcd-dead-c0de-510f69f80427}</Id>
+        <Version>1.0.0.0</Version>
+        <ParentCategory>
+          <Id>{47214238-9515-dead-c0de-94b14aafcbe4}</Id>
+        </ParentCategory>
+        <DefaultName>Unit Test</DefaultName>
       </LibraryCategory>
     </LibraryCategories>
     <SelectedLibraryCategories>
-      <Id xmlns="">{47214238-9515-4492-9133-94b14aafcbe4}</Id>
+      <Id>{a5fb11f2-cfcd-dead-c0de-510f69f80427}</Id>
     </SelectedLibraryCategories>
   </PropertyGroup>
   <ItemGroup>

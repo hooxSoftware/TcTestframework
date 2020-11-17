@@ -58,8 +58,8 @@ VAR
 	sCodeCoverage	: SCodeCoverage_t;
 	pTestCase  		: TestCaseHandle_t;
 	
-	//u32MaxLineIdx   : UDINT; (* maximale Zeilenanzahl   *)
-	//u32MaxPouIdx    : UDINT; (* maximale Bausteinanzahl *)
+	
+	pTestSuite: FB_Testsuite;
 END_VAR
 VAR CONSTANT 
 	u32MaxLineIdx   : UDINT := 2000; (* maximale Zeilenanzahl   *)
@@ -141,6 +141,7 @@ END_VAR]]></Declaration>
 		IF pActTestSuite^.o_eResult = EResult_t.eStateFailedFatal THEN
 			o_eResult := EResult_t.eStateFailedFatal;
 			o_eState  := EState_t.eStateBuildCoverageFile;
+			logInfo('+++++++++++++ Fatal Error : Test Ende ++++++++++++++');
 		ELSE
 			
 			pActTestSuite := getNextTestSuite();
@@ -841,7 +842,9 @@ END_VAR
       <LineId Id="50" Count="1" />
       <LineId Id="77" Count="0" />
       <LineId Id="95" Count="1" />
-      <LineId Id="99" Count="1" />
+      <LineId Id="99" Count="0" />
+      <LineId Id="1158" Count="0" />
+      <LineId Id="100" Count="0" />
       <LineId Id="116" Count="0" />
       <LineId Id="102" Count="4" />
       <LineId Id="1094" Count="0" />

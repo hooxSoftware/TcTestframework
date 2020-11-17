@@ -38,6 +38,7 @@ VAR
 	u16TestCases  	: UINT;
 	u16Index 		: UINT;
 	sStatistic 		: SStatistic_t;
+	pTestCase: FB_UnitTestBase;
 END_VAR
 ]]></Declaration>
     <Implementation>
@@ -58,6 +59,9 @@ END_VAR
 		IF i_bStart = TRUE THEN
 			logInfo(CONCAT('Run Testsuite ', strId));
 			pTest 	 := getFirstTestCase();
+			IF pTest <> 0 THEN
+				logInfo(CONCAT('Execute Testcase ', pTest^.getId()));
+			END_IF;
 			o_eState  := EState_t.eStatePrepare;
 			o_eResult := EResult_t.eStatePassed;
 		END_IF;
@@ -94,12 +98,21 @@ END_VAR
 					sStatistic.u32Failed 	:= sStatistic.u32Failed + pTest^.getFailed();
 					sStatistic.u32Asserts   := sStatistic.u32Passed + sStatistic.u32Failed;
 					
+					// Status des aktuellen Tests auswerten
+					CASE pTest^.o_eResult OF
+					EResult_t.eStatePassed     : logInfo('	Test Passed');
+					EResult_t.eStateFailed     : logInfo('	Test Failed');
+					EResult_t.eStateFailedFatal: logInfo('	Test Failed Fatal');	
+					END_CASE
+					
+					// Status der Testsuite ermitteln
 					CASE o_eResult OF 
 	
 					EResult_t.eStatePassed:
 						// Status des letzen Tests übernehmen
 						o_eResult := pTest^.o_eResult;
-	
+						
+		
 					EResult_t.eStateFailed:
 						// Status nur übernehmen wenn ein Fatal-Status
 						// ermittelt wird und der Test sofort abgebrochen
@@ -109,11 +122,12 @@ END_VAR
 							o_eState  := EState_t.eStateCleanUp;
 							pTest 	  := getFirstTestCase();	
 						END_IF;
+						
 	
 					EResult_t.eStateFailedFatal:
 	
 						o_eState := EState_t.eStateCleanUp;
-						pTest 	:= getFirstTestCase();					
+						pTest 	:= getFirstTestCase();				
 	
 					END_CASE;
 	
@@ -575,18 +589,23 @@ END_VAR
       </XmlArchive>
     </ObjectProperties>
     <LineIds Name="FB_Testsuite">
-      <LineId Id="3" Count="29" />
+      <LineId Id="3" Count="16" />
       <LineId Id="162" Count="0" />
-      <LineId Id="34" Count="8" />
-      <LineId Id="158" Count="0" />
-      <LineId Id="154" Count="0" />
-      <LineId Id="156" Count="0" />
-      <LineId Id="43" Count="0" />
-      <LineId Id="157" Count="0" />
-      <LineId Id="44" Count="35" />
-      <LineId Id="159" Count="1" />
-      <LineId Id="155" Count="0" />
-      <LineId Id="80" Count="35" />
+      <LineId Id="161" Count="0" />
+      <LineId Id="163" Count="0" />
+      <LineId Id="20" Count="35" />
+      <LineId Id="178" Count="0" />
+      <LineId Id="170" Count="0" />
+      <LineId Id="172" Count="0" />
+      <LineId Id="174" Count="1" />
+      <LineId Id="173" Count="0" />
+      <LineId Id="171" Count="0" />
+      <LineId Id="177" Count="0" />
+      <LineId Id="56" Count="4" />
+      <LineId Id="165" Count="0" />
+      <LineId Id="61" Count="9" />
+      <LineId Id="168" Count="0" />
+      <LineId Id="71" Count="51" />
       <LineId Id="2" Count="0" />
     </LineIds>
     <LineIds Name="FB_Testsuite.addTestcase">
