@@ -38,7 +38,6 @@ VAR
 	u16TestCases  	: UINT;
 	u16Index 		: UINT;
 	sStatistic 		: SStatistic_t;
-	pTestCase: FB_UnitTestBase;
 END_VAR
 ]]></Declaration>
     <Implementation>
@@ -589,23 +588,7 @@ END_VAR
       </XmlArchive>
     </ObjectProperties>
     <LineIds Name="FB_Testsuite">
-      <LineId Id="3" Count="16" />
-      <LineId Id="162" Count="0" />
-      <LineId Id="161" Count="0" />
-      <LineId Id="163" Count="0" />
-      <LineId Id="20" Count="35" />
-      <LineId Id="178" Count="0" />
-      <LineId Id="170" Count="0" />
-      <LineId Id="172" Count="0" />
-      <LineId Id="174" Count="1" />
-      <LineId Id="173" Count="0" />
-      <LineId Id="171" Count="0" />
-      <LineId Id="177" Count="0" />
-      <LineId Id="56" Count="4" />
-      <LineId Id="165" Count="0" />
-      <LineId Id="61" Count="9" />
-      <LineId Id="168" Count="0" />
-      <LineId Id="71" Count="51" />
+      <LineId Id="3" Count="132" />
       <LineId Id="2" Count="0" />
     </LineIds>
     <LineIds Name="FB_Testsuite.addTestcase">

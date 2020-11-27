@@ -1,0 +1,14 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.3">
+  <GVL Name="GVL_Parameter" Id="{e18916c9-a951-4ae7-bf0e-9ca70bd04505}">
+    <Declaration><![CDATA[{attribute 'hide'} 
+{attribute 'no-analysis'}
+VAR_GLOBAL
+	strTemp1 : STRING := 'F437005F';
+	strTemp2 : STRING := '40E2';
+	strTemp3 : STRING := '4F70';
+	strTemp4 : STRING := '91F9';
+	strTemp5 : STRING := '930E847E5C1E';
+END_VAR]]></Declaration>
+  </GVL>
+</TcPlcObject>

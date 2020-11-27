@@ -58,8 +58,7 @@ VAR
 	sCodeCoverage	: SCodeCoverage_t;
 	pTestCase  		: TestCaseHandle_t;
 	
-	
-	pTestSuite: FB_Testsuite;
+	license 		: STRING := 'NO LICENSE';
 END_VAR
 VAR CONSTANT 
 	u32MaxLineIdx   : UDINT := 2000; (* maximale Zeilenanzahl   *)
@@ -68,8 +67,8 @@ END_VAR]]></Declaration>
     <Implementation>
       <ST><![CDATA[
 	fbSystemTime(bEnable := TRUE, dwCycle := 5);
-
-	IF checkLicense() = ERetcode_t.eRetDone THEN
+	
+	IF checkLicense(license) = ERetcode_t.eRetDone THEN
 		bLicenseCheck := TRUE;
 	END_IF;
 
@@ -82,7 +81,11 @@ END_VAR]]></Declaration>
 	CASE o_eState OF 
 	
 	EState_t.eStateInit:	
-
+	
+		IF license = 'NO LICENSE' THEN
+			license := Concat(strTemp1, Concat('-',Concat(strTemp2, Concat('-',Concat(strTemp3, Concat('-', Concat(strTemp4, Concat('-', strTemp5))))))));
+		END_IF;
+		
 		IF i_bStart = FALSE THEN 
 			o_eState := EState_t.eStateIdle; 
 		END_IF
@@ -279,7 +282,7 @@ von:
 -------------------------------------------------------------------------------
 Beschreibung
 Diese Methode
-
+'DB9CD44E-2613-41EF-BE9B-3B9FCF58D815'
 -------------------------------------------------------------------------------
 Input
 -
@@ -290,22 +293,31 @@ Output
 {attribute 'hide'} 
 METHOD checkLicense : ERetCode_t
 VAR_INPUT
+	i_strGUID : STRING;
 END_VAR
 ]]></Declaration>
       <Implementation>
         <ST><![CDATA[
 	checkLicense := ERetCode_t.eRetBusy;
 	
-	fbLicense(bExecute    := TRUE, 
-		      stLicenseId := STRING_TO_GUID('DB9CD44E-2613-41EF-BE9B-3B9FCF58D815'));
-			  
-	IF fbLicense.bBusy =  FALSE THEN
-		IF fbLicense.stCheckLicense.eResult = E_LHR_LicenseOK 	    OR 
-		   fbLicense.stCheckLicense.eResult = E_LHR_LicenseOK_Demo  THEN
-			checkLicense := ERetCode_t.eRetDone;
-		ELSE
-			checkLicense := ERetCode_t.eRetFailed;	
+	IF i_strGUID <> 'NO LICENSE' THEN
+	
+		fbLicense(bExecute    := TRUE, 
+				  stLicenseId := STRING_TO_GUID(i_strGUID));
+				  
+		IF fbLicense.bBusy =  FALSE THEN
+			IF fbLicense.stCheckLicense.eResult = E_LHR_LicenseOK 	    OR 
+			   fbLicense.stCheckLicense.eResult = E_LHR_LicenseOK_Demo  THEN
+				checkLicense := ERetCode_t.eRetDone;
+			ELSE
+				checkLicense := ERetCode_t.eRetFailed;	
+			END_IF
+		END_IF;
+		
+		IF fbLicense.bError =  TRUE THEN
+			checkLicense := ERetCode_t.eRetFailed;
 		END_IF
+	
 	END_IF;
 ]]></ST>
       </Implementation>
@@ -788,7 +800,7 @@ END_VAR
     </Method>
     <LineIds Name="PRG_UnitTestLib">
       <LineId Id="257" Count="1" />
-      <LineId Id="1085" Count="0" />
+      <LineId Id="1227" Count="0" />
       <LineId Id="300" Count="0" />
       <LineId Id="1087" Count="1" />
       <LineId Id="1090" Count="0" />
@@ -801,7 +813,9 @@ END_VAR
       <LineId Id="9" Count="0" />
       <LineId Id="42" Count="0" />
       <LineId Id="45" Count="0" />
+      <LineId Id="1230" Count="2" />
       <LineId Id="318" Count="0" />
+      <LineId Id="1236" Count="0" />
       <LineId Id="160" Count="1" />
       <LineId Id="46" Count="0" />
       <LineId Id="316" Count="0" />
@@ -902,6 +916,7 @@ END_VAR
     <LineIds Name="PRG_UnitTestLib.checkLicense">
       <LineId Id="6" Count="0" />
       <LineId Id="5" Count="0" />
+      <LineId Id="91" Count="1" />
       <LineId Id="17" Count="0" />
       <LineId Id="7" Count="0" />
       <LineId Id="15" Count="1" />
@@ -912,6 +927,8 @@ END_VAR
       <LineId Id="11" Count="1" />
       <LineId Id="10" Count="0" />
       <LineId Id="14" Count="0" />
+      <LineId Id="95" Count="3" />
+      <LineId Id="93" Count="1" />
       <LineId Id="42" Count="0" />
     </LineIds>
     <LineIds Name="PRG_UnitTestLib.createReport">
