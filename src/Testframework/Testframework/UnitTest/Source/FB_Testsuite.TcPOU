@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.3">
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.4">
   <POU Name="FB_Testsuite" Id="{ae8bbd51-73a9-4be0-b082-2ec8a068e7f6}" SpecialFunc="None">
     <Declaration><![CDATA[(******************************************************************************
 Baustein: FB_Testsuite
@@ -89,7 +89,9 @@ END_VAR
 
 				pTest^.setStartTime();
 
-				IF pTest^._execute() = TRUE THEN
+				IF pTest^._execute() = TRUE 								OR 
+					pTest^.o_eResult  = EResult_t.eStateFailedFatal THEN
+					
 					pTest^.setEndTime();
 					sStatistic.u32Executed := sStatistic.u32Executed + 1;	
 				
@@ -588,7 +590,9 @@ END_VAR
       </XmlArchive>
     </ObjectProperties>
     <LineIds Name="FB_Testsuite">
-      <LineId Id="3" Count="132" />
+      <LineId Id="3" Count="48" />
+      <LineId Id="174" Count="1" />
+      <LineId Id="52" Count="83" />
       <LineId Id="2" Count="0" />
     </LineIds>
     <LineIds Name="FB_Testsuite.addTestcase">
