@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.3">
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.6">
   <POU Name="PRG_UnitTestLib" Id="{dbeace52-75a3-4dfa-9955-9febf020e88e}" SpecialFunc="None">
     <Declaration><![CDATA[(******************************************************************************
 Baustein: PRG_TestLibrary
@@ -72,11 +72,10 @@ END_VAR]]></Declaration>
 		bLicenseCheck := TRUE;
 	END_IF;
 
-	IF bLicenseCheck = TRUE THEN	
-		fbCoverage();
-	
-		fbUnittest();
-	END_IF;
+		
+	fbCoverage();
+		
+	fbUnittest();
 
 	CASE o_eState OF 
 	
@@ -163,7 +162,11 @@ END_VAR]]></Declaration>
 
 	EState_t.eStateBuildCoverageFile:
 
-		IF createReport(EReporttype_t.eCoverageReport) = ERetCode_t.eRetDone THEN
+		IF bLicenseCheck = TRUE THEN
+			IF createReport(EReporttype_t.eCoverageReport) = ERetCode_t.eRetDone THEN
+				o_eState := EState_t.eStateBuildUnitTestFile;
+			END_IF;
+		ELSE
 			o_eState := EState_t.eStateBuildUnitTestFile;
 		END_IF;
 
@@ -806,9 +809,8 @@ END_VAR
       <LineId Id="1090" Count="0" />
       <LineId Id="1089" Count="0" />
       <LineId Id="317" Count="0" />
-      <LineId Id="838" Count="0" />
-      <LineId Id="837" Count="0" />
-      <LineId Id="1086" Count="0" />
+      <LineId Id="1299" Count="0" />
+      <LineId Id="1301" Count="0" />
       <LineId Id="41" Count="0" />
       <LineId Id="9" Count="0" />
       <LineId Id="42" Count="0" />
@@ -871,9 +873,12 @@ END_VAR
       <LineId Id="97" Count="0" />
       <LineId Id="486" Count="0" />
       <LineId Id="485" Count="0" />
+      <LineId Id="1302" Count="0" />
       <LineId Id="488" Count="0" />
       <LineId Id="782" Count="1" />
       <LineId Id="527" Count="0" />
+      <LineId Id="1304" Count="1" />
+      <LineId Id="1303" Count="0" />
       <LineId Id="490" Count="0" />
       <LineId Id="613" Count="0" />
       <LineId Id="620" Count="0" />
