@@ -128,7 +128,7 @@ END_VAR]]></Declaration>
 	
 		IF pActTestSuite^.o_eResult = EResult_t.eStateFailedFatal THEN
 			o_eResult := EResult_t.eStateFailedFatal;
-			o_eState  := EState_t.eStateBuildCoverageFile;
+			o_eState  := EState_t.eStateExport;
 			logInfo('+++++++++++++ Fatal Error : Test Ende ++++++++++++++');
 		ELSE
 			
@@ -137,41 +137,42 @@ END_VAR]]></Declaration>
 			IF pActTestSuite <> 0 THEN
 				o_eState := EState_t.eStateExecute;
 			ELSE
-				o_eState := EState_t.eStateBuildCoverageFile;
+				o_eState := EState_t.eStateExport;
 				logInfo('+++++++++++++ Test Ende ++++++++++++++');
 			END_IF		
 			
 		END_IF
 
-	EState_t.eStateBuildCoverageFile:
+	EState_t.eStateExport:
 
-		IF createReport(EReporttype_t.eCoverageReport) = ERetCode_t.eRetDone THEN
+		IF createReport(EReporttype_t.eExternalReport) = ERetCode_t.eRetDone THEN
 			o_eState := EState_t.eStateBuildUnitTestFile;
 		END_IF;
-
+		
 	EState_t.eStateBuildUnitTestFile:
 
 		IF createReport(EReporttype_t.eUnitTestReport) = ERetCode_t.eRetDone THEN
+			o_eState := EState_t.eStateBuildCoverageFile;
+		END_IF;
+		
+	EState_t.eStateBuildCoverageFile:
+
+		IF createReport(EReporttype_t.eCoverageReport) = ERetCode_t.eRetDone THEN
 			o_eState := EState_t.eStateReady;
 		END_IF;
-
+		
 	EState_t.eStateReady:
 
 		bHwReady := TRUE;
 		bHwBusy  := FALSE;
 		IF i_bStart  = FALSE AND 
 			bHwStart = FALSE THEN
-			o_eState := EState_t.eStateExport;
-		END_IF
-
-	EState_t.eStateExport:
-
-		IF createReport(EReporttype_t.eExternalReport) = ERetCode_t.eRetDone THEN
 			o_eState := EState_t.eStateIdle;
-		END_IF;
-
+		END_IF		
+		
 	EState_t.eStateError,
 	EState_t.eStateLicenseError:
+	
 		bHwBusy  := FALSE;
 		o_eState := EState_t.eStateError;
 
@@ -787,33 +788,23 @@ END_VAR
       <LineId Id="101" Count="0" />
       <LineId Id="117" Count="0" />
       <LineId Id="97" Count="0" />
-      <LineId Id="486" Count="0" />
-      <LineId Id="485" Count="0" />
-      <LineId Id="488" Count="0" />
-      <LineId Id="782" Count="1" />
-      <LineId Id="527" Count="0" />
-      <LineId Id="490" Count="0" />
-      <LineId Id="613" Count="0" />
-      <LineId Id="620" Count="0" />
-      <LineId Id="615" Count="0" />
-      <LineId Id="614" Count="0" />
-      <LineId Id="780" Count="0" />
-      <LineId Id="612" Count="0" />
-      <LineId Id="86" Count="0" />
-      <LineId Id="955" Count="0" />
-      <LineId Id="779" Count="0" />
-      <LineId Id="956" Count="0" />
-      <LineId Id="89" Count="0" />
-      <LineId Id="959" Count="0" />
-      <LineId Id="90" Count="1" />
       <LineId Id="223" Count="0" />
       <LineId Id="222" Count="0" />
       <LineId Id="246" Count="0" />
       <LineId Id="892" Count="1" />
       <LineId Id="230" Count="0" />
-      <LineId Id="87" Count="0" />
+      <LineId Id="1378" Count="0" />
+      <LineId Id="1373" Count="3" />
+      <LineId Id="1361" Count="0" />
+      <LineId Id="1377" Count="0" />
+      <LineId Id="1362" Count="4" />
+      <LineId Id="1379" Count="0" />
+      <LineId Id="1381" Count="6" />
+      <LineId Id="1380" Count="0" />
+      <LineId Id="1372" Count="0" />
       <LineId Id="54" Count="0" />
       <LineId Id="312" Count="0" />
+      <LineId Id="1360" Count="0" />
       <LineId Id="55" Count="0" />
       <LineId Id="895" Count="0" />
       <LineId Id="894" Count="0" />
