@@ -1721,14 +1721,17 @@ END_VAR
 	validate := FALSE;
 	
 	IF (var1.pValue = 0 OR var2.pValue = 0) THEN
+		logError(concat('Assert validation fails with NULL-Pointer: ', strId));
 		RETURN;
 	END_IF
 
 	IF (var1.TypeClass <> var2.TypeClass) THEN
+		logError(concat('Assert validation fails with TypeClass Error: ', strId));
 		RETURN;
 	END_IF;	
 	
 	IF (var1.diSize <> var2.diSize) THEN
+		logError(concat('Assert validation fails with different size: ', strId));
 		RETURN;
 	END_IF;	
 	
@@ -2026,14 +2029,20 @@ END_VAR
       <LineId Id="5" Count="0" />
       <LineId Id="9" Count="0" />
       <LineId Id="11" Count="0" />
+      <LineId Id="51" Count="0" />
       <LineId Id="14" Count="0" />
       <LineId Id="10" Count="0" />
-      <LineId Id="19" Count="2" />
+      <LineId Id="19" Count="1" />
+      <LineId Id="52" Count="0" />
+      <LineId Id="21" Count="0" />
       <LineId Id="18" Count="0" />
       <LineId Id="22" Count="0" />
-      <LineId Id="16" Count="1" />
+      <LineId Id="16" Count="0" />
+      <LineId Id="53" Count="0" />
+      <LineId Id="17" Count="0" />
       <LineId Id="15" Count="0" />
-      <LineId Id="23" Count="1" />
+      <LineId Id="54" Count="0" />
+      <LineId Id="24" Count="0" />
     </LineIds>
   </POU>
 </TcPlcObject>
