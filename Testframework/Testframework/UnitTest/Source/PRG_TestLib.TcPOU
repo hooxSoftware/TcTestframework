@@ -1,0 +1,792 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.9">
+  <POU Name="PRG_TestLib" Id="{dbeace52-75a3-4dfa-9955-9febf020e88e}" SpecialFunc="None">
+    <Declaration><![CDATA[(******************************************************************************
+Baustein: PRG_TestLibrary
+Spezifikation: doc/Spezifikation.pdf, Kap. x.y.z
+-------------------------------------------------------------------------------
+erstellt:
+von:
+Geändert:
+von:
+-------------------------------------------------------------------------------
+Beschreibung
+Dieser Baustein etnhält alle Testsuites und führt diese aus.
+
+-------------------------------------------------------------------------------
+Input
+	i_bStart : mit positiver Flanke werden die registrierten Testsuites ausgeführt
+
+Output
+	o_eState  		: EState_t;
+	o_eResult 		: EResult_t;
+	o_sStatistic	: SStatistic_t;
+******************************************************************************)
+{attribute 'global_init_slot' := '41000'}
+PROGRAM PRG_TestLib
+VAR_INPUT
+	i_bStart : BOOL;
+END_VAR
+VAR_OUTPUT
+	o_eState  		: EState_t;
+	o_eResult 		: EResult_t;
+	o_sStatistic	: SStatistic_t;
+END_VAR
+VAR
+	bHwStart AT %I* : BOOL;
+	bHwBusy  AT %Q* : BOOL;
+	bHwReady AT %Q* : BOOL;
+	
+	a_pTestSuite 	: ARRAY [0..255] OF TestSuiteHandle_t;
+	u16TestSuites 	: UINT;
+	u16Index	  	: UINT;
+	pActTestSuite 	: TestSuiteHandle_t;
+	pTestReport		: POINTER TO FB_TestReportBase;
+	eRetCode 		: ERetCode_t;
+
+	fbSystemTime 	: FB_LocalSystemTime;
+	
+	fbUnittest 		: FB_CoverageFile;
+	u16ReportState : UINT;
+	u16TestSuitIdx	: UINT;
+	pTestCase  		: TestCaseHandle_t;
+	
+END_VAR
+VAR CONSTANT 
+END_VAR]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[
+	fbSystemTime(bEnable := TRUE, dwCycle := 5);
+			
+	fbUnittest();
+
+	CASE o_eState OF 
+	
+	EState_t.eStateInit:	
+		
+		IF i_bStart = FALSE THEN 
+		   logInfo('Testlib V1.1.1 Ready');
+			o_eState := EState_t.eStateIdle; 
+		END_IF
+
+	EState_t.eStateIdle:
+	
+		IF i_bStart = TRUE OR bHwStart = TRUE THEN
+			logInfo('+++++++++++++ Testbeginn ++++++++++++++');
+			o_eState := EState_t.eStatePrepare;
+			bHwReady := FALSE;
+		END_IF
+	
+	EState_t.eStatePrepare:
+	
+		bHwBusy := TRUE;
+		
+		o_eResult 	  				:= EResult_t.eStatePassed;
+		o_sStatistic.u32Executed 	:= 0;
+		o_sStatistic.u32TestCases	:= 0;
+		o_sStatistic.u32Asserts  	:= 0;
+		o_sStatistic.u32Passed   	:= 0;
+		o_sStatistic.u32Failed	 	:= 0;	
+
+		pActTestSuite := getFirstTestSuite();
+		
+		IF pActTestSuite      <> 0   THEN
+			o_eState := EState_t.eStateExecute;
+		ELSE
+			o_eState := EState_t.eStateError;	
+		END_IF
+	
+	EState_t.eStateExecute:
+	
+		pActTestSuite^(i_bStart := TRUE);
+	
+		IF pActTestSuite^.o_eState = EState_t.eStateReady THEN
+			
+			IF pActTestSuite^.o_eResult = EResult_t.eStateFailed THEN
+				o_eResult := EResult_t.eStateFailed;
+			END_IF
+			
+			pActTestSuite^(i_bStart := FALSE);
+			
+			o_eState := EState_t.eStateCleanUp;
+			
+			o_sStatistic.u32Executed 	:= o_sStatistic.u32Executed  + pActTestSuite^.getExecuted();
+			o_sStatistic.u32TestCases	:= o_sStatistic.u32TestCases + pActTestSuite^.getNoOfTests(); 
+			o_sStatistic.u32Asserts  	:= o_sStatistic.u32Asserts   + pActTestSuite^.getNoOfAsserts();
+			o_sStatistic.u32Passed   	:= o_sStatistic.u32Passed    + pActTestSuite^.getPassed();
+			o_sStatistic.u32Failed	 	:= o_sStatistic.u32Failed    + pActTestSuite^.getFailed();
+		END_IF
+	
+	EState_t.eStateCleanUp:
+	
+		IF pActTestSuite^.o_eResult = EResult_t.eStateFailedFatal THEN
+			o_eResult := EResult_t.eStateFailedFatal;
+			o_eState  := EState_t.eStateExport;
+			logInfo('+++++++++++++ Fatal Error : Test Ende ++++++++++++++');
+		ELSE
+			
+			pActTestSuite := getNextTestSuite();
+						
+			IF pActTestSuite <> 0 THEN
+				o_eState := EState_t.eStateExecute;
+			ELSE
+				o_eState := EState_t.eStateExport;
+				logInfo('+++++++++++++ Test Ende ++++++++++++++');
+			END_IF		
+			
+		END_IF
+
+	EState_t.eStateExport:
+
+		IF createReport(EReporttype_t.eExternalReport) = ERetCode_t.eRetDone THEN
+			o_eState := EState_t.eStateBuildUnitTestFile;
+		END_IF;
+		
+	EState_t.eStateBuildUnitTestFile:
+
+		IF createReport(EReporttype_t.eUnitTestReport) = ERetCode_t.eRetDone THEN
+			o_eState := EState_t.eStateBuildCoverageFile;
+		END_IF;
+		
+	EState_t.eStateReady:
+
+		bHwReady := TRUE;
+		bHwBusy  := FALSE;
+		IF i_bStart  = FALSE AND 
+			bHwStart = FALSE THEN
+			o_eState := EState_t.eStateIdle;
+		END_IF		
+		
+	EState_t.eStateError,
+	EState_t.eStateLicenseError:
+	
+		bHwBusy  := FALSE;
+		o_eState := EState_t.eStateError;
+
+	END_CASE]]></ST>
+    </Implementation>
+    <Method Name="addTestReport" Id="{01e7f184-904d-4319-bf24-cb63b7c8dbc8}">
+      <Declaration><![CDATA[(******************************************************************************
+Baustein: PRG_UnitTestLib.addTestReport
+Spezifikation: doc/Spezifikation.pdf, Kap. x.y.z
+-------------------------------------------------------------------------------
+erstellt:
+von:
+Geändert:
+von:
+-------------------------------------------------------------------------------
+Beschreibung
+Diese Methode
+
+-------------------------------------------------------------------------------
+Input
+i_pTestReport
+
+Output
+-
+******************************************************************************)
+{attribute 'hide'} 
+METHOD PUBLIC addTestReport : BOOL
+VAR_INPUT
+	i_pTestReport : TestReportHandle_t;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[
+	pTestReport := i_pTestReport;]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="addTestSuite" Id="{4899b7f4-5457-4c86-b63d-9b10a5e33440}">
+      <Declaration><![CDATA[(******************************************************************************
+Baustein: PRG_UnitTestLib.addTestSuite
+Spezifikation: doc/Spezifikation.pdf, Kap. x.y.z
+-------------------------------------------------------------------------------
+erstellt:
+von:
+Geändert:
+von:
+-------------------------------------------------------------------------------
+Beschreibung
+Diese Methode
+
+-------------------------------------------------------------------------------
+Input
+i_pTestSuite
+
+Output
+-
+******************************************************************************)
+{attribute 'hide'} 
+METHOD PUBLIC addTestSuite : BOOL
+VAR_INPUT
+	i_pTestSuite : TestSuiteHandle_t;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[
+	addTestSuite := FALSE;
+
+	IF 	i_pTestSuite  <> 0   AND 
+		u16TestSuites <  255 THEN
+		
+		a_pTestSuite[u16TestSuites] := i_pTestSuite;
+		
+		u16TestSuites := u16TestSuites +1;
+	
+		o_sStatistic.u32TestSuites := o_sStatistic.u32TestSuites + 1;
+		o_sStatistic.u32TestCases  := o_sStatistic.u32TestCases + i_pTestSuite^.sStatistic.u32TestCases;
+		
+		addTestSuite := TRUE;
+	END_IF]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="createReport" Id="{d9afc7ed-2e81-46b0-adaa-c3b998a94e06}">
+      <Declaration><![CDATA[{attribute 'hide'} 
+METHOD PRIVATE createReport : ERetCode_t
+VAR_INPUT
+	i_eReporttype : EReportType_t;
+END_VAR
+VAR
+	eRetcode : ERetCode_t;
+	u32Temp : UDINT;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[
+	createReport := ERetCode_t.eRetBusy;
+
+	CASE u16ReportState OF
+
+	0: 
+		IF i_eReporttype = EReportType_t.eUnitTestReport THEN
+			u16ReportState := 20;
+		END_IF;
+
+		IF i_eReporttype = EReportType_t.eExternalReport THEN
+			u16ReportState := 100;
+		END_IF;
+
+// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+//
+// Export Unittest Ergebnisse
+// 
+// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+	20:		
+
+		eRetcode := fbUnitTest.open('C:\TwinCAT\3.1\Boot\CurrentConfig\', 'Unittest.xml');
+
+		IF eRetcode = ERetCode_t.eRetDone THEN
+
+			u16ReportState := 21;
+
+		ELSIF eRetcode = ERetCode_t.eRetFailed THEN
+
+			logError('createReport Unittest.xml : Datei nicht geöffnet');
+			u16ReportState := 22;
+
+		END_IF;	
+
+	21:
+
+		u16TestSuitIdx := 0;
+
+		fbUnitTest.addString('<?xml version="1.0" ?>');
+		fbUnitTest.addCrlf();
+
+		fbUnitTest.addString('<testsuites>');
+		fbUnitTest.addCrlf();
+
+		pActTestSuite := getFirstTestSuite();
+
+		WHILE (pActTestSuite <> 0) DO
+
+			u16TestSuitIdx := u16TestSuitIdx+1;
+
+			fbUnitTest.addString('<testsuite');
+			fbUnitTest.addString(' name="');
+			fbUnitTest.addString(pActTestSuite^.getId());
+			fbUnitTest.addString('" tests="');
+			u32Temp := pActTestSuite^.getNoOfTests();
+			fbUnitTest.addValue(u32Temp);
+			fbUnitTest.addString('" disabled="');
+			u32Temp := 0;
+			fbUnitTest.addValue(u32Temp);
+			fbUnitTest.addString('" errors="');
+			fbUnitTest.addValue(u32Temp);
+			fbUnitTest.addString('" failures="');
+			u32Temp := pActTestSuite^.getFailed();
+			fbUnitTest.addValue(u32Temp);
+			fbUnitTest.addString('" hostname="');
+			fbUnitTest.addString('" id="');
+			fbUnitTest.addvalue(u16TestSuitIdx);
+			fbUnitTest.addString('" package="');
+			fbUnitTest.addString(pActTestSuite^.getPath());
+			fbUnitTest.addString('">');
+			fbUnitTest.addCrlf();
+
+			pTestCase := pActTestSuite^.getFirstTestCase();
+
+			WHILE (pTestCase <> 0) DO
+
+				fbUnitTest.addString('<testcase');
+				fbUnitTest.addString(' name="');
+				fbUnitTest.addString(pTestCase^.getId());
+				fbUnitTest.addString('" assertions="');
+				u32Temp := pTestCase^.getFailed() + pTestCase^.getPassed();
+				fbUnitTest.addValue(u32Temp);
+				fbUnitTest.addString('" classname="');
+				fbUnitTest.addString(pTestCase^.getPath());
+				fbUnitTest.addString(pTestCase^.getClassName());
+				fbUnitTest.addString('" time="');
+				u32Temp := pTestCase^.getTime();
+				fbUnitTest.addTimeMs(u32Temp);
+				fbUnitTest.addString('">');
+				fbUnitTest.addCrlf();
+
+				CASE pTestCase^.o_eResult OF
+
+				EResult_t.eStatePassed :
+
+					fbUnitTest.addString('<passed/>');
+
+				EResult_t.eStateFailed, 
+				EResult_t.eStateFailedFatal :
+			
+					fbUnitTest.addString('<failure');
+					fbUnitTest.addString(' message="');
+					fbUnitTest.addString(pTestCase^.getMessage());
+					fbUnitTest.addString('"/>');
+					
+				EResult_t.eStateSkipped:
+
+					fbUnitTest.addString('<skipped/>');
+
+				END_CASE;
+				
+				fbUnitTest.addCrlf();	
+
+				fbUnitTest.addString('</testcase>');
+				fbUnitTest.addCrlf();		
+
+				pTestCase := pActTestSuite^.getNextTestCase();
+		
+			END_WHILE
+
+			fbUnitTest.addString('</testsuite>');
+			fbUnitTest.addCrlf();	
+
+			pActTestSuite := getNextTestSuite();
+
+		END_WHILE
+
+		fbUnitTest.addString('</testsuites>');
+		fbUnitTest.addCrlf();
+
+		u16ReportState := 22;
+
+	22:
+		IF fbUnitTest.o_bOpen  = TRUE AND 
+		   fbUnitTest.o_bEmpty = TRUE THEN
+			fbUnitTest.close();
+		END_IF;
+
+		IF fbUnitTest.o_bOpen  = FALSE THEN
+			createReport 	:= ERetCode_t.eRetDone;
+		END_IF;
+
+// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+//
+//
+// 
+// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+	100:
+
+		IF pTestReport <> 0 THEN
+			
+			createReport := pTestReport^.create();		
+			
+		ELSE
+
+			createReport := ERetCode_t.eRetDone;
+
+		END_IF;
+
+	ELSE
+		createReport := ERetCode_t.eRetFailed;
+	END_CASE;
+
+	IF createReport = ERetCode_t.eRetDone THEN
+		u16ReportState := 0;
+	END_IF;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+(**)]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="getFirstTestSuite" Id="{6dd3fe68-4fa4-401b-93b4-4e9d66a75960}">
+      <Declaration><![CDATA[(******************************************************************************
+Baustein: PRG_UnitTestLib.getFirstTestSuite
+Spezifikation: doc/Spezifikation.pdf, Kap. x.y.z
+-------------------------------------------------------------------------------
+erstellt:
+von:
+Geändert:
+von:
+-------------------------------------------------------------------------------
+Beschreibung
+Diese Methode
+
+-------------------------------------------------------------------------------
+Input
+-
+
+Output
+-
+******************************************************************************)
+{attribute 'hide'} 
+METHOD PRIVATE getFirstTestSuite : TestSuiteHandle_t
+VAR_INPUT
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[
+	u16Index := 0;
+	getFirstTestSuite := a_pTestSuite[0];]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="getNextTestSuite" Id="{25155ea4-e257-4500-9294-2e5b075f342b}">
+      <Declaration><![CDATA[(******************************************************************************
+Baustein: PRG_UnitTestLib.getNextTestSuite
+Spezifikation: doc/Spezifikation.pdf, Kap. x.y.z
+-------------------------------------------------------------------------------
+erstellt:
+von:
+Geändert:
+von:
+-------------------------------------------------------------------------------
+Beschreibung
+Diese Methode
+
+-------------------------------------------------------------------------------
+Input
+-
+
+Output
+-
+******************************************************************************)
+{attribute 'hide'} 
+METHOD PRIVATE getNextTestSuite : TestSuiteHandle_t
+VAR_INPUT
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[
+	getNextTestSuite := 0;
+	u16Index 		 := u16Index + 1;
+
+	IF u16Index < u16TestSuites THEN
+		getNextTestSuite := a_pTestSuite[u16Index];
+	END_IF;]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="getTime" Id="{04976903-c590-4bd7-9b55-bd9bdde13ab5}">
+      <Declaration><![CDATA[(******************************************************************************
+Baustein: PRG_UnitTestLib.getTime
+Spezifikation: doc/Spezifikation.pdf, Kap. x.y.z
+-------------------------------------------------------------------------------
+erstellt:
+von:
+Geändert:
+von:
+-------------------------------------------------------------------------------
+Beschreibung
+Diese Methode
+
+-------------------------------------------------------------------------------
+Input
+-
+
+Output
+-
+******************************************************************************)
+{attribute 'hide'} 
+METHOD getTime : TimeStruct
+VAR_INPUT
+END_VAR
+VAR
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[
+	getTime := fbSystemTime.systemTime;
+]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="logError" Id="{9690f9c4-e79c-461f-b5e8-03d0cd8a943f}">
+      <Declaration><![CDATA[(******************************************************************************
+Baustein: PRG_UnitTestLib.logError
+Spezifikation: doc/Spezifikation.pdf, Kap. x.y.z
+-------------------------------------------------------------------------------
+erstellt:
+von:
+Geändert:
+von:
+-------------------------------------------------------------------------------
+Beschreibung
+Diese Methode
+
+-------------------------------------------------------------------------------
+Input
+i_strMessage
+
+Output
+-
+******************************************************************************)
+{attribute 'hide'} 
+METHOD PROTECTED logError : BOOL
+VAR_INPUT
+	i_strMessage : StrMessage_t;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[
+	ADSLOGSTR(msgCtrlMask 	:= ADSLOG_MSGTYPE_ERROR , 
+			  msgFmtStr 	:= i_strMessage, 
+			  strArg 		:= '');]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="logInfo" Id="{8bbf780e-46b8-44f0-9d7d-eeee4895fdf7}">
+      <Declaration><![CDATA[(******************************************************************************
+Baustein: PRG_UnitTestLib.logInfo
+Spezifikation: doc/Spezifikation.pdf, Kap. x.y.z
+-------------------------------------------------------------------------------
+erstellt:
+von:
+Geändert:
+von:
+-------------------------------------------------------------------------------
+Beschreibung
+Diese Methode
+
+-------------------------------------------------------------------------------
+Input
+i_strMessage
+
+Output
+-
+******************************************************************************)
+{attribute 'hide'} 
+METHOD PUBLIC logInfo : BOOL
+VAR_INPUT
+	i_strMessage : StrMessage_t;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[
+	ADSLOGSTR(msgCtrlMask 	:= ADSLOG_MSGTYPE_HINT , 
+			  msgFmtStr 	:= i_strMessage, 
+			  strArg 		:= '');]]></ST>
+      </Implementation>
+    </Method>
+    <LineIds Name="PRG_TestLib">
+      <LineId Id="257" Count="1" />
+      <LineId Id="1227" Count="0" />
+      <LineId Id="1301" Count="0" />
+      <LineId Id="41" Count="0" />
+      <LineId Id="9" Count="0" />
+      <LineId Id="42" Count="0" />
+      <LineId Id="45" Count="0" />
+      <LineId Id="1230" Count="0" />
+      <LineId Id="160" Count="0" />
+      <LineId Id="1446" Count="0" />
+      <LineId Id="161" Count="0" />
+      <LineId Id="46" Count="0" />
+      <LineId Id="162" Count="0" />
+      <LineId Id="47" Count="0" />
+      <LineId Id="57" Count="1" />
+      <LineId Id="217" Count="0" />
+      <LineId Id="59" Count="0" />
+      <LineId Id="954" Count="0" />
+      <LineId Id="60" Count="0" />
+      <LineId Id="48" Count="0" />
+      <LineId Id="52" Count="0" />
+      <LineId Id="957" Count="1" />
+      <LineId Id="433" Count="0" />
+      <LineId Id="114" Count="0" />
+      <LineId Id="251" Count="3" />
+      <LineId Id="115" Count="0" />
+      <LineId Id="435" Count="0" />
+      <LineId Id="64" Count="3" />
+      <LineId Id="108" Count="1" />
+      <LineId Id="68" Count="0" />
+      <LineId Id="53" Count="0" />
+      <LineId Id="49" Count="0" />
+      <LineId Id="72" Count="1" />
+      <LineId Id="70" Count="1" />
+      <LineId Id="118" Count="0" />
+      <LineId Id="120" Count="1" />
+      <LineId Id="175" Count="1" />
+      <LineId Id="119" Count="0" />
+      <LineId Id="174" Count="0" />
+      <LineId Id="74" Count="0" />
+      <LineId Id="125" Count="0" />
+      <LineId Id="177" Count="0" />
+      <LineId Id="216" Count="0" />
+      <LineId Id="215" Count="0" />
+      <LineId Id="178" Count="1" />
+      <LineId Id="75" Count="0" />
+      <LineId Id="50" Count="1" />
+      <LineId Id="77" Count="0" />
+      <LineId Id="95" Count="1" />
+      <LineId Id="99" Count="0" />
+      <LineId Id="1158" Count="0" />
+      <LineId Id="100" Count="0" />
+      <LineId Id="116" Count="0" />
+      <LineId Id="102" Count="5" />
+      <LineId Id="220" Count="0" />
+      <LineId Id="101" Count="0" />
+      <LineId Id="117" Count="0" />
+      <LineId Id="97" Count="0" />
+      <LineId Id="223" Count="0" />
+      <LineId Id="222" Count="0" />
+      <LineId Id="246" Count="0" />
+      <LineId Id="892" Count="1" />
+      <LineId Id="230" Count="0" />
+      <LineId Id="1378" Count="0" />
+      <LineId Id="1373" Count="3" />
+      <LineId Id="1361" Count="0" />
+      <LineId Id="1379" Count="0" />
+      <LineId Id="1381" Count="6" />
+      <LineId Id="1380" Count="0" />
+      <LineId Id="1372" Count="0" />
+      <LineId Id="54" Count="0" />
+      <LineId Id="312" Count="0" />
+      <LineId Id="1360" Count="0" />
+      <LineId Id="55" Count="0" />
+      <LineId Id="895" Count="0" />
+      <LineId Id="894" Count="0" />
+      <LineId Id="43" Count="0" />
+    </LineIds>
+    <LineIds Name="PRG_TestLib.addTestReport">
+      <LineId Id="7" Count="0" />
+      <LineId Id="5" Count="0" />
+    </LineIds>
+    <LineIds Name="PRG_TestLib.addTestSuite">
+      <LineId Id="7" Count="9" />
+      <LineId Id="41" Count="0" />
+      <LineId Id="43" Count="0" />
+      <LineId Id="42" Count="0" />
+      <LineId Id="17" Count="0" />
+      <LineId Id="5" Count="0" />
+    </LineIds>
+    <LineIds Name="PRG_TestLib.createReport">
+      <LineId Id="99" Count="1" />
+      <LineId Id="70" Count="1" />
+      <LineId Id="104" Count="0" />
+      <LineId Id="103" Count="0" />
+      <LineId Id="73" Count="0" />
+      <LineId Id="109" Count="0" />
+      <LineId Id="108" Count="0" />
+      <LineId Id="436" Count="2" />
+      <LineId Id="118" Count="0" />
+      <LineId Id="452" Count="4" />
+      <LineId Id="113" Count="0" />
+      <LineId Id="72" Count="0" />
+      <LineId Id="375" Count="3" />
+      <LineId Id="380" Count="7" />
+      <LineId Id="6" Count="0" />
+      <LineId Id="366" Count="0" />
+      <LineId Id="282" Count="0" />
+      <LineId Id="365" Count="0" />
+      <LineId Id="283" Count="20" />
+      <LineId Id="406" Count="0" />
+      <LineId Id="403" Count="0" />
+      <LineId Id="304" Count="0" />
+      <LineId Id="404" Count="0" />
+      <LineId Id="305" Count="0" />
+      <LineId Id="407" Count="0" />
+      <LineId Id="405" Count="0" />
+      <LineId Id="306" Count="3" />
+      <LineId Id="401" Count="0" />
+      <LineId Id="310" Count="13" />
+      <LineId Id="402" Count="0" />
+      <LineId Id="392" Count="0" />
+      <LineId Id="325" Count="0" />
+      <LineId Id="391" Count="0" />
+      <LineId Id="390" Count="0" />
+      <LineId Id="326" Count="12" />
+      <LineId Id="481" Count="1" />
+      <LineId Id="339" Count="0" />
+      <LineId Id="483" Count="0" />
+      <LineId Id="340" Count="13" />
+      <LineId Id="355" Count="8" />
+      <LineId Id="94" Count="0" />
+      <LineId Id="389" Count="0" />
+      <LineId Id="388" Count="0" />
+      <LineId Id="364" Count="0" />
+      <LineId Id="75" Count="0" />
+      <LineId Id="105" Count="2" />
+      <LineId Id="98" Count="0" />
+      <LineId Id="226" Count="0" />
+      <LineId Id="223" Count="0" />
+      <LineId Id="225" Count="0" />
+      <LineId Id="222" Count="0" />
+      <LineId Id="447" Count="0" />
+      <LineId Id="416" Count="0" />
+      <LineId Id="448" Count="3" />
+      <LineId Id="417" Count="0" />
+      <LineId Id="419" Count="3" />
+      <LineId Id="433" Count="1" />
+      <LineId Id="446" Count="0" />
+      <LineId Id="435" Count="0" />
+      <LineId Id="445" Count="0" />
+      <LineId Id="418" Count="0" />
+      <LineId Id="117" Count="0" />
+      <LineId Id="95" Count="0" />
+      <LineId Id="76" Count="1" />
+      <LineId Id="442" Count="0" />
+      <LineId Id="441" Count="0" />
+      <LineId Id="444" Count="0" />
+      <LineId Id="443" Count="0" />
+      <LineId Id="78" Count="15" />
+      <LineId Id="74" Count="0" />
+    </LineIds>
+    <LineIds Name="PRG_TestLib.getFirstTestSuite">
+      <LineId Id="25" Count="1" />
+      <LineId Id="5" Count="0" />
+    </LineIds>
+    <LineIds Name="PRG_TestLib.getNextTestSuite">
+      <LineId Id="25" Count="5" />
+      <LineId Id="5" Count="0" />
+    </LineIds>
+    <LineIds Name="PRG_TestLib.getTime">
+      <LineId Id="21" Count="0" />
+      <LineId Id="14" Count="0" />
+      <LineId Id="7" Count="0" />
+    </LineIds>
+    <LineIds Name="PRG_TestLib.logError">
+      <LineId Id="7" Count="0" />
+      <LineId Id="5" Count="0" />
+      <LineId Id="8" Count="1" />
+    </LineIds>
+    <LineIds Name="PRG_TestLib.logInfo">
+      <LineId Id="7" Count="0" />
+      <LineId Id="5" Count="0" />
+      <LineId Id="8" Count="1" />
+    </LineIds>
+  </POU>
+</TcPlcObject>

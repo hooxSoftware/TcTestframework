@@ -1,0 +1,450 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.9">
+  <POU Name="PRG_TestCoverage" Id="{89411254-1a6b-4317-931a-d4bd0576cd2f}" SpecialFunc="None">
+    <Declaration><![CDATA[(******************************************************************************
+Baustein: PRG_TestLibrary
+Spezifikation: doc/Spezifikation.pdf, Kap. x.y.z
+-------------------------------------------------------------------------------
+erstellt:
+von:
+Geändert:
+von:
+-------------------------------------------------------------------------------
+Beschreibung
+Dieser Baustein etnhält alle Testsuites und führt diese aus.
+
+-------------------------------------------------------------------------------
+Input
+	i_bStart : mit positiver Flanke werden die registrierten Testsuites ausgeführt
+
+Output
+	o_eState  		: EState_t;
+	o_eResult 		: EResult_t;
+	o_sStatistic	: SStatistic_t;
+******************************************************************************)
+{attribute 'global_init_slot' := '41000'}
+PROGRAM PRG_TestCoverage
+VAR_INPUT
+	i_bStart : BOOL;
+END_VAR
+VAR_OUTPUT
+	o_eState  		: EState_t;
+	o_eResult 		: EResult_t;
+	o_sStatistic	: SStatistic_t;
+END_VAR
+VAR
+
+
+	pTestReport		: POINTER TO FB_TestReportBase;
+	eRetCode 		: ERetCode_t;
+
+	fbSystemTime 	: FB_LocalSystemTime;
+	
+	fbCoverage 		: FB_CoverageFile;
+
+	u16PouIdx  		: UINT;
+	u16LineIdx 		: UINT;
+	u16ReportState  : UINT;
+	sCodeCoverage	: SCodeCoverage_t;
+	
+END_VAR
+VAR CONSTANT 
+	u32MaxLineIdx   : UDINT := 2000; (* maximale Zeilenanzahl   *)
+	u32MaxPouIdx    : UDINT := 500;  (* maximale Bausteinanzahl *)
+END_VAR]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[
+
+	fbCoverage();
+		
+	CASE o_eState OF 
+	
+	EState_t.eStateIdle:	
+		
+		IF i_bStart = FALSE THEN 
+		   logInfo('Testlib V1.1.1 Ready');
+			o_eState := EState_t.eStateIdle; 
+		END_IF
+	
+	EState_t.eStateExecute:
+	
+		IF createReport(EReporttype_t.eCoverageReport) = ERetCode_t.eRetDone THEN
+			o_eState := EState_t.eStateReady;
+		END_IF;
+		
+	EState_t.eStateReady:
+
+		IF i_bStart  = FALSE THEN
+			o_eState := EState_t.eStateIdle;
+		END_IF		
+		
+	EState_t.eStateError,
+	EState_t.eStateLicenseError:
+	
+		o_eState := EState_t.eStateError;
+
+	END_CASE]]></ST>
+    </Implementation>
+    <Method Name="createReport" Id="{edd1de35-26e0-498e-8636-7e4054f50d82}">
+      <Declaration><![CDATA[{attribute 'hide'} 
+METHOD PRIVATE createReport : ERetCode_t
+VAR_INPUT
+	i_eReporttype : EReportType_t;
+END_VAR
+VAR
+	eRetcode : ERetCode_t;
+	u32Temp : UDINT;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[
+	createReport := ERetCode_t.eRetBusy;
+
+	CASE u16ReportState OF
+
+	0: 
+		IF i_eReporttype = EReportType_t.eCoverageReport THEN
+			u16ReportState := 10;
+		END_IF;
+
+// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+//
+// Export Codeabdeckung
+// 
+// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+	10:
+		eRetcode := fbCoverage.open('C:\TwinCAT\3.1\Boot\CurrentConfig\', 'Coverage.xml');
+
+		IF eRetcode = ERetCode_t.eRetDone THEN
+
+			u16ReportState := 11;
+
+		ELSIF eRetcode = ERetCode_t.eRetFailed THEN
+
+			logError('createReport Coverage.xml : Datei nicht geöffnet');
+			u16ReportState := 12;
+
+		END_IF;		
+
+	11:
+
+		fbCoverage.addString('<?xml version="1.0" ?>');
+		fbCoverage.addCrlf();
+
+		fbCoverage.addString('<Result>');
+		fbCoverage.addCrlf();
+
+		FOR u16PouIdx := 1 TO sCodeCoverage.u16MaxPouIndex DO
+
+			fbCoverage.addString('<POU Id="');
+			fbCoverage.addValue(u16PouIdx);
+			fbCoverage.addString('">');
+			fbCoverage.addCrlf();
+
+			FOR u16LineIdx := 1 TO sCodeCoverage.u16MaxLineIndex DO
+
+				IF sCodeCoverage.aPou[u16PouIdx][u16LineIdx] > 0 THEN
+
+					fbCoverage.addString('<Line Nb="');
+					fbCoverage.addValue(u16LineIdx);
+
+					fbCoverage.addString('" Count="');
+					fbCoverage.addValue(sCodeCoverage.aPou[u16PouIdx][u16LineIdx]);
+					
+					fbCoverage.addString('"/>');
+					fbCoverage.addCrlf();
+
+				END_IF;
+
+			END_FOR;
+
+			fbCoverage.addString('</POU>');
+			fbCoverage.addCrlf();
+
+		END_FOR;
+
+		fbCoverage.addString('</Result>');
+		fbCoverage.addCrlf();
+		u16ReportState := 12;
+
+
+	12:
+
+		IF fbCoverage.o_bOpen  = TRUE AND 
+		   fbCoverage.o_bEmpty = TRUE THEN
+			fbCoverage.close();
+		END_IF;
+
+		IF fbCoverage.o_bOpen  = FALSE THEN
+			createReport 	:= ERetCode_t.eRetDone;
+		END_IF;
+
+	ELSE
+		createReport := ERetCode_t.eRetFailed;
+	END_CASE;
+
+	IF createReport = ERetCode_t.eRetDone THEN
+		u16ReportState := 0;
+	END_IF;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+(**)]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="getTime" Id="{fe4cca3a-6c07-4982-9c1c-91c2c139ab04}">
+      <Declaration><![CDATA[(******************************************************************************
+Baustein: PRG_UnitTestLib.getTime
+Spezifikation: doc/Spezifikation.pdf, Kap. x.y.z
+-------------------------------------------------------------------------------
+erstellt:
+von:
+Geändert:
+von:
+-------------------------------------------------------------------------------
+Beschreibung
+Diese Methode
+
+-------------------------------------------------------------------------------
+Input
+-
+
+Output
+-
+******************************************************************************)
+{attribute 'hide'} 
+METHOD getTime : TimeStruct
+VAR_INPUT
+END_VAR
+VAR
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[
+	getTime := fbSystemTime.systemTime;
+]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="LineCovered" Id="{a6330277-f233-45b1-ab10-e30e40611447}">
+      <Declaration><![CDATA[{attribute 'hide'} 
+METHOD PUBLIC LineCovered : BOOL
+VAR_INPUT
+	u16Pou  : UINT;
+	u16Line : UINT;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[
+  LineCovered := TRUE;
+	
+  IF (u16Pou  > 0 AND u16Pou  <= u32MaxPouIdx ) AND
+		 (u16Line > 0 AND u16Line <= u32MaxLineIdx) THEN
+  
+	  IF u16Pou > sCodeCoverage.u16MaxPouIndex THEN
+		  sCodeCoverage.u16MaxPouIndex := u16Pou;
+	  END_IF;
+	  IF u16Line > sCodeCoverage.u16MaxLineIndex THEN
+		  sCodeCoverage.u16MaxLineIndex := u16Line;
+	  END_IF;
+	  
+	  IF sCodeCoverage.aPou[u16Pou][u16Line] < 255 THEN
+		  sCodeCoverage.aPou[u16Pou][u16Line] := sCodeCoverage.aPou[u16Pou][u16Line]+1;
+	  END_IF;
+  END_IF;
+
+	
+	
+	
+]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="logError" Id="{b61ecc79-d71a-4298-a53e-ef31f447bae7}">
+      <Declaration><![CDATA[(******************************************************************************
+Baustein: PRG_UnitTestLib.logError
+Spezifikation: doc/Spezifikation.pdf, Kap. x.y.z
+-------------------------------------------------------------------------------
+erstellt:
+von:
+Geändert:
+von:
+-------------------------------------------------------------------------------
+Beschreibung
+Diese Methode
+
+-------------------------------------------------------------------------------
+Input
+i_strMessage
+
+Output
+-
+******************************************************************************)
+{attribute 'hide'} 
+METHOD PROTECTED logError : BOOL
+VAR_INPUT
+	i_strMessage : StrMessage_t;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[
+	ADSLOGSTR(msgCtrlMask 	:= ADSLOG_MSGTYPE_ERROR , 
+			  msgFmtStr 	:= i_strMessage, 
+			  strArg 		:= '');]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="logInfo" Id="{9d54e29d-5872-467f-a5be-c4c4f1bef70e}">
+      <Declaration><![CDATA[(******************************************************************************
+Baustein: PRG_UnitTestLib.logInfo
+Spezifikation: doc/Spezifikation.pdf, Kap. x.y.z
+-------------------------------------------------------------------------------
+erstellt:
+von:
+Geändert:
+von:
+-------------------------------------------------------------------------------
+Beschreibung
+Diese Methode
+
+-------------------------------------------------------------------------------
+Input
+i_strMessage
+
+Output
+-
+******************************************************************************)
+{attribute 'hide'} 
+METHOD PUBLIC logInfo : BOOL
+VAR_INPUT
+	i_strMessage : StrMessage_t;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[
+	ADSLOGSTR(msgCtrlMask 	:= ADSLOG_MSGTYPE_HINT , 
+			  msgFmtStr 	:= i_strMessage, 
+			  strArg 		:= '');]]></ST>
+      </Implementation>
+    </Method>
+    <LineIds Name="PRG_TestCoverage">
+      <LineId Id="257" Count="0" />
+      <LineId Id="1227" Count="0" />
+      <LineId Id="317" Count="0" />
+      <LineId Id="1299" Count="0" />
+      <LineId Id="9" Count="0" />
+      <LineId Id="42" Count="0" />
+      <LineId Id="45" Count="0" />
+      <LineId Id="1230" Count="0" />
+      <LineId Id="160" Count="0" />
+      <LineId Id="1446" Count="0" />
+      <LineId Id="161" Count="0" />
+      <LineId Id="46" Count="0" />
+      <LineId Id="53" Count="0" />
+      <LineId Id="49" Count="0" />
+      <LineId Id="72" Count="0" />
+      <LineId Id="1563" Count="2" />
+      <LineId Id="75" Count="0" />
+      <LineId Id="1381" Count="0" />
+      <LineId Id="1384" Count="1" />
+      <LineId Id="1387" Count="0" />
+      <LineId Id="1380" Count="0" />
+      <LineId Id="1372" Count="0" />
+      <LineId Id="54" Count="0" />
+      <LineId Id="312" Count="0" />
+      <LineId Id="1360" Count="0" />
+      <LineId Id="895" Count="0" />
+      <LineId Id="894" Count="0" />
+      <LineId Id="43" Count="0" />
+    </LineIds>
+    <LineIds Name="PRG_TestCoverage.createReport">
+      <LineId Id="99" Count="1" />
+      <LineId Id="70" Count="1" />
+      <LineId Id="104" Count="0" />
+      <LineId Id="103" Count="0" />
+      <LineId Id="228" Count="1" />
+      <LineId Id="227" Count="0" />
+      <LineId Id="457" Count="4" />
+      <LineId Id="439" Count="0" />
+      <LineId Id="119" Count="0" />
+      <LineId Id="122" Count="0" />
+      <LineId Id="372" Count="0" />
+      <LineId Id="123" Count="1" />
+      <LineId Id="279" Count="0" />
+      <LineId Id="162" Count="0" />
+      <LineId Id="231" Count="0" />
+      <LineId Id="374" Count="0" />
+      <LineId Id="232" Count="0" />
+      <LineId Id="280" Count="0" />
+      <LineId Id="373" Count="0" />
+      <LineId Id="121" Count="0" />
+      <LineId Id="236" Count="1" />
+      <LineId Id="240" Count="38" />
+      <LineId Id="238" Count="0" />
+      <LineId Id="164" Count="1" />
+      <LineId Id="179" Count="0" />
+      <LineId Id="174" Count="2" />
+      <LineId Id="169" Count="0" />
+      <LineId Id="221" Count="0" />
+      <LineId Id="215" Count="0" />
+      <LineId Id="220" Count="0" />
+      <LineId Id="173" Count="0" />
+      <LineId Id="117" Count="0" />
+      <LineId Id="95" Count="0" />
+      <LineId Id="76" Count="1" />
+      <LineId Id="442" Count="0" />
+      <LineId Id="441" Count="0" />
+      <LineId Id="444" Count="0" />
+      <LineId Id="443" Count="0" />
+      <LineId Id="78" Count="15" />
+      <LineId Id="74" Count="0" />
+    </LineIds>
+    <LineIds Name="PRG_TestCoverage.getTime">
+      <LineId Id="21" Count="0" />
+      <LineId Id="14" Count="0" />
+      <LineId Id="7" Count="0" />
+    </LineIds>
+    <LineIds Name="PRG_TestCoverage.LineCovered">
+      <LineId Id="8" Count="0" />
+      <LineId Id="5" Count="0" />
+      <LineId Id="34" Count="0" />
+      <LineId Id="44" Count="0" />
+      <LineId Id="48" Count="0" />
+      <LineId Id="60" Count="0" />
+      <LineId Id="56" Count="0" />
+      <LineId Id="58" Count="0" />
+      <LineId Id="57" Count="0" />
+      <LineId Id="67" Count="1" />
+      <LineId Id="59" Count="0" />
+      <LineId Id="69" Count="0" />
+      <LineId Id="49" Count="0" />
+      <LineId Id="47" Count="0" />
+      <LineId Id="50" Count="0" />
+      <LineId Id="46" Count="0" />
+      <LineId Id="37" Count="0" />
+      <LineId Id="22" Count="0" />
+      <LineId Id="27" Count="1" />
+      <LineId Id="10" Count="0" />
+    </LineIds>
+    <LineIds Name="PRG_TestCoverage.logError">
+      <LineId Id="7" Count="0" />
+      <LineId Id="5" Count="0" />
+      <LineId Id="8" Count="1" />
+    </LineIds>
+    <LineIds Name="PRG_TestCoverage.logInfo">
+      <LineId Id="7" Count="0" />
+      <LineId Id="5" Count="0" />
+      <LineId Id="8" Count="1" />
+    </LineIds>
+  </POU>
+</TcPlcObject>

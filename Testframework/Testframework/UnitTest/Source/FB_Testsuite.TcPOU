@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.4">
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.9">
   <POU Name="FB_Testsuite" Id="{ae8bbd51-73a9-4be0-b082-2ec8a068e7f6}" SpecialFunc="None">
     <Declaration><![CDATA[(******************************************************************************
 Baustein: FB_Testsuite
@@ -73,7 +73,7 @@ END_VAR
 		sStatistic.u32Asserts 	:= 0;
 
 		IF pTest <> 0 THEN
-			IF pTest^._prepare() = TRUE THEN
+			IF pTest^._prepare() = ERetCode_t.eRetDone THEN
 				pTest 	:= getNextTestCase();
 			END_IF;
 		ELSE
@@ -89,7 +89,7 @@ END_VAR
 
 				pTest^.setStartTime();
 
-				IF pTest^._execute() = TRUE 								OR 
+				IF pTest^._execute() = ERetCode_t.eRetDone			OR 
 					pTest^.o_eResult  = EResult_t.eStateFailedFatal THEN
 					
 					pTest^.setEndTime();
@@ -148,7 +148,7 @@ END_VAR
 	ESTate_t.eStateCleanUp:
 
 		IF pTest <> 0 THEN
-			IF pTest^._cleanup() = TRUE THEN
+			IF pTest^._cleanup() = ERetCode_t.eRetDone THEN
 				pTest 	:= getNextTestCase();
 			END_IF;
 		ELSE
@@ -574,7 +574,7 @@ END_VAR
 ]]></Declaration>
       <Implementation>
         <ST><![CDATA[
-	bRegistered := PRG_UnitTestLib.addTestSuite(this);]]></ST>
+	bRegistered := PRG_TestLib.addTestSuite(this);]]></ST>
       </Implementation>
     </Method>
     <ObjectProperties>
@@ -590,9 +590,7 @@ END_VAR
       </XmlArchive>
     </ObjectProperties>
     <LineIds Name="FB_Testsuite">
-      <LineId Id="3" Count="48" />
-      <LineId Id="174" Count="1" />
-      <LineId Id="52" Count="83" />
+      <LineId Id="3" Count="134" />
       <LineId Id="2" Count="0" />
     </LineIds>
     <LineIds Name="FB_Testsuite.addTestcase">

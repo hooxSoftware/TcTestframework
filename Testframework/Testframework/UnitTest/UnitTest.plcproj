@@ -18,7 +18,7 @@
     <Released>false</Released>
     <Title>UnitTest</Title>
     <Author>Patrick Dressel</Author>
-    <ProjectVersion>1.0.2</ProjectVersion>
+    <ProjectVersion>1.1.1</ProjectVersion>
     <Licenses>
     </Licenses>
     <LibraryCategories>
@@ -61,6 +61,9 @@
     <Compile Include="Datatypes\EResult_t.TcDUT">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Datatypes\ERetCode_t.TcDUT">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Datatypes\EState_t.TcDUT">
       <SubType>Code</SubType>
     </Compile>
@@ -71,9 +74,6 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Datatypes\Report\EExportState_t.TcDUT">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Datatypes\Report\ERetCode_t.TcDUT">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Datatypes\Report\NameHandle_t.TcDUT">
@@ -125,10 +125,13 @@
     <Compile Include="Source\FB_Testsuite.TcPOU">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Source\FB_UnitTestBase.TcPOU">
+    <Compile Include="Source\FB_TestBase.TcPOU">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Source\PRG_UnitTestLib.TcPOU">
+    <Compile Include="Source\PRG_TestLib.TcPOU">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Source\PRG_TestCoverage.TcPOU">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Source\Report\FB_CoverageFile.TcPOU">

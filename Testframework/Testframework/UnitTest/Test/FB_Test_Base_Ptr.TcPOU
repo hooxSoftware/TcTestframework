@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.3">
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.9">
   <POU Name="FB_Test_Base_Ptr" Id="{18af484c-a194-47ec-b09e-eee8a132e9b6}" SpecialFunc="None">
-    <Declaration><![CDATA[FUNCTION_BLOCK FB_Test_Base_Ptr EXTENDS FB_UnitTestBase
+    <Declaration><![CDATA[FUNCTION_BLOCK FB_Test_Base_Ptr EXTENDS FB_TestBase
 VAR_INPUT
 END_VAR
 VAR_OUTPUT
@@ -32,13 +32,13 @@ Input
 Output
 -
 ******************************************************************************)
-METHOD PUBLIC cleanup : BOOL
+METHOD PUBLIC cleanup : ERetCode_t
 VAR_INPUT
 END_VAR
 ]]></Declaration>
       <Implementation>
         <ST><![CDATA[
-	cleanup := true;]]></ST>
+	cleanup := ERetCode_t.eRetDone;]]></ST>
       </Implementation>
     </Method>
     <Method Name="execute" Id="{8fd83f8a-ddb5-450e-978e-89b220df3e19}">
@@ -61,7 +61,7 @@ Input
 Output
 -
 ******************************************************************************)
-METHOD PUBLIC execute : BOOL
+METHOD PUBLIC execute : ERetCode_t
 VAR_INPUT
 END_VAR
 VAR
@@ -196,7 +196,7 @@ END_VAR
 	
 	
 	
-	execute := TRUE;]]></ST>
+	execute := ERetCode_t.eRetDone;]]></ST>
       </Implementation>
     </Method>
     <Method Name="prepare" Id="{3232e615-701e-4d31-ba3f-31bec248c2e2}">
@@ -219,13 +219,13 @@ Input
 Output
 -
 ******************************************************************************)
-METHOD PUBLIC prepare : BOOL
+METHOD PUBLIC prepare : ERetCode_t
 VAR_INPUT
 END_VAR
 ]]></Declaration>
       <Implementation>
         <ST><![CDATA[
-	prepare := true;]]></ST>
+	prepare := ERetCode_t.eRetDone;]]></ST>
       </Implementation>
     </Method>
     <LineIds Name="FB_Test_Base_Ptr">

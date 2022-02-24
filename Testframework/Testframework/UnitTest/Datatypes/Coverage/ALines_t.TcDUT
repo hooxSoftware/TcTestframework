@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.3">
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.9">
   <DUT Name="ALines_t" Id="{94f03b62-4f7d-4880-bde0-3115f7203820}">
-    <Declaration><![CDATA[TYPE ALines_t : Array[1..PRG_UnitTestlib.u32MaxLineIdx] of BYTE; END_TYPE
+    <Declaration><![CDATA[TYPE ALines_t : Array[1..PRG_TestCoverage.u32MaxLineIdx] of BYTE; END_TYPE
 ]]></Declaration>
   </DUT>
 </TcPlcObject>

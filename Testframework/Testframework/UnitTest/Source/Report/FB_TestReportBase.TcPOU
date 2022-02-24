@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.3">
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.9">
   <POU Name="FB_TestReportBase" Id="{57a69a83-3743-4ea7-bdac-7bf43020bf6d}" SpecialFunc="None">
     <Declaration><![CDATA[(******************************************************************************
 Baustein: FB_TestReportBase
@@ -420,7 +420,7 @@ END_VAR]]></Declaration>
 	
 		eRetCode 	:= Open();
 		u32Line  	:= 0;
-		sStatistic 	:= PRG_UnitTestLib.o_sStatistic;
+		sStatistic 	:= PRG_TestLib.o_sStatistic;
 
 		IF eRetCode = ERetCode_t.eRetDone THEN
 			eState := EExportState_t.eExportGetLine;
@@ -497,7 +497,7 @@ END_VAR
 ]]></Declaration>
       <Implementation>
         <ST><![CDATA[
-	PRG_UnitTestLib.addTestReport(this);]]></ST>
+	PRG_TestLib.addTestReport(this);]]></ST>
       </Implementation>
     </Method>
     <Method Name="getFileName" Id="{9251c5ba-20de-428c-96f9-f4ec9b2c4f20}">
@@ -561,7 +561,7 @@ END_VAR
 ]]></Declaration>
       <Implementation>
         <ST><![CDATA[
-	getTime := PRG_UnitTestLib.getTime();
+	getTime := PRG_TestLib.getTime();
 	
 	]]></ST>
       </Implementation>

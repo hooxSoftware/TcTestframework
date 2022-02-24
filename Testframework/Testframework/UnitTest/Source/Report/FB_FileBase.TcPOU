@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.3">
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.9">
   <POU Name="FB_FileBase" Id="{ae4044ad-0900-4102-9c63-f2ca7dc7882b}" SpecialFunc="None">
     <Declaration><![CDATA[(******************************************************************************
 Baustein: FB_TestReportBase
@@ -37,7 +37,7 @@ VAR
 	
 	fbOpen      : FB_FileOpen;
 	fbClose     : FB_FileClose;
-	fbWrite	    : FB_FileWrite;
+	fbWrite	   : FB_FileWrite;
 	strFileName : StrFileName_t;
 	strFilePath : StrPathName_t;
 	
@@ -46,7 +46,7 @@ VAR
 	
 	sStatistic  : SStatistic_t;
 
-	trgOpen 	: F_TRIG;
+	trgOpen 	   : F_TRIG;
 	trgWrite 	: F_TRIG;
 	trgClose 	: F_TRIG;
 END_VAR
@@ -204,7 +204,7 @@ END_VAR]]></Declaration>
 
 		END_IF;
 
-		PRG_UnitTestLib.logInfo(concat('addTimeMs : ' , strTemp));
+		PRG_TestLib.logInfo(concat('addTimeMs : ' , strTemp));
 
 		addString(strTemp);
 ]]></ST>
@@ -450,7 +450,7 @@ END_VAR
 ]]></Declaration>
       <Implementation>
         <ST><![CDATA[
-	getTime := PRG_UnitTestLib.getTime();
+	getTime := PRG_TestLib.getTime();
 	
 	]]></ST>
       </Implementation>

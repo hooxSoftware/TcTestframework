@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.3">
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.9">
   <POU Name="FB_Test_Base_Not" Id="{fcf08a4b-84b3-4de6-9021-24a73f13f2bf}" SpecialFunc="None">
-    <Declaration><![CDATA[FUNCTION_BLOCK FB_Test_Base_Not EXTENDS FB_UnitTestBase
+    <Declaration><![CDATA[FUNCTION_BLOCK FB_Test_Base_Not EXTENDS FB_TestBase
 VAR_INPUT
 END_VAR
 VAR_OUTPUT
@@ -32,13 +32,13 @@ Input
 Output
 -
 ******************************************************************************)
-METHOD PUBLIC cleanup : BOOL
+METHOD PUBLIC cleanup : ERetCode_t
 VAR_INPUT
 END_VAR
 ]]></Declaration>
       <Implementation>
         <ST><![CDATA[
-	cleanup := true;]]></ST>
+	cleanup := ERetCode_t.eRetDone;]]></ST>
       </Implementation>
     </Method>
     <Method Name="execute" Id="{787a6e5e-98af-47ae-8dc1-33d98cab30ec}">
@@ -61,7 +61,7 @@ Input
 Output
 -
 ******************************************************************************)
-METHOD PUBLIC execute : BOOL
+METHOD PUBLIC execute : ERetCode_t
 VAR_INPUT
 END_VAR
 VAR
@@ -179,7 +179,7 @@ END_VAR
 	assertNotEQUAL(r64Value1, r64Value2);
 
 (**********************************************) 		
-	execute := TRUE;]]></ST>
+	execute := ERetCode_t.eRetDone;]]></ST>
       </Implementation>
     </Method>
     <Method Name="prepare" Id="{6212eda2-4fb6-4cf5-a93a-1b3be7bda95e}">
@@ -202,13 +202,13 @@ Input
 Output
 -
 ******************************************************************************)
-METHOD PUBLIC prepare : BOOL
+METHOD PUBLIC prepare : ERetCode_t
 VAR_INPUT
 END_VAR
 ]]></Declaration>
       <Implementation>
         <ST><![CDATA[
-	prepare := true;]]></ST>
+	prepare := ERetCode_t.eRetDone;]]></ST>
       </Implementation>
     </Method>
     <LineIds Name="FB_Test_Base_Not">

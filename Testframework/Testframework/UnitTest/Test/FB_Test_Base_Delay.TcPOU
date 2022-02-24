@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.3">
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.9">
   <POU Name="FB_Test_Base_Delay" Id="{e59d7c4a-e04d-4575-8e5a-1de80b51c7c7}" SpecialFunc="None">
-    <Declaration><![CDATA[FUNCTION_BLOCK FB_Test_Base_Delay EXTENDS FB_UnitTestBase
+    <Declaration><![CDATA[FUNCTION_BLOCK FB_Test_Base_Delay EXTENDS FB_TestBase
 VAR_INPUT
 END_VAR
 VAR_OUTPUT
@@ -34,13 +34,13 @@ Input
 Output
 -
 ******************************************************************************)
-METHOD PUBLIC cleanup : BOOL
+METHOD PUBLIC cleanup : ERetCode_t
 VAR_INPUT
 END_VAR
 ]]></Declaration>
       <Implementation>
         <ST><![CDATA[
-	cleanup := TRUE;
+	cleanup := ERetCode_t.eRetDone;
 	
 	fbDelay(IN := false);]]></ST>
       </Implementation>
@@ -65,7 +65,7 @@ Input
 Output
 -
 ******************************************************************************)
-METHOD PUBLIC execute : BOOL
+METHOD PUBLIC execute : ERetCode_t
 VAR_INPUT
 END_VAR
 VAR
@@ -80,6 +80,7 @@ END_VAR
       <Implementation>
         <ST><![CDATA[
 	fbDelay(PT := t#250ms);
+	execute 	  := ERetCode_t.eRetBusy;
 
 	bValue1 := TRUE;
 	bValue2 := TRUE;
@@ -93,7 +94,9 @@ END_VAR
 	r32Value2 := 5345.53245;
 	assertEQUAL(r32Value1, r32Value2);
 
-	execute := fbDelay.Q;]]></ST>
+	if fbDelay.Q then
+		execute := ERetCode_t.eRetDone;
+	end_if;]]></ST>
       </Implementation>
     </Method>
     <Method Name="prepare" Id="{75766130-e927-4659-beb9-1c58ca136ce7}">
@@ -116,13 +119,13 @@ Input
 Output
 -
 ******************************************************************************)
-METHOD PUBLIC prepare : BOOL
+METHOD PUBLIC prepare : ERetCode_t
 VAR_INPUT
 END_VAR
 ]]></Declaration>
       <Implementation>
         <ST><![CDATA[
-	prepare := TRUE;
+	prepare := ERetCode_t.eRetDone;
 	
 	fbDelay.IN := true;]]></ST>
       </Implementation>
@@ -138,6 +141,7 @@ END_VAR
     </LineIds>
     <LineIds Name="FB_Test_Base_Delay.execute">
       <LineId Id="76" Count="1" />
+      <LineId Id="110" Count="0" />
       <LineId Id="40" Count="0" />
       <LineId Id="34" Count="0" />
       <LineId Id="41" Count="0" />
@@ -146,8 +150,10 @@ END_VAR
       <LineId Id="37" Count="1" />
       <LineId Id="44" Count="1" />
       <LineId Id="39" Count="0" />
+      <LineId Id="108" Count="0" />
       <LineId Id="25" Count="0" />
       <LineId Id="24" Count="0" />
+      <LineId Id="109" Count="0" />
     </LineIds>
     <LineIds Name="FB_Test_Base_Delay.prepare">
       <LineId Id="25" Count="0" />
