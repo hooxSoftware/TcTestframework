@@ -1,12 +1,11 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.3">
-  <DUT Name="EReportType_t" Id="{ab003a45-b18c-4681-8257-cc03762f6df4}">
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.9">
+  <DUT Name="EReportType_t" Id="{d6fbd902-e500-4190-ba1b-36716e3ffec5}">
     <Declaration><![CDATA[{attribute 'qualified_only'}
 {attribute 'strict'}
 TYPE EReportType_t :
 (
-	eCoverageReport := 1,
-	eUnitTestReport := 2,
+	eUnitTestReport := 0,
 	eExternalReport
 );
 END_TYPE

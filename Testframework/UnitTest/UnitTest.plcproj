@@ -16,9 +16,9 @@
     <CombineIds>false</CombineIds>
     <Company>Hoox.Software</Company>
     <Released>false</Released>
-    <Title>UnitTest</Title>
+    <Title>UnitTestFramework</Title>
     <Author>Patrick Dressel</Author>
-    <ProjectVersion>1.1.1</ProjectVersion>
+    <ProjectVersion>2.0.0</ProjectVersion>
     <Licenses>
     </Licenses>
     <LibraryCategories>
@@ -49,15 +49,6 @@
     </SelectedLibraryCategories>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="Datatypes\Coverage\ALines_t.TcDUT">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Datatypes\Coverage\EReportType_t.TcDUT">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Datatypes\Coverage\SCodeCoverage_t.TcDUT">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="Datatypes\EResult_t.TcDUT">
       <SubType>Code</SubType>
     </Compile>
@@ -74,6 +65,9 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Datatypes\Report\EExportState_t.TcDUT">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Datatypes\Report\EReportType_t.TcDUT">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Datatypes\Report\NameHandle_t.TcDUT">
@@ -131,9 +125,6 @@
     <Compile Include="Source\PRG_TestLib.TcPOU">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Source\PRG_TestCoverage.TcPOU">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="Source\Report\FB_CoverageFile.TcPOU">
       <SubType>Code</SubType>
     </Compile>
@@ -161,7 +152,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Datatypes" />
-    <Folder Include="Datatypes\Coverage" />
     <Folder Include="Datatypes\Report" />
     <Folder Include="GVLs" />
     <Folder Include="Source" />

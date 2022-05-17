@@ -12,7 +12,7 @@ von:
 -------------------------------------------------------------------------------
 Beschreibung
 Dieser Baustein enthält alle zugeordneten Testfälle. Ein Testfall
-ist ein abgeleiteter Baustein (FB) von FB_UnitTestBase.
+ist ein abgeleiteter Baustein (FB) von FB_TestBase.
 
 -------------------------------------------------------------------------------
 Input

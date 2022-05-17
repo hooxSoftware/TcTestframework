@@ -1,7 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.9">
   <POU Name="FB_Test_Base" Id="{f4823231-d10b-40e2-9073-1f2bc0a0599a}" SpecialFunc="None">
-    <Declaration><![CDATA[FUNCTION_BLOCK FB_Test_Base EXTENDS FB_TestBase
+    <Declaration><![CDATA[{attribute 'hide'}
+FUNCTION_BLOCK FB_Test_Base EXTENDS FB_TestBase
 VAR_INPUT
 END_VAR
 VAR_OUTPUT

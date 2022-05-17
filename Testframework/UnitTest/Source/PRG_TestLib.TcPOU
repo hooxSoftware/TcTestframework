@@ -145,7 +145,7 @@ END_VAR]]></Declaration>
 	EState_t.eStateBuildUnitTestFile:
 
 		IF createReport(EReporttype_t.eUnitTestReport) = ERetCode_t.eRetDone THEN
-			o_eState := EState_t.eStateBuildCoverageFile;
+			o_eState := EState_t.eStateReady;
 		END_IF;
 		
 	EState_t.eStateReady:

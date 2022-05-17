@@ -2,7 +2,7 @@
 <TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.9">
   <POU Name="FB_TestBase" Id="{77b52f8d-9a49-403a-aba1-80915f687878}" SpecialFunc="None">
     <Declaration><![CDATA[(******************************************************************************
-Baustein: FB_UnitTestBase
+Baustein: FB_TestBase
 Spezifikation: doc/Spezifikation.pdf, Kap. x.y.z
 -------------------------------------------------------------------------------
 erstellt:
@@ -49,7 +49,7 @@ END_VAR
     </Implementation>
     <Method Name="_cleanup" Id="{344aee8e-b817-4cb6-9aba-783306fb7b3f}">
       <Declaration><![CDATA[(******************************************************************************
-Baustein: FB_UnitTestBase.cleanup
+Baustein: FB_TestBase.cleanup
 Spezifikation: doc/Spezifikation.pdf, Kap. x.y.z
 -------------------------------------------------------------------------------
 erstellt:
@@ -84,7 +84,7 @@ END_VAR
     </Method>
     <Method Name="_execute" Id="{7a2e47ea-4d60-41f0-a3d6-a81f0185c513}">
       <Declaration><![CDATA[(******************************************************************************
-Baustein: FB_UnitTestBase.execute
+Baustein: FB_TestBase.execute
 Spezifikation: doc/Spezifikation.pdf, Kap. x.y.z
 -------------------------------------------------------------------------------
 erstellt:
@@ -115,7 +115,7 @@ END_VAR
     </Method>
     <Method Name="_prepare" Id="{542f6515-c2b9-44d6-8c08-2dee2ccb31ed}">
       <Declaration><![CDATA[(******************************************************************************
-Baustein: FB_UnitTestBase.prepare
+Baustein: FB_TestBase.prepare
 Spezifikation: doc/Spezifikation.pdf, Kap. x.y.z
 -------------------------------------------------------------------------------
 erstellt:
@@ -151,7 +151,7 @@ END_VAR
     </Method>
     <Method Name="addFailed" Id="{877265ac-7517-465d-8046-dbd413ab22a9}">
       <Declaration><![CDATA[(******************************************************************************
-Baustein: FB_UnitTestBase.addFailed
+Baustein: FB_TestBase.addFailed
 Spezifikation: doc/Spezifikation.pdf, Kap. x.y.z
 -------------------------------------------------------------------------------
 erstellt:
@@ -192,7 +192,7 @@ END_VAR
     </Method>
     <Method Name="addPassed" Id="{725a8b74-1eab-4dbd-9f39-193c14d3c944}">
       <Declaration><![CDATA[(******************************************************************************
-Baustein: FB_UnitTestBase.addPassed
+Baustein: FB_TestBase.addPassed
 Spezifikation: doc/Spezifikation.pdf, Kap. x.y.z
 -------------------------------------------------------------------------------
 erstellt:
@@ -226,7 +226,7 @@ END_VAR
     </Method>
     <Method Name="assertEQUAL" Id="{ad51daad-5695-45d0-ad00-7926bcc015fa}">
       <Declaration><![CDATA[(******************************************************************************
-Baustein: FB_UnitTestBase.assertEQUAL
+Baustein: FB_TestBase.assertEQUAL
 Spezifikation: doc/Spezifikation.pdf, Kap. x.y.z
 -------------------------------------------------------------------------------
 erstellt:
@@ -266,7 +266,7 @@ END_VAR
     </Method>
     <Method Name="assertEQUAL_Fatal" Id="{69be4dda-87a9-4f6f-9eca-8a1ee02fedac}">
       <Declaration><![CDATA[(******************************************************************************
-Baustein: FB_UnitTestBase.assertEQUAL_Fatal
+Baustein: FB_TestBase.assertEQUAL_Fatal
 Spezifikation: doc/Spezifikation.pdf, Kap. x.y.z
 -------------------------------------------------------------------------------
 erstellt:
@@ -305,7 +305,7 @@ END_VAR
     </Method>
     <Method Name="assertFALSE" Id="{d4d5eea3-3c53-497c-9176-1d2814a51e39}">
       <Declaration><![CDATA[(******************************************************************************
-Baustein: FB_UnitTestBase.assertFALSE
+Baustein: FB_TestBase.assertFALSE
 Spezifikation: doc/Spezifikation.pdf, Kap. x.y.z
 -------------------------------------------------------------------------------
 erstellt:
@@ -339,7 +339,7 @@ END_VAR
     </Method>
     <Method Name="assertFALSE_Fatal" Id="{75476dd2-303d-4781-a584-de30bb3a6473}">
       <Declaration><![CDATA[(******************************************************************************
-Baustein: FB_UnitTestBase.assertFALSE_Fatal
+Baustein: FB_TestBase.assertFALSE_Fatal
 Spezifikation: doc/Spezifikation.pdf, Kap. x.y.z
 -------------------------------------------------------------------------------
 erstellt:
@@ -373,7 +373,7 @@ END_VAR
     </Method>
     <Method Name="assertNotEqual" Id="{7bdd8554-52a7-414f-8a4a-343d38a85ee0}">
       <Declaration><![CDATA[(******************************************************************************
-Baustein: FB_UnitTestBase.assertNotEqual
+Baustein: FB_TestBase.assertNotEqual
 Spezifikation: doc/Spezifikation.pdf, Kap. x.y.z
 -------------------------------------------------------------------------------
 erstellt:
@@ -413,7 +413,7 @@ END_VAR
     </Method>
     <Method Name="assertNotEqual_Fatal" Id="{50f19e45-a9a3-4436-9481-7ad1f66a8015}">
       <Declaration><![CDATA[(******************************************************************************
-Baustein: FB_UnitTestBase.assertNotEqual_Fatal
+Baustein: FB_TestBase.assertNotEqual_Fatal
 Spezifikation: doc/Spezifikation.pdf, Kap. x.y.z
 -------------------------------------------------------------------------------
 erstellt:
@@ -453,7 +453,7 @@ END_VAR
     </Method>
     <Method Name="assertPtrEqual" Id="{95a0bcc0-afe3-4228-85a2-ce212c091a6f}">
       <Declaration><![CDATA[(******************************************************************************
-Baustein: FB_UnitTestBase.assertPtrEqual
+Baustein: FB_TestBase.assertPtrEqual
 Spezifikation: doc/Spezifikation.pdf, Kap. x.y.z
 -------------------------------------------------------------------------------
 erstellt:
@@ -484,7 +484,7 @@ END_VAR]]></Declaration>
     </Method>
     <Method Name="assertPtrEqual_Fatal" Id="{1b8e3907-0f7e-4c04-80e7-103c2b3a23a5}">
       <Declaration><![CDATA[(******************************************************************************
-Baustein: FB_UnitTestBase.assertPtrEqual_Fatal
+Baustein: FB_TestBase.assertPtrEqual_Fatal
 Spezifikation: doc/Spezifikation.pdf, Kap. x.y.z
 -------------------------------------------------------------------------------
 erstellt:
@@ -515,7 +515,7 @@ END_VAR]]></Declaration>
     </Method>
     <Method Name="assertPtrNotEqual" Id="{57846629-242c-4e81-af74-58586a21a4fc}">
       <Declaration><![CDATA[(******************************************************************************
-Baustein: FB_UnitTestBase.assertPtrNotEqual
+Baustein: FB_TestBase.assertPtrNotEqual
 Spezifikation: doc/Spezifikation.pdf, Kap. x.y.z
 -------------------------------------------------------------------------------
 erstellt:
@@ -547,7 +547,7 @@ END_VAR
     </Method>
     <Method Name="assertPtrNotEqual_Fatal" Id="{39a47f2c-67f8-43f2-bc30-f2cb3de76090}">
       <Declaration><![CDATA[(******************************************************************************
-Baustein: FB_UnitTestBase.assertPtrNotEqual_Fatal
+Baustein: FB_TestBase.assertPtrNotEqual_Fatal
 Spezifikation: doc/Spezifikation.pdf, Kap. x.y.z
 -------------------------------------------------------------------------------
 erstellt:
@@ -579,7 +579,7 @@ END_VAR
     </Method>
     <Method Name="assertPtrNotNull" Id="{f628fc0d-4d94-48e7-aae3-588658d79bb7}">
       <Declaration><![CDATA[(******************************************************************************
-Baustein: FB_UnitTestBase.assertPtrNotNull
+Baustein: FB_TestBase.assertPtrNotNull
 Spezifikation: doc/Spezifikation.pdf, Kap. x.y.z
 -------------------------------------------------------------------------------
 erstellt:
@@ -609,7 +609,7 @@ END_VAR
     </Method>
     <Method Name="assertPtrNotNull_Fatal" Id="{02ae7d7d-3ede-4c25-85fd-0879e689222b}">
       <Declaration><![CDATA[(******************************************************************************
-Baustein: FB_UnitTestBase.assertPtrNotNull_Fatal
+Baustein: FB_TestBase.assertPtrNotNull_Fatal
 Spezifikation: doc/Spezifikation.pdf, Kap. x.y.z
 -------------------------------------------------------------------------------
 erstellt:
@@ -639,7 +639,7 @@ END_VAR
     </Method>
     <Method Name="assertPtrNull" Id="{abd2bd77-de32-4620-9218-680a260e8028}">
       <Declaration><![CDATA[(******************************************************************************
-Baustein: FB_UnitTestBase.assertPtrNull
+Baustein: FB_TestBase.assertPtrNull
 Spezifikation: doc/Spezifikation.pdf, Kap. x.y.z
 -------------------------------------------------------------------------------
 erstellt:
@@ -669,7 +669,7 @@ END_VAR
     </Method>
     <Method Name="assertPtrNull_Fatal" Id="{5bf9c97f-bc97-48db-98fa-ba9cb62263a9}">
       <Declaration><![CDATA[(******************************************************************************
-Baustein: FB_UnitTestBase.assertPtrNull_Fatal
+Baustein: FB_TestBase.assertPtrNull_Fatal
 Spezifikation: doc/Spezifikation.pdf, Kap. x.y.z
 -------------------------------------------------------------------------------
 erstellt:
@@ -699,7 +699,7 @@ END_VAR
     </Method>
     <Method Name="assertRealEqual" Id="{d770309a-bad4-4c69-b79f-274b8b36691a}">
       <Declaration><![CDATA[(******************************************************************************
-Baustein: FB_UnitTestBase.assertRealEqual
+Baustein: FB_TestBase.assertRealEqual
 Spezifikation: doc/Spezifikation.pdf, Kap. x.y.z
 -------------------------------------------------------------------------------
 erstellt:
@@ -733,7 +733,7 @@ END_VAR
     </Method>
     <Method Name="assertRealEqual_Fatal" Id="{cf2c2abf-779b-4ad8-b6e5-676b71c0ac70}">
       <Declaration><![CDATA[(******************************************************************************
-Baustein: FB_UnitTestBase.assertRealEqual_Fatal
+Baustein: FB_TestBase.assertRealEqual_Fatal
 Spezifikation: doc/Spezifikation.pdf, Kap. x.y.z
 -------------------------------------------------------------------------------
 erstellt:
@@ -767,7 +767,7 @@ END_VAR
     </Method>
     <Method Name="assertRealNotEqual" Id="{78d62bc5-9b58-4d56-afb5-189d3abc8861}">
       <Declaration><![CDATA[(******************************************************************************
-Baustein: FB_UnitTestBase.assertRealNotEqual
+Baustein: FB_TestBase.assertRealNotEqual
 Spezifikation: doc/Spezifikation.pdf, Kap. x.y.z
 -------------------------------------------------------------------------------
 erstellt:
@@ -801,7 +801,7 @@ END_VAR
     </Method>
     <Method Name="assertRealNotEqual_Fatal" Id="{258a11aa-40fa-4616-826d-01f5de63c20d}">
       <Declaration><![CDATA[(******************************************************************************
-Baustein: FB_UnitTestBase.assertRealNotEqual_Fatal
+Baustein: FB_TestBase.assertRealNotEqual_Fatal
 Spezifikation: doc/Spezifikation.pdf, Kap. x.y.z
 -------------------------------------------------------------------------------
 erstellt:
@@ -835,7 +835,7 @@ END_VAR
     </Method>
     <Method Name="assertStringEqual" Id="{83105799-7b7a-4d3d-8679-14126f120e79}">
       <Declaration><![CDATA[(******************************************************************************
-Baustein: FB_UnitTestBase.assertStringEqual
+Baustein: FB_TestBase.assertStringEqual
 Spezifikation: doc/Spezifikation.pdf, Kap. x.y.z
 -------------------------------------------------------------------------------
 erstellt:
@@ -871,7 +871,7 @@ END_VAR
     </Method>
     <Method Name="assertStringEqual_Fatal" Id="{bf1be694-6409-4e9e-9292-da4654ce1902}">
       <Declaration><![CDATA[(******************************************************************************
-Baustein: FB_UnitTestBase.assertStringEqual_Fatal
+Baustein: FB_TestBase.assertStringEqual_Fatal
 Spezifikation: doc/Spezifikation.pdf, Kap. x.y.z
 -------------------------------------------------------------------------------
 erstellt:
@@ -907,7 +907,7 @@ END_VAR
     </Method>
     <Method Name="assertStringNotEqual" Id="{5b6c5929-a0bc-40c1-a6e9-53f688e2534b}">
       <Declaration><![CDATA[(******************************************************************************
-Baustein: FB_UnitTestBase.assertStringNotEqual
+Baustein: FB_TestBase.assertStringNotEqual
 Spezifikation: doc/Spezifikation.pdf, Kap. x.y.z
 -------------------------------------------------------------------------------
 erstellt:
@@ -943,7 +943,7 @@ END_VAR
     </Method>
     <Method Name="assertStringNotEqual_fatal" Id="{5f4342ff-8918-48d1-98ef-3f0b434e545d}">
       <Declaration><![CDATA[(******************************************************************************
-Baustein: FB_UnitTestBase.assertStringNotEqual_fatal
+Baustein: FB_TestBase.assertStringNotEqual_fatal
 Spezifikation: doc/Spezifikation.pdf, Kap. x.y.z
 -------------------------------------------------------------------------------
 erstellt:
@@ -979,7 +979,7 @@ END_VAR
     </Method>
     <Method Name="assertTRUE" Id="{22cc59e3-d507-4b30-a16f-46ddc4d327da}">
       <Declaration><![CDATA[(******************************************************************************
-Baustein: FB_UnitTestBase.assertTRUE
+Baustein: FB_TestBase.assertTRUE
 Spezifikation: doc/Spezifikation.pdf, Kap. x.y.z
 -------------------------------------------------------------------------------
 erstellt:
@@ -1014,7 +1014,7 @@ END_VAR
     <Method Name="assertTRUE_Fatal" Id="{33bf9cec-0e76-4b31-9c97-1667bb6d5ac6}">
       <Declaration><![CDATA[
 (******************************************************************************
-Baustein: FB_UnitTestBase.assertTRUE_Fatal
+Baustein: FB_TestBase.assertTRUE_Fatal
 Spezifikation: doc/Spezifikation.pdf, Kap. x.y.z
 -------------------------------------------------------------------------------
 erstellt:
@@ -1048,7 +1048,7 @@ END_VAR
     </Method>
     <Method Name="cleanup" Id="{bb611570-6ab2-451b-9f0d-51e2ce59af0a}">
       <Declaration><![CDATA[(******************************************************************************
-Baustein: FB_UnitTestBase.cleanup
+Baustein: FB_TestBase.cleanup
 Spezifikation: doc/Spezifikation.pdf, Kap. x.y.z
 -------------------------------------------------------------------------------
 erstellt:
@@ -1082,7 +1082,7 @@ END_VAR
     </Method>
     <Method Name="execute" Id="{eaaea70b-9bf9-4b40-b05d-957421faa196}">
       <Declaration><![CDATA[(******************************************************************************
-Baustein: FB_UnitTestBase.execute
+Baustein: FB_TestBase.execute
 Spezifikation: doc/Spezifikation.pdf, Kap. x.y.z
 -------------------------------------------------------------------------------
 erstellt:
@@ -1155,7 +1155,7 @@ END_VAR
     </Method>
     <Method Name="getClassName" Id="{fe0c9224-6b8f-4968-bd60-2e0b1dc4c7d8}">
       <Declaration><![CDATA[(******************************************************************************
-Baustein: FB_UnitTestBase.getId
+Baustein: FB_TestBase.getId
 Spezifikation: doc/Spezifikation.pdf, Kap. x.y.z
 -------------------------------------------------------------------------------
 erstellt:
@@ -1185,7 +1185,7 @@ END_VAR
     </Method>
     <Method Name="getFailed" Id="{03b873b5-0f90-4435-8771-5dc65ef5e0d1}">
       <Declaration><![CDATA[(******************************************************************************
-Baustein: FB_UnitTestBase.getFailed
+Baustein: FB_TestBase.getFailed
 Spezifikation: doc/Spezifikation.pdf, Kap. x.y.z
 -------------------------------------------------------------------------------
 erstellt:
@@ -1215,7 +1215,7 @@ END_VAR
     </Method>
     <Method Name="getId" Id="{3201004a-c0ba-477e-8045-eedf4c12dcd0}">
       <Declaration><![CDATA[(******************************************************************************
-Baustein: FB_UnitTestBase.getId
+Baustein: FB_TestBase.getId
 Spezifikation: doc/Spezifikation.pdf, Kap. x.y.z
 -------------------------------------------------------------------------------
 erstellt:
@@ -1255,7 +1255,7 @@ END_VAR
     </Method>
     <Method Name="getPassed" Id="{2d53e756-4b16-44f6-b072-8c9bc39b56a8}">
       <Declaration><![CDATA[(******************************************************************************
-Baustein: FB_UnitTestBase.getPassed
+Baustein: FB_TestBase.getPassed
 Spezifikation: doc/Spezifikation.pdf, Kap. x.y.z
 -------------------------------------------------------------------------------
 erstellt:
@@ -1285,7 +1285,7 @@ END_VAR
     </Method>
     <Method Name="getPath" Id="{e3a99e4d-69cf-4522-86d0-57b9b9298cbb}">
       <Declaration><![CDATA[(******************************************************************************
-Baustein: FB_UnitTestBase.getPassed
+Baustein: FB_TestBase.getPassed
 Spezifikation: doc/Spezifikation.pdf, Kap. x.y.z
 -------------------------------------------------------------------------------
 erstellt:
@@ -1315,7 +1315,7 @@ END_VAR
     </Method>
     <Method Name="getSystemTime" Id="{dc291d5d-13e7-498d-ab24-a88e76a0f5f2}">
       <Declaration><![CDATA[(******************************************************************************
-Baustein: FB_UnitTestBase.getPassed
+Baustein: FB_TestBase.getPassed
 Spezifikation: doc/Spezifikation.pdf, Kap. x.y.z
 -------------------------------------------------------------------------------
 erstellt:
@@ -1350,7 +1350,7 @@ END_VAR]]></Declaration>
     </Method>
     <Method Name="getTime" Id="{289a6643-aea8-41f4-9573-9f8f1e125c8e}">
       <Declaration><![CDATA[(******************************************************************************
-Baustein: FB_UnitTestBase.getPassed
+Baustein: FB_TestBase.getPassed
 Spezifikation: doc/Spezifikation.pdf, Kap. x.y.z
 -------------------------------------------------------------------------------
 erstellt:
@@ -1384,7 +1384,7 @@ END_VAR
     </Method>
     <Method Name="isSkipped" Id="{e2151300-eb3a-4ef7-9340-3371bd55a074}">
       <Declaration><![CDATA[(******************************************************************************
-Baustein: FB_UnitTestBase.getPassed
+Baustein: FB_TestBase.getPassed
 Spezifikation: doc/Spezifikation.pdf, Kap. x.y.z
 -------------------------------------------------------------------------------
 erstellt:
@@ -1414,7 +1414,7 @@ END_VAR
     </Method>
     <Method Name="logError" Id="{16a351f0-cd4d-4e8b-bead-0c78616d52ea}">
       <Declaration><![CDATA[(******************************************************************************
-Baustein: FB_UnitTestBase.logError
+Baustein: FB_TestBase.logError
 Spezifikation: doc/Spezifikation.pdf, Kap. x.y.z
 -------------------------------------------------------------------------------
 erstellt:
@@ -1447,7 +1447,7 @@ END_VAR
     </Method>
     <Method Name="logInfo" Id="{2a28e610-d91b-4870-a421-7bc6546ff390}">
       <Declaration><![CDATA[(******************************************************************************
-Baustein: FB_UnitTestBase.logInfo
+Baustein: FB_TestBase.logInfo
 Spezifikation: doc/Spezifikation.pdf, Kap. x.y.z
 -------------------------------------------------------------------------------
 erstellt:
@@ -1480,7 +1480,7 @@ END_VAR
     </Method>
     <Method Name="prepare" Id="{571b8d1e-086f-4be7-aee6-f996b70e4b02}">
       <Declaration><![CDATA[(******************************************************************************
-Baustein: FB_UnitTestBase.prepare
+Baustein: FB_TestBase.prepare
 Spezifikation: doc/Spezifikation.pdf, Kap. x.y.z
 -------------------------------------------------------------------------------
 erstellt:
@@ -1509,7 +1509,7 @@ END_VAR
     </Method>
     <Method Name="register" Id="{4a228bed-2579-4e19-893d-8dcd5cfaa8a3}">
       <Declaration><![CDATA[(******************************************************************************
-Baustein: FB_UnitTestBase.register
+Baustein: FB_TestBase.register
 Spezifikation: doc/Spezifikation.pdf, Kap. x.y.z
 -------------------------------------------------------------------------------
 erstellt:
@@ -1544,7 +1544,7 @@ END_VAR
     </Method>
     <Method Name="setEndTime" Id="{2f133e6d-150e-424a-a9c1-5a581e939cfa}">
       <Declaration><![CDATA[(******************************************************************************
-Baustein: FB_UnitTestBase.getPassed
+Baustein: FB_TestBase.getPassed
 Spezifikation: doc/Spezifikation.pdf, Kap. x.y.z
 -------------------------------------------------------------------------------
 erstellt:
@@ -1590,7 +1590,7 @@ END_VAR
     </Method>
     <Method Name="setStartTime" Id="{8cc3bd6c-8aa2-4c8c-8cf1-b74a81a48cb3}">
       <Declaration><![CDATA[(******************************************************************************
-Baustein: FB_UnitTestBase.getPassed
+Baustein: FB_TestBase.getPassed
 Spezifikation: doc/Spezifikation.pdf, Kap. x.y.z
 -------------------------------------------------------------------------------
 erstellt:
@@ -1623,7 +1623,7 @@ END_VAR
     </Method>
     <Method Name="strncmp" Id="{ba3fcb40-c976-48c8-9fd0-cd1feb115e5f}">
       <Declaration><![CDATA[(******************************************************************************
-Baustein: FB_UnitTestBase.strncmp
+Baustein: FB_TestBase.strncmp
 Spezifikation: doc/Spezifikation.pdf, Kap. x.y.z
 -------------------------------------------------------------------------------
 erstellt:
@@ -1690,7 +1690,7 @@ END_VAR]]></Declaration>
     </Method>
     <Method Name="validate" Id="{26cbef17-aced-449e-9fb6-d6b834f5b8ef}">
       <Declaration><![CDATA[(******************************************************************************
-Baustein: FB_UnitTestBase.validate
+Baustein: FB_TestBase.validate
 Spezifikation: doc/Spezifikation.pdf, Kap. x.y.z
 -------------------------------------------------------------------------------
 erstellt:
