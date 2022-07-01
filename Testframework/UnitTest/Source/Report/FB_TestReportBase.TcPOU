@@ -226,36 +226,36 @@ END_VAR
 
 	CASE i_anyValue.TypeClass OF
 
-	IBaseLibrary.TYPE_SINT:
+	__SYSTEM.Type_Class.TYPE_SINT:
 
 		addString(SINT_TO_STRING(uValue.s8Value));
 
-	//IBaseLibrary.TYPE_BYTE:
-	IBaseLibrary.TYPE_USINT:
+	//__SYSTEM.Type_Class.TYPE_BYTE:
+	__SYSTEM.Type_Class.TYPE_USINT:
 
 		addString(USINT_TO_STRING(uValue.u8Value));
 
-	IBaseLibrary.TYPE_INT:
+	__SYSTEM.Type_Class.TYPE_INT:
 
 		addString(INT_TO_STRING(uValue.s16Value));
 
-	IBaseLibrary.TYPE_DINT:
+	__SYSTEM.Type_Class.TYPE_DINT:
 
 		addString(DINT_TO_STRING(uValue.s32Value));
 
-	IBaseLibrary.TYPE_UINT:
+	__SYSTEM.Type_Class.TYPE_UINT:
 
 		addString(UINT_TO_STRING(uValue.u16Value));
 
-	IBaseLibrary.TYPE_UDINT:
+	__SYSTEM.Type_Class.TYPE_UDINT:
 
 		addString(UDINT_TO_STRING(uValue.u32Value));
 
-	IBaseLibrary.TYPE_WORD:
+	__SYSTEM.Type_Class.TYPE_WORD:
 
 		addString(WORD_TO_STRING(uValue.w16Value));
 
-	IBaseLibrary.TYPE_DWORD:
+	__SYSTEM.Type_Class.TYPE_DWORD:
 
 		addString(DWORD_TO_STRING(uValue.w32Value));
 
