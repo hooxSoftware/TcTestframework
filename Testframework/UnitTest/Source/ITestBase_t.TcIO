@@ -1,0 +1,55 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.11">
+  <Itf Name="ITestBase_t" Id="{9c48b1f4-ee79-43bd-b9a3-d78583bb60da}">
+    <Declaration><![CDATA[INTERFACE ITestBase_t
+]]></Declaration>
+    <Method Name="_cleanup" Id="{fafc9c7e-f319-4379-b168-0ec8f0292d03}">
+      <Declaration><![CDATA[METHOD PUBLIC _cleanup : ERetCode_t
+VAR_INPUT
+END_VAR
+]]></Declaration>
+    </Method>
+    <Method Name="_execute" Id="{acf175e3-b737-4368-87ef-537fb8e7d94a}">
+      <Declaration><![CDATA[METHOD PUBLIC _execute : ERetCode_t
+VAR_INPUT
+END_VAR
+]]></Declaration>
+    </Method>
+    <Method Name="_prepare" Id="{2a2e458a-0f88-4594-94f6-e3fb93469a62}">
+      <Declaration><![CDATA[METHOD PUBLIC _prepare : ERetCode_t
+VAR_INPUT
+END_VAR
+]]></Declaration>
+    </Method>
+    <Method Name="getClassname" Id="{80fac9dc-a047-463f-aced-f02760d617fc}">
+      <Declaration><![CDATA[METHOD getClassname : ObjectId_t
+VAR_INPUT
+END_VAR
+]]></Declaration>
+    </Method>
+    <Method Name="getId" Id="{0f51fb20-4fae-474a-bdd3-960651b92a0f}">
+      <Declaration><![CDATA[METHOD getId : ObjectId_t
+VAR_INPUT
+END_VAR
+]]></Declaration>
+    </Method>
+    <Method Name="getMessage" Id="{61957595-151b-4032-8e9c-f69bc6b8620a}">
+      <Declaration><![CDATA[METHOD getMessage : StrMessage_t
+VAR_INPUT
+END_VAR
+]]></Declaration>
+    </Method>
+    <Method Name="getPath" Id="{826500ad-9e52-4726-a94b-08a67a71ffe5}">
+      <Declaration><![CDATA[METHOD getPath : ObjectId_t
+VAR_INPUT
+END_VAR
+]]></Declaration>
+    </Method>
+    <Property Name="Result" Id="{1565c885-bd5b-4f76-bea6-bae078ea3d58}">
+      <Declaration><![CDATA[PROPERTY Result : STestcase_t]]></Declaration>
+      <Get Name="Get" Id="{ec1bfcd2-1589-4bca-af07-92322c474187}">
+        <Declaration><![CDATA[]]></Declaration>
+      </Get>
+    </Property>
+  </Itf>
+</TcPlcObject>

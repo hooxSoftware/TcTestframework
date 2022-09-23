@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.9">
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.11">
   <POU Name="FB_Testsuite" Id="{ae8bbd51-73a9-4be0-b082-2ec8a068e7f6}" SpecialFunc="None">
     <Declaration><![CDATA[(******************************************************************************
 Baustein: FB_Testsuite
@@ -22,8 +22,8 @@ Output
 -
 ******************************************************************************)
 FUNCTION_BLOCK FB_Testsuite
+    IMPLEMENTS ITestsuite_t
 VAR_INPUT
-	i_bStart : BOOL;
 END_VAR
 VAR_OUTPUT
 	o_eState  		: EState_t;
@@ -33,15 +33,70 @@ VAR
 	strId			: ObjectId_t;
 	strPath			: ObjectId_t;
 	bRegistered     : BOOL;
-	a_pTest  		: ARRAY [0..255] OF TestCaseHandle_t;
-	pTest     		: TestCaseHandle_t;
+	a_iTest  		: ARRAY [0..255] OF ITestBase_t;
+	iTest     		: ITestBase_t;
 	u16TestCases  	: UINT;
 	u16Index 		: UINT;
 	sStatistic 		: SStatistic_t;
 END_VAR
 ]]></Declaration>
     <Implementation>
-      <ST><![CDATA[
+      <ST><![CDATA[]]></ST>
+    </Implementation>
+    <Method Name="addTestcase" Id="{80822225-6192-4f00-bbb8-24a92c6881f7}">
+      <Declaration><![CDATA[(******************************************************************************
+Baustein: FB_Testsuite.addTestcase
+Spezifikation: doc/Spezifikation.pdf, Kap. x.y.z
+-------------------------------------------------------------------------------
+erstellt:
+von:
+Geändert:
+von:
+-------------------------------------------------------------------------------
+Beschreibung
+Diese Methode
+
+-------------------------------------------------------------------------------
+Input
+i_pTestCase
+
+Output
+-
+******************************************************************************)
+{attribute 'hide'} 
+METHOD PUBLIC addTestcase : BOOL
+VAR_INPUT
+	i_iTestCase : ITestBase_t;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[
+	addTestcase := FALSE;
+
+	IF 	i_iTestCase  <> 0   AND 
+		u16TestCases <  255 THEN
+		
+		a_iTest[u16TestCases] := i_iTestCase;
+		
+		u16TestCases := u16TestCases +1;
+		
+		sStatistic.u32TestCases := sStatistic.u32TestCases + 1;
+		
+		addTestcase := true;
+	END_IF]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="execute" Id="{44c9852e-be60-482d-af64-b35cb0a07d5a}">
+      <Declaration><![CDATA[METHOD execute : BOOL
+VAR_INPUT
+	i_bStart	: BOOL;
+END_VAR
+VAR
+    sTestResult : STestcase_t;
+END_VAR 
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[
 	CASE o_eState OF
 		
 	EState_t.eStateInit:
@@ -57,9 +112,9 @@ END_VAR
 
 		IF i_bStart = TRUE THEN
 			logInfo(CONCAT('Run Testsuite ', strId));
-			pTest 	 := getFirstTestCase();
-			IF pTest <> 0 THEN
-				logInfo(CONCAT('Execute Testcase ', pTest^.getId()));
+			iTest 	 := getFirstTestCase();
+			IF iTest <> 0 THEN
+				logInfo(CONCAT('Execute Testcase ', iTest.getId()));
 			END_IF;
 			o_eState  := EState_t.eStatePrepare;
 			o_eResult := EResult_t.eStatePassed;
@@ -72,35 +127,41 @@ END_VAR
 		sStatistic.u32Failed 	:= 0;
 		sStatistic.u32Asserts 	:= 0;
 
-		IF pTest <> 0 THEN
-			IF pTest^._prepare() = ERetCode_t.eRetDone THEN
-				pTest 	:= getNextTestCase();
-			END_IF;
+		IF iTest <> 0 THEN
+            sTestResult := iTest.Result;
+            IF sTestResult.eState <> EResult_t.eStateSkipped THEN
+                IF iTest._prepare() = ERetCode_t.eRetDone THEN
+                    iTest 	:= getNextTestCase();
+                END_IF;
+            ELSE
+                iTest 	:= getNextTestCase();
+            END_IF;
 		ELSE
 			o_eState := EState_t.eStateExecute;
-			pTest 	:= getFirstTestCase();
+			iTest 	 := getFirstTestCase();
 		END_IF;
 
 	EState_t.eStateExecute:
 
-		IF pTest <> 0 THEN
+		IF iTest <> 0 THEN
 
-			IF pTest^.isSkipped() = FALSE THEN
+            sTestResult := iTest.Result;
 
-				pTest^.setStartTime();
+			IF sTestResult.eState <> EResult_t.eStateSkipped THEN
 
-				IF pTest^._execute() = ERetCode_t.eRetDone			OR 
-					pTest^.o_eResult  = EResult_t.eStateFailedFatal THEN
+				IF iTest._execute()    = ERetCode_t.eRetDone		 OR 
+				   sTestResult.eState  = EResult_t.eStateFailedFatal THEN
 					
-					pTest^.setEndTime();
 					sStatistic.u32Executed := sStatistic.u32Executed + 1;	
+                    (* update Result *)
+                    sTestResult := iTest.Result;
 				
-					sStatistic.u32Passed 	:= sStatistic.u32Passed + pTest^.getPassed();
-					sStatistic.u32Failed 	:= sStatistic.u32Failed + pTest^.getFailed();
+					sStatistic.u32Passed 	:= sStatistic.u32Passed + sTestResult.u32Passed;
+					sStatistic.u32Failed 	:= sStatistic.u32Failed + sTestResult.u32Failed;
 					sStatistic.u32Asserts   := sStatistic.u32Passed + sStatistic.u32Failed;
 					
 					// Status des aktuellen Tests auswerten
-					CASE pTest^.o_eResult OF
+					CASE sTestResult.eState OF
 					EResult_t.eStatePassed     : logInfo('	Test Passed');
 					EResult_t.eStateFailed     : logInfo('	Test Failed');
 					EResult_t.eStateFailedFatal: logInfo('	Test Failed Fatal');	
@@ -111,46 +172,48 @@ END_VAR
 	
 					EResult_t.eStatePassed:
 						// Status des letzen Tests übernehmen
-						o_eResult := pTest^.o_eResult;
+						o_eResult := sTestResult.eState;
 						
 		
 					EResult_t.eStateFailed:
 						// Status nur übernehmen wenn ein Fatal-Status
 						// ermittelt wird und der Test sofort abgebrochen
 						// werden soll.
-						IF pTest^.o_eResult = EResult_t.eStateFailedFatal THEN
-							o_eResult := pTest^.o_eResult;
+						IF sTestResult.eState = EResult_t.eStateFailedFatal THEN
+							o_eResult := sTestResult.eState;
 							o_eState  := EState_t.eStateCleanUp;
-							pTest 	  := getFirstTestCase();	
+							iTest 	  := getFirstTestCase();	
 						END_IF;
 						
 	
 					EResult_t.eStateFailedFatal:
 	
 						o_eState := EState_t.eStateCleanUp;
-						pTest 	:= getFirstTestCase();				
+						iTest 	:= getFirstTestCase();				
 	
 					END_CASE;
 	
 					IF o_eResult <> EResult_t.eStateFailedFatal THEN
-						pTest 	 := getNextTestCase();
+						iTest 	 := getNextTestCase();
 					END_IF;
 	
 				END_IF;
 			ELSE
-				pTest 	 := getNextTestCase();
+				iTest 	 := getNextTestCase();
 			END_IF;
 		ELSE
 			o_eState := EState_t.eStateCleanUp;
-			pTest 	:= getFirstTestCase();
+			iTest 	:= getFirstTestCase();
 		END_IF;
 
 	ESTate_t.eStateCleanUp:
 
-		IF pTest <> 0 THEN
-			IF pTest^._cleanup() = ERetCode_t.eRetDone THEN
-				pTest 	:= getNextTestCase();
-			END_IF;
+		IF iTest <> 0 THEN
+            IF sTestResult.eState <> EResult_t.eStateSkipped THEN
+                IF iTest._cleanup() = ERetCode_t.eRetDone THEN
+                    iTest 	:= getNextTestCase();
+                END_IF;
+            END_IF;
 		ELSE
 			o_eState := EState_t.eStateReady;
 		END_IF;
@@ -177,48 +240,6 @@ END_VAR
 	
 	
 //	]]></ST>
-    </Implementation>
-    <Method Name="addTestcase" Id="{80822225-6192-4f00-bbb8-24a92c6881f7}">
-      <Declaration><![CDATA[(******************************************************************************
-Baustein: FB_Testsuite.addTestcase
-Spezifikation: doc/Spezifikation.pdf, Kap. x.y.z
--------------------------------------------------------------------------------
-erstellt:
-von:
-Geändert:
-von:
--------------------------------------------------------------------------------
-Beschreibung
-Diese Methode
-
--------------------------------------------------------------------------------
-Input
-i_pTestCase
-
-Output
--
-******************************************************************************)
-{attribute 'hide'} 
-METHOD PUBLIC addTestcase : BOOL
-VAR_INPUT
-	i_pTestCase : TestCaseHandle_t;
-END_VAR
-]]></Declaration>
-      <Implementation>
-        <ST><![CDATA[
-	addTestcase := FALSE;
-
-	IF 	i_pTestCase  <> 0   AND 
-		u16TestCases <  255 THEN
-		
-		a_pTest[u16TestCases] := i_pTestCase;
-		
-		u16TestCases := u16TestCases +1;
-		
-		sStatistic.u32TestCases := sStatistic.u32TestCases + 1;
-		
-		addTestcase := true;
-	END_IF]]></ST>
       </Implementation>
     </Method>
     <Method Name="FB_init" Id="{cdfd5773-6fa2-4b78-87a3-142799abac6a}">
@@ -257,66 +278,6 @@ END_VAR
 	register();]]></ST>
       </Implementation>
     </Method>
-    <Method Name="getExecuted" Id="{804ee58b-a056-4a70-9969-b35be52cb2ce}">
-      <Declaration><![CDATA[(******************************************************************************
-Baustein: FB_Testsuite.getExecuted
-Spezifikation: doc/Spezifikation.pdf, Kap. x.y.z
--------------------------------------------------------------------------------
-erstellt:
-von:
-Geändert:
-von:
--------------------------------------------------------------------------------
-Beschreibung
-Diese Methode
-
--------------------------------------------------------------------------------
-Input
--
-
-Output
--
-******************************************************************************)
-{attribute 'hide'} 
-METHOD PUBLIC getExecuted : UDINT
-VAR_INPUT
-END_VAR
-]]></Declaration>
-      <Implementation>
-        <ST><![CDATA[
-	getExecuted := sStatistic.u32Executed;]]></ST>
-      </Implementation>
-    </Method>
-    <Method Name="getFailed" Id="{ce9f9fb8-dfbd-411b-9557-00a87161e21a}">
-      <Declaration><![CDATA[(******************************************************************************
-Baustein: FB_Testsuite.getFailed
-Spezifikation: doc/Spezifikation.pdf, Kap. x.y.z
--------------------------------------------------------------------------------
-erstellt:
-von:
-Geändert:
-von:
--------------------------------------------------------------------------------
-Beschreibung
-Diese Methode
-
--------------------------------------------------------------------------------
-Input
--
-
-Output
--
-******************************************************************************)
-{attribute 'hide'} 
-METHOD PUBLIC getFailed : UDINT
-VAR_INPUT
-END_VAR
-]]></Declaration>
-      <Implementation>
-        <ST><![CDATA[
-	getFailed := sStatistic.u32Failed;]]></ST>
-      </Implementation>
-    </Method>
     <Method Name="getFirstTestCase" Id="{565a7440-2552-4228-bd2b-b6378bb5c8b9}">
       <Declaration><![CDATA[(******************************************************************************
 Baustein: FB_Testsuite.getFirstTestCase
@@ -338,14 +299,14 @@ Output
 -
 ******************************************************************************)
 {attribute 'hide'} 
-METHOD PUBLIC getFirstTestCase : TestCaseHandle_t
+METHOD PUBLIC getFirstTestCase : ITestBase_t
 VAR_INPUT
 END_VAR
 ]]></Declaration>
       <Implementation>
         <ST><![CDATA[
 	u16Index := 0;
-	getFirstTestCase := a_pTest[0];]]></ST>
+	getFirstTestCase := a_iTest[0];]]></ST>
       </Implementation>
     </Method>
     <Method Name="getId" Id="{f75a7191-de66-4010-8dda-4a26aa6a90f4}">
@@ -399,7 +360,7 @@ Output
 -
 ******************************************************************************)
 {attribute 'hide'} 
-METHOD PUBLIC getNextTestCase : TestCaseHandle_t
+METHOD PUBLIC getNextTestCase : ITestBase_t
 VAR_INPUT
 END_VAR
 ]]></Declaration>
@@ -409,98 +370,8 @@ END_VAR
 	u16Index 		 := u16Index + 1;
 
 	IF u16Index < u16TestCases THEN
-		getNextTestCase := a_pTest[u16Index];
+		getNextTestCase := a_iTest[u16Index];
 	END_IF;]]></ST>
-      </Implementation>
-    </Method>
-    <Method Name="getNoOfAsserts" Id="{90c2aaf2-cbc5-46bd-85ef-aa252e2f8d0f}">
-      <Declaration><![CDATA[(******************************************************************************
-Baustein: FB_Testsuite.getNoOfAsserts
-Spezifikation: doc/Spezifikation.pdf, Kap. x.y.z
--------------------------------------------------------------------------------
-erstellt:
-von:
-Geändert:
-von:
--------------------------------------------------------------------------------
-Beschreibung
-Diese Methode
-
--------------------------------------------------------------------------------
-Input
--
-
-Output
--
-******************************************************************************)
-{attribute 'hide'} 
-METHOD PUBLIC getNoOfAsserts : UDINT
-VAR_INPUT
-END_VAR
-]]></Declaration>
-      <Implementation>
-        <ST><![CDATA[
-	getNoOfAsserts := sStatistic.u32Asserts;]]></ST>
-      </Implementation>
-    </Method>
-    <Method Name="getNoOfTests" Id="{5c45c94a-2ee3-4a94-bafd-ed5fe0d7c4f1}">
-      <Declaration><![CDATA[(******************************************************************************
-Baustein: FB_Testsuite.getNoOfTests
-Spezifikation: doc/Spezifikation.pdf, Kap. x.y.z
--------------------------------------------------------------------------------
-erstellt:
-von:
-Geändert:
-von:
--------------------------------------------------------------------------------
-Beschreibung
-Diese Methode
-
--------------------------------------------------------------------------------
-Input
--
-
-Output
--
-******************************************************************************)
-{attribute 'hide'} 
-METHOD PUBLIC getNoOfTests : UDINT
-VAR_INPUT
-END_VAR
-]]></Declaration>
-      <Implementation>
-        <ST><![CDATA[
-	getNoOfTests := sStatistic.u32TestCases;]]></ST>
-      </Implementation>
-    </Method>
-    <Method Name="getPassed" Id="{613bafe4-a0f5-4b42-965c-d87e0581e3fb}">
-      <Declaration><![CDATA[(******************************************************************************
-Baustein: FB_Testsuite.getPassed
-Spezifikation: doc/Spezifikation.pdf, Kap. x.y.z
--------------------------------------------------------------------------------
-erstellt:
-von:
-Geändert:
-von:
--------------------------------------------------------------------------------
-Beschreibung
-Diese Methode
-
--------------------------------------------------------------------------------
-Input
--
-
-Output
--
-******************************************************************************)
-{attribute 'hide'} 
-METHOD PUBLIC getPassed : UDINT
-VAR_INPUT
-END_VAR
-]]></Declaration>
-      <Implementation>
-        <ST><![CDATA[
-	getPassed := sStatistic.u32Passed;]]></ST>
       </Implementation>
     </Method>
     <Method Name="getPath" Id="{0c655e80-1810-4039-ac18-fb19e58b187c}">
@@ -512,6 +383,22 @@ END_VAR
       <Implementation>
         <ST><![CDATA[
 	getPath := strPath;]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="getResult" Id="{da61837f-a28c-4b0f-93ef-935f7efb76a4}">
+      <Declaration><![CDATA[METHOD getResult : EResult_t
+VAR_INPUT
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="getState" Id="{043e226a-4a17-4c00-b80f-6dbe5fb3b88f}">
+      <Declaration><![CDATA[METHOD getState : EState_t
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[getState := o_eState;]]></ST>
       </Implementation>
     </Method>
     <Method Name="logInfo" Id="{4162b475-e111-4ea4-af72-09599d7cdb23}">
@@ -574,9 +461,22 @@ END_VAR
 ]]></Declaration>
       <Implementation>
         <ST><![CDATA[
-	bRegistered := PRG_TestLib.addTestSuite(this);]]></ST>
+	bRegistered := PRG_TestLib.addTestSuite(this^);]]></ST>
       </Implementation>
     </Method>
+    <Property Name="Result" Id="{a498e662-1794-43fc-873e-a36fb9fd250b}">
+      <Declaration><![CDATA[{warning 'Eigenschaftenimplementierung hinzufügen'}
+PROPERTY Result : SStatistic_t
+]]></Declaration>
+      <Get Name="Get" Id="{55f23317-ab5c-4ecf-9850-69ee41479e24}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[Result := sStatistic;]]></ST>
+        </Implementation>
+      </Get>
+    </Property>
     <ObjectProperties>
       <XmlArchive>
         <Data>
@@ -589,61 +489,5 @@ END_VAR
         </TypeList>
       </XmlArchive>
     </ObjectProperties>
-    <LineIds Name="FB_Testsuite">
-      <LineId Id="3" Count="134" />
-      <LineId Id="2" Count="0" />
-    </LineIds>
-    <LineIds Name="FB_Testsuite.addTestcase">
-      <LineId Id="3" Count="12" />
-      <LineId Id="2" Count="0" />
-    </LineIds>
-    <LineIds Name="FB_Testsuite.FB_init">
-      <LineId Id="3" Count="2" />
-      <LineId Id="2" Count="0" />
-    </LineIds>
-    <LineIds Name="FB_Testsuite.getExecuted">
-      <LineId Id="3" Count="0" />
-      <LineId Id="2" Count="0" />
-    </LineIds>
-    <LineIds Name="FB_Testsuite.getFailed">
-      <LineId Id="3" Count="0" />
-      <LineId Id="2" Count="0" />
-    </LineIds>
-    <LineIds Name="FB_Testsuite.getFirstTestCase">
-      <LineId Id="3" Count="1" />
-      <LineId Id="2" Count="0" />
-    </LineIds>
-    <LineIds Name="FB_Testsuite.getId">
-      <LineId Id="3" Count="0" />
-      <LineId Id="2" Count="0" />
-    </LineIds>
-    <LineIds Name="FB_Testsuite.getNextTestCase">
-      <LineId Id="3" Count="5" />
-      <LineId Id="2" Count="0" />
-    </LineIds>
-    <LineIds Name="FB_Testsuite.getNoOfAsserts">
-      <LineId Id="3" Count="0" />
-      <LineId Id="2" Count="0" />
-    </LineIds>
-    <LineIds Name="FB_Testsuite.getNoOfTests">
-      <LineId Id="3" Count="0" />
-      <LineId Id="2" Count="0" />
-    </LineIds>
-    <LineIds Name="FB_Testsuite.getPassed">
-      <LineId Id="3" Count="0" />
-      <LineId Id="2" Count="0" />
-    </LineIds>
-    <LineIds Name="FB_Testsuite.getPath">
-      <LineId Id="3" Count="0" />
-      <LineId Id="2" Count="0" />
-    </LineIds>
-    <LineIds Name="FB_Testsuite.logInfo">
-      <LineId Id="3" Count="2" />
-      <LineId Id="2" Count="0" />
-    </LineIds>
-    <LineIds Name="FB_Testsuite.register">
-      <LineId Id="3" Count="0" />
-      <LineId Id="2" Count="0" />
-    </LineIds>
   </POU>
 </TcPlcObject>

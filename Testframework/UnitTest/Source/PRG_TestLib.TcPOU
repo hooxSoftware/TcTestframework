@@ -37,20 +37,20 @@ VAR
 	bHwBusy  AT %Q* : BOOL;
 	bHwReady AT %Q* : BOOL;
 	
-	a_pTestSuite 	: ARRAY [0..255] OF TestSuiteHandle_t;
+	a_iTestSuite 	: ARRAY [0..255] OF ITestSuite_t;
 	u16TestSuites 	: UINT;
 	u16Index	  	: UINT;
-	pActTestSuite 	: TestSuiteHandle_t;
+	iActTestSuite 	: ITestSuite_t;
 	pTestReport		: POINTER TO FB_TestReportBase;
 	eRetCode 		: ERetCode_t;
 
 	fbSystemTime 	: FB_LocalSystemTime;
 	
 	fbUnittest 		: FB_CoverageFile;
-	u16ReportState : UINT;
+	u16ReportState  : UINT;
 	u16TestSuitIdx	: UINT;
-	pTestCase  		: TestCaseHandle_t;
-	
+	iTestCase  		: ITestBase_t;
+	sTempResult     : SStatistic_t;
 END_VAR
 VAR CONSTANT 
 END_VAR]]></Declaration>
@@ -88,9 +88,9 @@ END_VAR]]></Declaration>
 		o_sStatistic.u32Passed   	:= 0;
 		o_sStatistic.u32Failed	 	:= 0;	
 
-		pActTestSuite := getFirstTestSuite();
+		iActTestSuite := getFirstTestSuite();
 		
-		IF pActTestSuite      <> 0   THEN
+		IF iActTestSuite      <> 0   THEN
 			o_eState := EState_t.eStateExecute;
 		ELSE
 			o_eState := EState_t.eStateError;	
@@ -98,36 +98,37 @@ END_VAR]]></Declaration>
 	
 	EState_t.eStateExecute:
 	
-		pActTestSuite^(i_bStart := TRUE);
+		iActTestSuite.execute(i_bStart := TRUE);
 	
-		IF pActTestSuite^.o_eState = EState_t.eStateReady THEN
+		IF iActTestSuite.getState() = EState_t.eStateReady THEN
 			
-			IF pActTestSuite^.o_eResult = EResult_t.eStateFailed THEN
+			IF iActTestSuite.getResult() = EResult_t.eStateFailed THEN
 				o_eResult := EResult_t.eStateFailed;
 			END_IF
 			
-			pActTestSuite^(i_bStart := FALSE);
-			
+			iActTestSuite.execute(i_bStart := FALSE);
+			sTempResult := iActTestSuite.Result;
+
 			o_eState := EState_t.eStateCleanUp;
-			
-			o_sStatistic.u32Executed 	:= o_sStatistic.u32Executed  + pActTestSuite^.getExecuted();
-			o_sStatistic.u32TestCases	:= o_sStatistic.u32TestCases + pActTestSuite^.getNoOfTests(); 
-			o_sStatistic.u32Asserts  	:= o_sStatistic.u32Asserts   + pActTestSuite^.getNoOfAsserts();
-			o_sStatistic.u32Passed   	:= o_sStatistic.u32Passed    + pActTestSuite^.getPassed();
-			o_sStatistic.u32Failed	 	:= o_sStatistic.u32Failed    + pActTestSuite^.getFailed();
+
+			o_sStatistic.u32Executed 	:= o_sStatistic.u32Executed  + sTempResult.u32Executed;
+			o_sStatistic.u32TestCases	:= o_sStatistic.u32TestCases + sTempResult.u32TestCases; 
+			o_sStatistic.u32Asserts  	:= o_sStatistic.u32Asserts   + sTempResult.u32Asserts;
+			o_sStatistic.u32Passed   	:= o_sStatistic.u32Passed    + sTempResult.u32Passed;
+			o_sStatistic.u32Failed	 	:= o_sStatistic.u32Failed    + sTempResult.u32Failed;
 		END_IF
 	
 	EState_t.eStateCleanUp:
 	
-		IF pActTestSuite^.o_eResult = EResult_t.eStateFailedFatal THEN
+		IF iActTestSuite.getResult() = EResult_t.eStateFailedFatal THEN
 			o_eResult := EResult_t.eStateFailedFatal;
 			o_eState  := EState_t.eStateExport;
 			logInfo('+++++++++++++ Fatal Error : Test Ende ++++++++++++++');
 		ELSE
 			
-			pActTestSuite := getNextTestSuite();
+			iActTestSuite := getNextTestSuite();
 						
-			IF pActTestSuite <> 0 THEN
+			IF iActTestSuite <> 0 THEN
 				o_eState := EState_t.eStateExecute;
 			ELSE
 				o_eState := EState_t.eStateExport;
@@ -219,22 +220,25 @@ Output
 {attribute 'hide'} 
 METHOD PUBLIC addTestSuite : BOOL
 VAR_INPUT
-	i_pTestSuite : TestSuiteHandle_t;
+	i_iTestSuite : ITestSuite_t;
+END_VAR
+VAR
+    sStatistic : SStatistic_t;
 END_VAR
 ]]></Declaration>
       <Implementation>
         <ST><![CDATA[
 	addTestSuite := FALSE;
 
-	IF 	i_pTestSuite  <> 0   AND 
+	IF 	i_iTestSuite  <> 0   AND 
 		u16TestSuites <  255 THEN
 		
-		a_pTestSuite[u16TestSuites] := i_pTestSuite;
-		
-		u16TestSuites := u16TestSuites +1;
+		a_iTestSuite[u16TestSuites] := i_iTestSuite;
+		sStatistic      := i_iTestSuite.Result;
+		u16TestSuites   := u16TestSuites +1;
 	
 		o_sStatistic.u32TestSuites := o_sStatistic.u32TestSuites + 1;
-		o_sStatistic.u32TestCases  := o_sStatistic.u32TestCases + i_pTestSuite^.sStatistic.u32TestCases;
+		o_sStatistic.u32TestCases  := o_sStatistic.u32TestCases + sStatistic.u32TestCases;
 		
 		addTestSuite := TRUE;
 	END_IF]]></ST>
@@ -247,8 +251,10 @@ VAR_INPUT
 	i_eReporttype : EReportType_t;
 END_VAR
 VAR
-	eRetcode : ERetCode_t;
-	u32Temp : UDINT;
+	eRetcode    : ERetCode_t;
+	u32Temp     : UDINT;
+    sTestResult : STestcase_t;
+    sStatistic  : SStatistic_t;
 END_VAR
 ]]></Declaration>
       <Implementation>
@@ -296,54 +302,55 @@ END_VAR
 		fbUnitTest.addString('s');
 		fbUnitTest.addCrlf();
 
-		pActTestSuite := getFirstTestSuite();
+		iActTestSuite := getFirstTestSuite();
 
-		WHILE (pActTestSuite <> 0) DO
+		WHILE (iActTestSuite <> 0) DO
 
+            sStatistic := iActTestSuite.Result;
 			u16TestSuitIdx := u16TestSuitIdx+1;
 
 			fbUnitTest.addString('<testsuite');
 			fbUnitTest.addString(' name="');
-			fbUnitTest.addString(pActTestSuite^.getId());
-			fbUnitTest.addString('" tests="');
-			u32Temp := pActTestSuite^.getNoOfTests();
-			fbUnitTest.addValue(u32Temp);
+			fbUnitTest.addString(iActTestSuite.getId());
+			fbUnitTest.addString('" tests="');			
+			fbUnitTest.addValue(sStatistic.u32TestCases);
 			fbUnitTest.addString('" disabled="');
-			u32Temp := 0;
+            u32Temp := sStatistic.u32TestCases-sStatistic.u32Executed;
 			fbUnitTest.addValue(u32Temp);
 			fbUnitTest.addString('" errors="');
 			fbUnitTest.addValue(u32Temp);
 			fbUnitTest.addString('" failures="');
-			u32Temp := pActTestSuite^.getFailed();
-			fbUnitTest.addValue(u32Temp);
+			fbUnitTest.addValue(sStatistic.u32Failed);
 			fbUnitTest.addString('" hostname="');
 			fbUnitTest.addString('" id="');
 			fbUnitTest.addvalue(u16TestSuitIdx);
 			fbUnitTest.addString('" package="');
-			fbUnitTest.addString(pActTestSuite^.getPath());
+			fbUnitTest.addString(iActTestSuite.getPath());
 			fbUnitTest.addString('">');
 			fbUnitTest.addCrlf();
 
-			pTestCase := pActTestSuite^.getFirstTestCase();
+			iTestCase := iActTestSuite.getFirstTestCase();
 
-			WHILE (pTestCase <> 0) DO
+			WHILE (iTestCase <> 0) DO
+        
+                sTestResult := iTestCase.Result;
 
 				fbUnitTest.addString('<testcase');
 				fbUnitTest.addString(' name="');
-				fbUnitTest.addString(pTestCase^.getId());
+				fbUnitTest.addString(iTestCase.getId());
 				fbUnitTest.addString('" assertions="');
-				u32Temp := pTestCase^.getFailed() + pTestCase^.getPassed();
+                u32Temp := sTestResult.u32Failed + sTestResult.u32Passed;
 				fbUnitTest.addValue(u32Temp);
 				fbUnitTest.addString('" classname="');
-				fbUnitTest.addString(pTestCase^.getPath());
-				fbUnitTest.addString(pTestCase^.getClassName());
-				fbUnitTest.addString('" time="');
-				u32Temp := pTestCase^.getTime();
-				fbUnitTest.addTimeMs(u32Temp);
+				fbUnitTest.addString(iTestCase.getPath());
+                fbUnitTest.addString('.');
+				fbUnitTest.addString(iTestCase.getClassName());
+				fbUnitTest.addString('" time="');				
+				fbUnitTest.addTimeMs(sTestResult.u32Time);
 				fbUnitTest.addString('">');
 				fbUnitTest.addCrlf();
 
-				CASE pTestCase^.o_eResult OF
+				CASE sTestResult.eState OF
 
 				EResult_t.eStatePassed :
 
@@ -354,7 +361,7 @@ END_VAR
 			
 					fbUnitTest.addString('<failure');
 					fbUnitTest.addString(' message="');
-					fbUnitTest.addString(pTestCase^.getMessage());
+					fbUnitTest.addString(iTestCase.getMessage());
 					fbUnitTest.addString('"/>');
 					
 				EResult_t.eStateSkipped:
@@ -368,14 +375,14 @@ END_VAR
 				fbUnitTest.addString('</testcase>');
 				fbUnitTest.addCrlf();		
 
-				pTestCase := pActTestSuite^.getNextTestCase();
+				iTestCase := iActTestSuite.getNextTestCase();
 		
 			END_WHILE
 
 			fbUnitTest.addString('</testsuite>');
 			fbUnitTest.addCrlf();	
 
-			pActTestSuite := getNextTestSuite();
+			iActTestSuite := getNextTestSuite();
 
 		END_WHILE
 
@@ -458,14 +465,14 @@ Output
 -
 ******************************************************************************)
 {attribute 'hide'} 
-METHOD PRIVATE getFirstTestSuite : TestSuiteHandle_t
+METHOD PRIVATE getFirstTestSuite : ITestSuite_t
 VAR_INPUT
 END_VAR
 ]]></Declaration>
       <Implementation>
         <ST><![CDATA[
 	u16Index := 0;
-	getFirstTestSuite := a_pTestSuite[0];]]></ST>
+	getFirstTestSuite := a_iTestSuite[0];]]></ST>
       </Implementation>
     </Method>
     <Method Name="getNextTestSuite" Id="{25155ea4-e257-4500-9294-2e5b075f342b}">
@@ -489,7 +496,7 @@ Output
 -
 ******************************************************************************)
 {attribute 'hide'} 
-METHOD PRIVATE getNextTestSuite : TestSuiteHandle_t
+METHOD PRIVATE getNextTestSuite : ITestSuite_t
 VAR_INPUT
 END_VAR
 ]]></Declaration>
@@ -499,7 +506,7 @@ END_VAR
 	u16Index 		 := u16Index + 1;
 
 	IF u16Index < u16TestSuites THEN
-		getNextTestSuite := a_pTestSuite[u16Index];
+		getNextTestSuite := a_iTestSuite[u16Index];
 	END_IF;]]></ST>
       </Implementation>
     </Method>

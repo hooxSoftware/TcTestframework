@@ -1,0 +1,14 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.11">
+  <DUT Name="STestcase_t" Id="{54abfb9c-1ca8-4925-a710-9517e8a87ac8}">
+    <Declaration><![CDATA[TYPE STestcase_t :
+STRUCT
+	u32Passed 		: UDINT;
+	u32Failed 		: UDINT;
+    u32Time         : UDINT;
+    eState          : EResult_t;
+END_STRUCT
+END_TYPE
+]]></Declaration>
+  </DUT>
+</TcPlcObject>

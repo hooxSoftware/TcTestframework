@@ -16,9 +16,9 @@
     <CombineIds>false</CombineIds>
     <Company>Hoox.Software</Company>
     <Released>false</Released>
-    <Title>UnitTestFramework</Title>
+    <Title>TestFramework</Title>
     <Author>Patrick Dressel</Author>
-    <ProjectVersion>2.0.0</ProjectVersion>
+    <ProjectVersion>2.0.1</ProjectVersion>
     <Licenses>
     </Licenses>
     <LibraryCategories>
@@ -91,10 +91,10 @@
     <Compile Include="Datatypes\Report\UTime_t.TcDUT">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Datatypes\SResult_t.TcDUT">
+    <Compile Include="Datatypes\SStatistic_t.TcDUT">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Datatypes\SStatistic_t.TcDUT">
+    <Compile Include="Datatypes\STestcase_t.TcDUT">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Datatypes\StringHandle_t.TcDUT">
@@ -104,9 +104,6 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Datatypes\TestCaseHandle_t.TcDUT">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Datatypes\TestSuiteHandle_t.TcDUT">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="GVLs\GVL_Parameter.TcGVL">
@@ -120,6 +117,12 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Source\FB_TestBase.TcPOU">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Source\ITestBase_t.TcIO">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Source\ITestsuite_t.TcIO">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Source\PRG_TestLib.TcPOU">

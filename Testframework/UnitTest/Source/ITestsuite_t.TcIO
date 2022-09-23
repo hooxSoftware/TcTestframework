@@ -1,0 +1,63 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.11">
+  <Itf Name="ITestsuite_t" Id="{64d669ca-ee83-4507-a72e-0264a93c3904}">
+    <Declaration><![CDATA[INTERFACE ITestsuite_t
+]]></Declaration>
+    <Method Name="addTestcase" Id="{9e1025a7-1de2-4386-85ea-c13d6cc5799e}">
+      <Declaration><![CDATA[METHOD PUBLIC addTestcase : BOOL
+VAR_INPUT
+	i_iTestCase : ITestBase_t;
+END_VAR
+]]></Declaration>
+    </Method>
+    <Method Name="execute" Id="{7300aae1-deb3-45bf-8fcc-0899f11e7300}">
+      <Declaration><![CDATA[METHOD execute : BOOL
+VAR_INPUT
+    i_bStart : BOOL;
+END_VAR
+]]></Declaration>
+    </Method>
+    <Method Name="getFirstTestCase" Id="{7d020b3e-52d9-41a6-9579-059090326f3c}">
+      <Declaration><![CDATA[METHOD getFirstTestCase : ITestBase_t
+VAR_INPUT
+END_VAR
+]]></Declaration>
+    </Method>
+    <Method Name="getId" Id="{e64d8fc8-ca14-461a-bef5-e9e575e7e0e1}">
+      <Declaration><![CDATA[METHOD getId : STRING
+VAR_INPUT
+END_VAR
+]]></Declaration>
+    </Method>
+    <Method Name="getNextTestCase" Id="{24088fc9-3cf9-4cfe-908e-a6c58f99c953}">
+      <Declaration><![CDATA[METHOD getNextTestCase : ITestBase_t
+VAR_INPUT
+END_VAR
+]]></Declaration>
+    </Method>
+    <Method Name="getPath" Id="{6880e334-3b3f-48db-8b27-625a1d698f2a}">
+      <Declaration><![CDATA[METHOD getPath : ObjectId_t
+VAR_INPUT
+END_VAR
+]]></Declaration>
+    </Method>
+    <Method Name="getResult" Id="{9e054800-ab53-4131-87a6-37711a93aea6}">
+      <Declaration><![CDATA[METHOD getResult : EResult_t
+VAR_INPUT
+END_VAR
+]]></Declaration>
+    </Method>
+    <Method Name="getState" Id="{888c3208-bbdc-456e-8781-ea97c17b988e}">
+      <Declaration><![CDATA[METHOD getState : EState_t
+VAR_INPUT
+END_VAR
+]]></Declaration>
+    </Method>
+    <Property Name="Result" Id="{f66fd49c-1759-447d-96b9-666b288afb19}">
+      <Declaration><![CDATA[PROPERTY Result : SStatistic_t]]></Declaration>
+      <Get Name="Get" Id="{613283c0-dd90-4ecb-946e-083fde5482a8}">
+        <Declaration><![CDATA[]]></Declaration>
+      </Get>
+    </Property>
+  </Itf>
+</TcPlcObject>

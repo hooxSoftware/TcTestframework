@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.9">
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.11">
   <POU Name="FB_TestBase" Id="{77b52f8d-9a49-403a-aba1-80915f687878}" SpecialFunc="None">
     <Declaration><![CDATA[(******************************************************************************
 Baustein: FB_TestBase
@@ -23,6 +23,7 @@ Output
 	o_eResult: EResult_t;
 ******************************************************************************)
 FUNCTION_BLOCK FB_TestBase
+    IMPLEMENTS ITestBase_t
 VAR_INPUT
 END_VAR
 VAR_OUTPUT
@@ -34,13 +35,11 @@ VAR
 	strClassName	: ObjectId_t;
 	strPath			: ObjectId_t;
 	strMessage 	 	: StrMessage_t;
-	bSkipTest		: BOOL;
-	pTestSuite      : TestSuiteHandle_t;
-	bRegistered 	: BOOL;
-	u32Passed 		: UDINT;
-	u32Failed 		: UDINT;
 	u32StartTime	: UDINT;
 	u32EndTime		: UDINT;
+	iTestSuite      : ITestsuite_t;
+	bRegistered 	: BOOL;
+    sResult         : STestcase_t;
 END_VAR
 ]]></Declaration>
     <Implementation>
@@ -68,7 +67,7 @@ Output
 -
 ******************************************************************************)
 {attribute 'hide'} 
-METHOD INTERNAL _cleanup : ERetCode_t
+METHOD PUBLIC FINAL _cleanup : ERetCode_t
 VAR_INPUT
 END_VAR
 ]]></Declaration>
@@ -77,7 +76,9 @@ END_VAR
 
 	_cleanup := cleanup();
 
-	
+    IF _cleanup = ERetCode_t.eRetDone THEN
+        setEndTime();
+    END_IF;	
 	
 	]]></ST>
       </Implementation>
@@ -103,7 +104,7 @@ Output
 -
 ******************************************************************************)
 {attribute 'hide'} 
-METHOD INTERNAL _execute : ERetCode_t
+METHOD PUBLIC FINAL _execute : ERetCode_t
 VAR_INPUT
 END_VAR
 ]]></Declaration>
@@ -134,19 +135,23 @@ Output
 -
 ******************************************************************************)
 {attribute 'hide'} 
-METHOD INTERNAL _prepare : ERetCode_t
+METHOD PUBLIC FINAL _prepare : ERetCode_t
 VAR_INPUT
 END_VAR
 ]]></Declaration>
       <Implementation>
         <ST><![CDATA[
-	u32Passed 		:= 0;
-	u32Failed 		:= 0;
-	u32StartTime 	:= 0;
-	u32EndTime 		:= 0;
-	o_eResult 		:= EResult_t.eStateSkipped;
+	sResult.u32Passed 		:= 0;
+	sResult.u32Failed 		:= 0;
+	u32StartTime 	        := 0;
+	u32EndTime 		        := 0;
+	o_eResult 		        := EResult_t.eStateIdle;
 
-	_prepare := prepare();]]></ST>
+	_prepare := prepare();
+
+    IF _prepare = ERetCode_t.eRetDone THEN
+        setStartTime();
+    END_IF;]]></ST>
       </Implementation>
     </Method>
     <Method Name="addFailed" Id="{877265ac-7517-465d-8046-dbd413ab22a9}">
@@ -170,14 +175,14 @@ Output
 -
 ******************************************************************************)
 {attribute 'hide'} 
-METHOD INTERNAL addFailed : BOOL
+METHOD INTERNAL FINAL addFailed : BOOL
 VAR_INPUT
 	bFatal : BOOL;
 END_VAR
 ]]></Declaration>
       <Implementation>
         <ST><![CDATA[
-	u32Failed := u32Failed + 1;
+	sResult.u32Failed := sResult.u32Failed + 1;
 	
 	o_eResult := EResult_t.eStateFailed;
 	
@@ -211,15 +216,15 @@ Output
 -
 ******************************************************************************)
 {attribute 'hide'} 
-METHOD INTERNAL addPassed : BOOL
+METHOD INTERNAL FINAL addPassed : BOOL
 VAR_INPUT
 END_VAR
 ]]></Declaration>
       <Implementation>
         <ST><![CDATA[
-	u32Passed := u32Passed + 1;
+	sResult.u32Passed := sResult.u32Passed + 1;
 
-	IF o_eResult = eResult_t.eStateSkipped THEN
+	IF o_eResult = eResult_t.eStateIdle THEN
 		o_eResult := eResult_t.eStatePassed;
 	END_IF;]]></ST>
       </Implementation>
@@ -245,7 +250,7 @@ Input
 Output
 -
 ******************************************************************************)
-METHOD PROTECTED assertEQUAL : BOOL
+METHOD PROTECTED FINAL assertEQUAL : BOOL
 VAR_INPUT
 	Actual   : ANY;
 	Expected : ANY;
@@ -285,7 +290,7 @@ Input
 Output
 -
 ******************************************************************************)
-METHOD PROTECTED assertEQUAL_Fatal : BOOL
+METHOD PROTECTED FINAL assertEQUAL_Fatal : BOOL
 VAR_INPUT
 	Actual   : ANY;
 	Expected : ANY;
@@ -323,7 +328,7 @@ Input
 Output
 -
 ******************************************************************************)
-METHOD PROTECTED assertFALSE : BOOL
+METHOD PROTECTED FINAL assertFALSE : BOOL
 VAR_INPUT
 	bValue : BOOL;
 END_VAR
@@ -357,7 +362,7 @@ Input
 Output
 -
 ******************************************************************************)
-METHOD PROTECTED assertFALSE_Fatal : BOOL
+METHOD PROTECTED FINAL assertFALSE_Fatal : BOOL
 VAR_INPUT
 	bValue : BOOL;
 END_VAR
@@ -392,7 +397,7 @@ Input
 Output
 -
 ******************************************************************************)
-METHOD PROTECTED assertNotEqual : BOOL
+METHOD PROTECTED FINAL assertNotEqual : BOOL
 VAR_INPUT
 	Actual   : ANY;
 	Expected : ANY;
@@ -432,7 +437,7 @@ Input
 Output
 -
 ******************************************************************************)
-METHOD PROTECTED assertNotEqual_Fatal : BOOL
+METHOD PROTECTED FINAL assertNotEqual_Fatal : BOOL
 VAR_INPUT
 	Actual   : ANY;
 	Expected : ANY;
@@ -472,7 +477,7 @@ Input
 Output
 -
 ******************************************************************************)
-METHOD PROTECTED assertPtrEqual : BOOL
+METHOD PROTECTED FINAL assertPtrEqual : BOOL
 VAR_INPUT
 	pActual   : PVOID;
 	pExpected : PVOID;
@@ -503,7 +508,7 @@ Input
 Output
 -
 ******************************************************************************)
-METHOD PROTECTED assertPtrEqual_Fatal : BOOL
+METHOD PROTECTED FINAL assertPtrEqual_Fatal : BOOL
 VAR_INPUT
 	pActual   : PVOID;
 	pExpected : PVOID;
@@ -534,7 +539,7 @@ Input
 Output
 -
 ******************************************************************************)
-METHOD PROTECTED assertPtrNotEqual : BOOL
+METHOD PROTECTED FINAL assertPtrNotEqual : BOOL
 VAR_INPUT
 	pActual   : PVOID;
 	pExpected : PVOID;
@@ -566,7 +571,7 @@ Input
 Output
 -
 ******************************************************************************)
-METHOD PROTECTED assertPtrNotEqual_Fatal : BOOL
+METHOD PROTECTED FINAL assertPtrNotEqual_Fatal : BOOL
 VAR_INPUT
 	pActual   : PVOID;
 	pExpected : PVOID;
@@ -597,7 +602,7 @@ Input
 Output
 -
 ******************************************************************************)
-METHOD PROTECTED assertPtrNotNull : BOOL
+METHOD PROTECTED FINAL assertPtrNotNull : BOOL
 VAR_INPUT
 	pActual   : PVOID;
 END_VAR
@@ -627,7 +632,7 @@ Input
 Output
 -
 ******************************************************************************)
-METHOD PROTECTED assertPtrNotNull_Fatal : BOOL
+METHOD PROTECTED FINAL assertPtrNotNull_Fatal : BOOL
 VAR_INPUT
 	pActual   : PVOID;
 END_VAR
@@ -657,7 +662,7 @@ Input
 Output
 -
 ******************************************************************************)
-METHOD PROTECTED assertPtrNull : BOOL
+METHOD PROTECTED FINAL assertPtrNull : BOOL
 VAR_INPUT
 	pActual   : PVOID;
 END_VAR
@@ -687,7 +692,7 @@ Input
 Output
 -
 ******************************************************************************)
-METHOD PROTECTED assertPtrNull_Fatal : BOOL
+METHOD PROTECTED FINAL assertPtrNull_Fatal : BOOL
 VAR_INPUT
 	pActual   : PVOID;
 END_VAR
@@ -719,7 +724,7 @@ Input
 Output
 -
 ******************************************************************************)
-METHOD PROTECTED assertRealEqual : BOOL
+METHOD PROTECTED FINAL assertRealEqual : BOOL
 VAR_INPUT
 	r32Actual 		: REAL;
 	r32Expected 	: REAL;
@@ -753,7 +758,7 @@ Input
 Output
 -
 ******************************************************************************)
-METHOD PROTECTED assertRealEqual_Fatal : BOOL
+METHOD PROTECTED FINAL assertRealEqual_Fatal : BOOL
 VAR_INPUT
 	r32Actual 		: REAL;
 	r32Expected 	: REAL;
@@ -787,7 +792,7 @@ Input
 Output
 -
 ******************************************************************************)
-METHOD PRIVATE assertRealNotEqual : BOOL
+METHOD PRIVATE FINAL assertRealNotEqual : BOOL
 VAR_INPUT
 	r32Actual 		: REAL;
 	r32Expected 	: REAL;
@@ -821,7 +826,7 @@ Input
 Output
 -
 ******************************************************************************)
-METHOD PROTECTED assertRealNotEqual_Fatal : BOOL
+METHOD PROTECTED FINAL assertRealNotEqual_Fatal : BOOL
 VAR_INPUT
 	r32Actual 		: REAL;
 	r32Expected 	: REAL;
@@ -854,7 +859,7 @@ Input
 Output
 -
 ******************************************************************************)
-METHOD PROTECTED assertStringEqual : BOOL
+METHOD PROTECTED FINAL assertStringEqual : BOOL
 VAR_INPUT
 	pActual 	: StringHandle_t;
 	pExpected 	: StringHandle_t;
@@ -890,7 +895,7 @@ Input
 Output
 -
 ******************************************************************************)
-METHOD PROTECTED assertStringEqual_Fatal : BOOL
+METHOD PROTECTED FINAL assertStringEqual_Fatal : BOOL
 VAR_INPUT
 	pActual 	: StringHandle_t;
 	pExpected 	: StringHandle_t;
@@ -926,7 +931,7 @@ Input
 Output
 -
 ******************************************************************************)
-METHOD PROTECTED assertStringNotEqual : BOOL
+METHOD PROTECTED FINAL assertStringNotEqual : BOOL
 VAR_INPUT
 	pActual 	: StringHandle_t;
 	pExpected 	: StringHandle_t;
@@ -962,7 +967,7 @@ Input
 Output
 -
 ******************************************************************************)
-METHOD PROTECTED assertStringNotEqual_fatal : BOOL
+METHOD PROTECTED FINAL assertStringNotEqual_fatal : BOOL
 VAR_INPUT
 	pExpected 	: StringHandle_t;
 	pActual 	: StringHandle_t;
@@ -997,7 +1002,7 @@ Input
 Output
 -
 ******************************************************************************)
-METHOD PROTECTED assertTRUE : BOOL
+METHOD PROTECTED FINAL assertTRUE : BOOL
 VAR_INPUT
 	bValue : BOOL;
 END_VAR
@@ -1032,7 +1037,7 @@ Input
 Output
 -
 ******************************************************************************)
-METHOD PROTECTED assertTRUE_Fatal : BOOL
+METHOD PROTECTED FINAL assertTRUE_Fatal : BOOL
 VAR_INPUT
 	bValue : BOOL;
 END_VAR
@@ -1072,7 +1077,6 @@ END_VAR
 ]]></Declaration>
       <Implementation>
         <ST><![CDATA[
-
 	cleanup := ERetCode_t.eRetFailed;
 
 	
@@ -1138,7 +1142,7 @@ VAR_INPUT
 	i_strId	  		: ObjectId_t;
 	i_strClassName	: ObjectId_t;
 	i_strPath 		: ObjectId_t;
-	i_pTestSuite 	: TestSuiteHandle_t;
+	i_iTestSuite 	: ITestSuite_t;
 	i_bExecute      : BOOL := true; 
 END_VAR
 ]]></Declaration>
@@ -1146,9 +1150,12 @@ END_VAR
         <ST><![CDATA[	
 	strId 		 := i_strId;
 	strClassName := i_strClassName;
-	strPath 	 	 := i_strPath;
-	bSkipTest  	 := (i_bExecute = false);
-	pTestSuite 	 := i_pTestSuite;
+	strPath 	 := i_strPath;
+	iTestSuite 	 := i_iTestSuite;
+
+    IF i_bExecute = FALSE THEN
+        o_eResult := EResult_t.eStateSkipped;
+    END_IF;
 	
 	register();]]></ST>
       </Implementation>
@@ -1174,7 +1181,7 @@ Output
 -
 ******************************************************************************)
 {attribute 'hide'} 
-METHOD PUBLIC getClassName : ObjectId_t
+METHOD PUBLIC FINAL getClassName : ObjectId_t
 VAR_INPUT
 END_VAR
 ]]></Declaration>
@@ -1204,13 +1211,13 @@ Output
 -
 ******************************************************************************)
 {attribute 'hide'} 
-METHOD PUBLIC getFailed : UDINT
+METHOD PUBLIC FINAL getFailed : UDINT
 VAR_INPUT
 END_VAR
 ]]></Declaration>
       <Implementation>
         <ST><![CDATA[
-	getFailed := u32Failed;]]></ST>
+	getFailed := sResult.u32Failed;]]></ST>
       </Implementation>
     </Method>
     <Method Name="getId" Id="{3201004a-c0ba-477e-8045-eedf4c12dcd0}">
@@ -1234,7 +1241,7 @@ Output
 -
 ******************************************************************************)
 {attribute 'hide'} 
-METHOD PUBLIC getId : ObjectId_t
+METHOD PUBLIC FINAL getId : ObjectId_t
 VAR_INPUT
 END_VAR
 ]]></Declaration>
@@ -1244,7 +1251,7 @@ END_VAR
       </Implementation>
     </Method>
     <Method Name="getMessage" Id="{afb1fb13-c5eb-4812-98a0-96deb4f8231a}">
-      <Declaration><![CDATA[METHOD PUBLIC getMessage : StrMessage_t
+      <Declaration><![CDATA[METHOD PUBLIC FINAL getMessage : StrMessage_t
 VAR_INPUT
 END_VAR
 ]]></Declaration>
@@ -1274,13 +1281,13 @@ Output
 -
 ******************************************************************************)
 {attribute 'hide'} 
-METHOD PUBLIC getPassed : UDINT
+METHOD PUBLIC FINAL getPassed : UDINT
 VAR_INPUT
 END_VAR
 ]]></Declaration>
       <Implementation>
         <ST><![CDATA[
-	getPassed := u32Passed;]]></ST>
+	getPassed := sResult.u32Passed;]]></ST>
       </Implementation>
     </Method>
     <Method Name="getPath" Id="{e3a99e4d-69cf-4522-86d0-57b9b9298cbb}">
@@ -1304,7 +1311,7 @@ Output
 -
 ******************************************************************************)
 {attribute 'hide'} 
-METHOD PUBLIC getPath : ObjectId_t
+METHOD PUBLIC FINAL getPath : ObjectId_t
 VAR_INPUT
 END_VAR
 ]]></Declaration>
@@ -1334,7 +1341,7 @@ Output
 -
 ******************************************************************************)
 {attribute 'hide'} 
-METHOD PRIVATE getSystemTime : UDINT
+METHOD PRIVATE FINAL getSystemTime : UDINT
 VAR_INPUT
 END_VAR
 VAR
@@ -1369,7 +1376,7 @@ Output
 -
 ******************************************************************************)
 {attribute 'hide'} 
-METHOD PUBLIC getTime : UDINT
+METHOD PUBLIC FINAL getTime : UDINT
 VAR_INPUT
 END_VAR
 ]]></Declaration>
@@ -1380,36 +1387,6 @@ END_VAR
 	IF u32EndTime > u32StartTime THEN
 		getTime := u32EndTime - u32StartTime;
 	END_IF;]]></ST>
-      </Implementation>
-    </Method>
-    <Method Name="isSkipped" Id="{e2151300-eb3a-4ef7-9340-3371bd55a074}">
-      <Declaration><![CDATA[(******************************************************************************
-Baustein: FB_TestBase.getPassed
-Spezifikation: doc/Spezifikation.pdf, Kap. x.y.z
--------------------------------------------------------------------------------
-erstellt:
-von:
-Geändert:
-von:
--------------------------------------------------------------------------------
-Beschreibung
-Diese Methode
-
--------------------------------------------------------------------------------
-Input
--
-
-Output
--
-******************************************************************************)
-{attribute 'hide'} 
-METHOD INTERNAL isSkipped : BOOL
-VAR_INPUT
-END_VAR
-]]></Declaration>
-      <Implementation>
-        <ST><![CDATA[
-	isSkipped := bSkipTest;]]></ST>
       </Implementation>
     </Method>
     <Method Name="logError" Id="{16a351f0-cd4d-4e8b-bead-0c78616d52ea}">
@@ -1433,7 +1410,7 @@ Output
 -
 ******************************************************************************)
 {attribute 'hide'} 
-METHOD PROTECTED logError : BOOL
+METHOD PROTECTED FINAL logError : BOOL
 VAR_INPUT
 	i_strMessage : StrMessage_t;
 END_VAR
@@ -1466,7 +1443,7 @@ Output
 -
 ******************************************************************************)
 {attribute 'hide'} 
-METHOD INTERNAL logInfo : BOOL
+METHOD INTERNAL FINAL logInfo : BOOL
 VAR_INPUT
 	i_strMessage : StrMessage_t;
 END_VAR
@@ -1528,20 +1505,36 @@ Output
 -
 ******************************************************************************)
 {attribute 'hide'} 
-METHOD INTERNAL register : BOOL
+METHOD INTERNAL FINAL register : BOOL
 VAR_INPUT
 END_VAR
 ]]></Declaration>
       <Implementation>
         <ST><![CDATA[
-	IF pTestSuite <> 0 	AND 
+	IF iTestSuite <> 0 	AND 
        bRegistered = FALSE  THEN
 		
-		bRegistered := pTestSuite^.addTestcase(THIS);
+	   bRegistered := iTestSuite.addTestcase(THIS^);
 	
 	END_IF]]></ST>
       </Implementation>
     </Method>
+    <Property Name="Result" Id="{098c66a5-b85f-4544-bdc8-e9830f10d1fa}">
+      <Declaration><![CDATA[{warning 'Eigenschaftenimplementierung hinzufügen'}
+PROPERTY Result : STestcase_t
+]]></Declaration>
+      <Get Name="Get" Id="{74b42ec5-7997-4155-b252-215f59ff35a1}">
+        <Declaration><![CDATA[VAR
+END_VAR
+]]></Declaration>
+        <Implementation>
+          <ST><![CDATA[
+    sResult.u32Time := getTime();
+    sResult.eState  := o_eResult; 
+    Result          := sResult;]]></ST>
+        </Implementation>
+      </Get>
+    </Property>
     <Method Name="setEndTime" Id="{2f133e6d-150e-424a-a9c1-5a581e939cfa}">
       <Declaration><![CDATA[(******************************************************************************
 Baustein: FB_TestBase.getPassed
@@ -1563,7 +1556,7 @@ Output
 -
 ******************************************************************************)
 {attribute 'hide'} 
-METHOD INTERNAL setEndTime : BOOL
+METHOD INTERNAL FINAL setEndTime : BOOL
 VAR_INPUT
 END_VAR
 ]]></Declaration>
@@ -1576,7 +1569,7 @@ END_VAR
       </Implementation>
     </Method>
     <Method Name="setMessage" Id="{5e945eba-6cfb-4739-8a87-efafbad421bc}">
-      <Declaration><![CDATA[METHOD PROTECTED setMessage
+      <Declaration><![CDATA[METHOD PROTECTED FINAL setMessage
 VAR_INPUT
 	strValue : StrMessage_t;
 END_VAR
@@ -1609,7 +1602,7 @@ Output
 -
 ******************************************************************************)
 {attribute 'hide'} 
-METHOD INTERNAL setStartTime : BOOL
+METHOD INTERNAL FINAL setStartTime : BOOL
 VAR_INPUT
 END_VAR
 ]]></Declaration>
@@ -1644,7 +1637,7 @@ Output
 -
 ******************************************************************************)
 {attribute 'hide'} 
-METHOD PRIVATE strncmp : BOOL
+METHOD PRIVATE FINAL strncmp : BOOL
 VAR_INPUT
 	strInput 	: StringHandle_t;
 	strCompare 	: StringHandle_t;
@@ -1710,7 +1703,7 @@ Output
 -
 ******************************************************************************)
 {attribute 'hide'} 
-METHOD PRIVATE validate : BOOL
+METHOD PRIVATE FINAL validate : BOOL
 VAR_INPUT
 	var1 : ANY;
 	var2 : ANY;
@@ -1738,311 +1731,5 @@ END_VAR
 	validate := true;]]></ST>
       </Implementation>
     </Method>
-    <LineIds Name="FB_TestBase">
-      <LineId Id="43" Count="0" />
-      <LineId Id="9" Count="0" />
-    </LineIds>
-    <LineIds Name="FB_TestBase._cleanup">
-      <LineId Id="118" Count="0" />
-      <LineId Id="120" Count="4" />
-      <LineId Id="52" Count="0" />
-    </LineIds>
-    <LineIds Name="FB_TestBase._execute">
-      <LineId Id="60" Count="0" />
-      <LineId Id="58" Count="0" />
-      <LineId Id="52" Count="0" />
-    </LineIds>
-    <LineIds Name="FB_TestBase._prepare">
-      <LineId Id="28" Count="0" />
-      <LineId Id="5" Count="0" />
-      <LineId Id="29" Count="0" />
-      <LineId Id="78" Count="1" />
-      <LineId Id="102" Count="0" />
-      <LineId Id="125" Count="0" />
-      <LineId Id="55" Count="0" />
-    </LineIds>
-    <LineIds Name="FB_TestBase.addFailed">
-      <LineId Id="6" Count="0" />
-      <LineId Id="5" Count="0" />
-      <LineId Id="7" Count="0" />
-      <LineId Id="9" Count="0" />
-      <LineId Id="18" Count="0" />
-      <LineId Id="12" Count="1" />
-      <LineId Id="44" Count="0" />
-      <LineId Id="43" Count="0" />
-      <LineId Id="42" Count="0" />
-      <LineId Id="14" Count="0" />
-      <LineId Id="10" Count="0" />
-    </LineIds>
-    <LineIds Name="FB_TestBase.addPassed">
-      <LineId Id="6" Count="1" />
-      <LineId Id="32" Count="0" />
-      <LineId Id="31" Count="0" />
-      <LineId Id="30" Count="0" />
-      <LineId Id="33" Count="0" />
-    </LineIds>
-    <LineIds Name="FB_TestBase.assertEQUAL">
-      <LineId Id="9" Count="1" />
-      <LineId Id="16" Count="1" />
-      <LineId Id="22" Count="0" />
-      <LineId Id="18" Count="1" />
-      <LineId Id="21" Count="0" />
-      <LineId Id="15" Count="0" />
-      <LineId Id="12" Count="0" />
-    </LineIds>
-    <LineIds Name="FB_TestBase.assertEQUAL_Fatal">
-      <LineId Id="9" Count="0" />
-      <LineId Id="16" Count="2" />
-      <LineId Id="22" Count="0" />
-      <LineId Id="19" Count="2" />
-      <LineId Id="12" Count="0" />
-    </LineIds>
-    <LineIds Name="FB_TestBase.assertFALSE">
-      <LineId Id="8" Count="0" />
-      <LineId Id="5" Count="0" />
-      <LineId Id="36" Count="1" />
-      <LineId Id="12" Count="0" />
-      <LineId Id="10" Count="0" />
-    </LineIds>
-    <LineIds Name="FB_TestBase.assertFALSE_Fatal">
-      <LineId Id="7" Count="4" />
-      <LineId Id="5" Count="0" />
-    </LineIds>
-    <LineIds Name="FB_TestBase.assertNotEqual">
-      <LineId Id="9" Count="1" />
-      <LineId Id="16" Count="1" />
-      <LineId Id="22" Count="0" />
-      <LineId Id="18" Count="1" />
-      <LineId Id="21" Count="0" />
-      <LineId Id="15" Count="0" />
-      <LineId Id="12" Count="0" />
-    </LineIds>
-    <LineIds Name="FB_TestBase.assertNotEqual_Fatal">
-      <LineId Id="9" Count="1" />
-      <LineId Id="16" Count="1" />
-      <LineId Id="22" Count="0" />
-      <LineId Id="18" Count="1" />
-      <LineId Id="21" Count="0" />
-      <LineId Id="15" Count="0" />
-      <LineId Id="12" Count="0" />
-    </LineIds>
-    <LineIds Name="FB_TestBase.assertPtrEqual">
-      <LineId Id="8" Count="0" />
-      <LineId Id="5" Count="0" />
-    </LineIds>
-    <LineIds Name="FB_TestBase.assertPtrEqual_Fatal">
-      <LineId Id="8" Count="0" />
-      <LineId Id="5" Count="0" />
-    </LineIds>
-    <LineIds Name="FB_TestBase.assertPtrNotEqual">
-      <LineId Id="8" Count="0" />
-      <LineId Id="5" Count="0" />
-    </LineIds>
-    <LineIds Name="FB_TestBase.assertPtrNotEqual_Fatal">
-      <LineId Id="8" Count="0" />
-      <LineId Id="5" Count="0" />
-    </LineIds>
-    <LineIds Name="FB_TestBase.assertPtrNotNull">
-      <LineId Id="7" Count="0" />
-      <LineId Id="5" Count="0" />
-    </LineIds>
-    <LineIds Name="FB_TestBase.assertPtrNotNull_Fatal">
-      <LineId Id="7" Count="0" />
-      <LineId Id="5" Count="0" />
-    </LineIds>
-    <LineIds Name="FB_TestBase.assertPtrNull">
-      <LineId Id="7" Count="0" />
-      <LineId Id="5" Count="0" />
-    </LineIds>
-    <LineIds Name="FB_TestBase.assertPtrNull_Fatal">
-      <LineId Id="7" Count="0" />
-      <LineId Id="5" Count="0" />
-    </LineIds>
-    <LineIds Name="FB_TestBase.assertRealEqual">
-      <LineId Id="9" Count="0" />
-      <LineId Id="5" Count="0" />
-    </LineIds>
-    <LineIds Name="FB_TestBase.assertRealEqual_Fatal">
-      <LineId Id="9" Count="0" />
-      <LineId Id="5" Count="0" />
-    </LineIds>
-    <LineIds Name="FB_TestBase.assertRealNotEqual">
-      <LineId Id="9" Count="0" />
-      <LineId Id="5" Count="0" />
-    </LineIds>
-    <LineIds Name="FB_TestBase.assertRealNotEqual_Fatal">
-      <LineId Id="9" Count="0" />
-      <LineId Id="5" Count="0" />
-    </LineIds>
-    <LineIds Name="FB_TestBase.assertStringEqual">
-      <LineId Id="14" Count="0" />
-      <LineId Id="19" Count="0" />
-      <LineId Id="16" Count="2" />
-      <LineId Id="11" Count="0" />
-    </LineIds>
-    <LineIds Name="FB_TestBase.assertStringEqual_Fatal">
-      <LineId Id="9" Count="4" />
-      <LineId Id="5" Count="0" />
-    </LineIds>
-    <LineIds Name="FB_TestBase.assertStringNotEqual">
-      <LineId Id="9" Count="4" />
-      <LineId Id="5" Count="0" />
-    </LineIds>
-    <LineIds Name="FB_TestBase.assertStringNotEqual_fatal">
-      <LineId Id="8" Count="4" />
-      <LineId Id="5" Count="0" />
-    </LineIds>
-    <LineIds Name="FB_TestBase.assertTRUE">
-      <LineId Id="8" Count="4" />
-      <LineId Id="5" Count="0" />
-    </LineIds>
-    <LineIds Name="FB_TestBase.assertTRUE_Fatal">
-      <LineId Id="6" Count="4" />
-      <LineId Id="5" Count="0" />
-    </LineIds>
-    <LineIds Name="FB_TestBase.cleanup">
-      <LineId Id="118" Count="0" />
-      <LineId Id="120" Count="4" />
-      <LineId Id="52" Count="0" />
-    </LineIds>
-    <LineIds Name="FB_TestBase.execute">
-      <LineId Id="60" Count="0" />
-      <LineId Id="58" Count="0" />
-      <LineId Id="52" Count="0" />
-    </LineIds>
-    <LineIds Name="FB_TestBase.FB_init">
-      <LineId Id="11" Count="1" />
-      <LineId Id="49" Count="0" />
-      <LineId Id="79" Count="0" />
-      <LineId Id="78" Count="0" />
-      <LineId Id="9" Count="0" />
-      <LineId Id="20" Count="0" />
-      <LineId Id="7" Count="0" />
-    </LineIds>
-    <LineIds Name="FB_TestBase.getClassName">
-      <LineId Id="25" Count="0" />
-      <LineId Id="5" Count="0" />
-    </LineIds>
-    <LineIds Name="FB_TestBase.getFailed">
-      <LineId Id="6" Count="0" />
-      <LineId Id="5" Count="0" />
-    </LineIds>
-    <LineIds Name="FB_TestBase.getId">
-      <LineId Id="25" Count="0" />
-      <LineId Id="5" Count="0" />
-    </LineIds>
-    <LineIds Name="FB_TestBase.getMessage">
-      <LineId Id="6" Count="0" />
-      <LineId Id="5" Count="0" />
-    </LineIds>
-    <LineIds Name="FB_TestBase.getPassed">
-      <LineId Id="6" Count="0" />
-      <LineId Id="5" Count="0" />
-    </LineIds>
-    <LineIds Name="FB_TestBase.getPath">
-      <LineId Id="6" Count="0" />
-      <LineId Id="5" Count="0" />
-    </LineIds>
-    <LineIds Name="FB_TestBase.getSystemTime">
-      <LineId Id="6" Count="0" />
-      <LineId Id="5" Count="0" />
-      <LineId Id="10" Count="1" />
-      <LineId Id="9" Count="0" />
-    </LineIds>
-    <LineIds Name="FB_TestBase.getTime">
-      <LineId Id="9" Count="1" />
-      <LineId Id="7" Count="0" />
-      <LineId Id="6" Count="0" />
-      <LineId Id="5" Count="0" />
-      <LineId Id="8" Count="0" />
-    </LineIds>
-    <LineIds Name="FB_TestBase.isSkipped">
-      <LineId Id="6" Count="0" />
-      <LineId Id="5" Count="0" />
-    </LineIds>
-    <LineIds Name="FB_TestBase.logError">
-      <LineId Id="7" Count="0" />
-      <LineId Id="5" Count="0" />
-      <LineId Id="8" Count="1" />
-    </LineIds>
-    <LineIds Name="FB_TestBase.logInfo">
-      <LineId Id="7" Count="0" />
-      <LineId Id="5" Count="0" />
-      <LineId Id="8" Count="1" />
-    </LineIds>
-    <LineIds Name="FB_TestBase.prepare">
-      <LineId Id="102" Count="0" />
-      <LineId Id="55" Count="0" />
-    </LineIds>
-    <LineIds Name="FB_TestBase.register">
-      <LineId Id="7" Count="0" />
-      <LineId Id="5" Count="0" />
-      <LineId Id="12" Count="0" />
-      <LineId Id="8" Count="0" />
-      <LineId Id="10" Count="1" />
-      <LineId Id="9" Count="0" />
-    </LineIds>
-    <LineIds Name="FB_TestBase.setEndTime">
-      <LineId Id="10" Count="0" />
-      <LineId Id="7" Count="2" />
-      <LineId Id="5" Count="0" />
-    </LineIds>
-    <LineIds Name="FB_TestBase.setMessage">
-      <LineId Id="12" Count="0" />
-      <LineId Id="7" Count="0" />
-      <LineId Id="5" Count="0" />
-      <LineId Id="13" Count="0" />
-    </LineIds>
-    <LineIds Name="FB_TestBase.setStartTime">
-      <LineId Id="9" Count="0" />
-      <LineId Id="6" Count="0" />
-      <LineId Id="5" Count="0" />
-      <LineId Id="8" Count="0" />
-      <LineId Id="7" Count="0" />
-    </LineIds>
-    <LineIds Name="FB_TestBase.strncmp">
-      <LineId Id="11" Count="4" />
-      <LineId Id="31" Count="1" />
-      <LineId Id="34" Count="0" />
-      <LineId Id="46" Count="1" />
-      <LineId Id="35" Count="0" />
-      <LineId Id="58" Count="0" />
-      <LineId Id="57" Count="0" />
-      <LineId Id="38" Count="0" />
-      <LineId Id="48" Count="0" />
-      <LineId Id="53" Count="2" />
-      <LineId Id="49" Count="0" />
-      <LineId Id="62" Count="0" />
-      <LineId Id="56" Count="0" />
-      <LineId Id="59" Count="0" />
-      <LineId Id="51" Count="0" />
-      <LineId Id="60" Count="0" />
-      <LineId Id="50" Count="0" />
-      <LineId Id="52" Count="0" />
-      <LineId Id="39" Count="0" />
-      <LineId Id="43" Count="0" />
-      <LineId Id="37" Count="0" />
-      <LineId Id="5" Count="0" />
-    </LineIds>
-    <LineIds Name="FB_TestBase.validate">
-      <LineId Id="8" Count="0" />
-      <LineId Id="5" Count="0" />
-      <LineId Id="9" Count="0" />
-      <LineId Id="11" Count="0" />
-      <LineId Id="51" Count="0" />
-      <LineId Id="14" Count="0" />
-      <LineId Id="10" Count="0" />
-      <LineId Id="19" Count="1" />
-      <LineId Id="52" Count="0" />
-      <LineId Id="21" Count="0" />
-      <LineId Id="18" Count="0" />
-      <LineId Id="22" Count="0" />
-      <LineId Id="16" Count="0" />
-      <LineId Id="53" Count="0" />
-      <LineId Id="17" Count="0" />
-      <LineId Id="15" Count="0" />
-      <LineId Id="54" Count="0" />
-      <LineId Id="24" Count="0" />
-    </LineIds>
   </POU>
 </TcPlcObject>
