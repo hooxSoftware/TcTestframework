@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.9">
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.11">
   <POU Name="FB_Test_Base" Id="{f4823231-d10b-40e2-9073-1f2bc0a0599a}" SpecialFunc="None">
     <Declaration><![CDATA[{attribute 'hide'}
 FUNCTION_BLOCK FB_Test_Base EXTENDS FB_TestBase
@@ -95,10 +95,10 @@ END_VAR
 	bValue2[0] := TRUE;
 	
 	setMessage('Teste Datentyp BOOL');
-	assertEQUAL(bValue1[0], bValue2[0]);
+	assert.EQUAL(bValue1[0], bValue2[0]);
 	
 	setMessage('Teste Datentyp Array of BOOL');
-	assertEQUAL(bValue1, bValue2);
+	assert.EQUAL(bValue1, bValue2);
 
 (**********************************************) 
 	
@@ -106,80 +106,80 @@ END_VAR
 	s8Value2[0] := 32;
 	
 	setMessage('Teste Datentyp SINT');
-	assertEQUAL(s8Value1[0], s8Value2[0]);
+	assert.EQUAL(s8Value1[0], s8Value2[0]);
 
 	setMessage('Teste Datentyp Array of SINT');
-	assertEQUAL(s8Value1, s8Value2);
+	assert.EQUAL(s8Value1, s8Value2);
 (**********************************************) 	
 
 	u8Value1[0] := 34;
 	u8Value2[0] := 34;
 	
 	setMessage('Teste Datentyp USINT');
-	assertEQUAL(u8Value1[0], u8Value2[0]);
+	assert.EQUAL(u8Value1[0], u8Value2[0]);
 
 	setMessage('Teste Datentyp Array of USINT');
-	assertEQUAL(u8Value1, u8Value2);
+	assert.EQUAL(u8Value1, u8Value2);
 (**********************************************) 	
 	
 	s16Value1[0] := 1323;
 	s16Value2[0] := 1323;
 	
 	setMessage('Teste Datentyp INT');
-	assertEQUAL(s16Value1[0], s16Value2[0]);
+	assert.EQUAL(s16Value1[0], s16Value2[0]);
 
 	setMessage('Teste Datentyp Array of INT');
-	assertEQUAL(s16Value1, s16Value2);
+	assert.EQUAL(s16Value1, s16Value2);
 (**********************************************) 	
 
 	u16Value1[0] := 3124;
 	u16Value2[0] := 3124;
 	
 	setMessage('Teste Datentyp UINT');
-	assertEQUAL(u16Value1[0] , u16Value2[0] );
+	assert.EQUAL(u16Value1[0] , u16Value2[0] );
 
 	setMessage('Teste Datentyp Array of UINT');
-	assertEQUAL(u16Value1 , u16Value2);
+	assert.EQUAL(u16Value1 , u16Value2);
 (**********************************************) 	
 
 	s32Value1[0] := 1244;
 	s32Value2[0] := 1244;
 	
 	setMessage('Teste Datentyp DINT');
-	assertEQUAL(s32Value1[0], s32Value2[0]);
+	assert.EQUAL(s32Value1[0], s32Value2[0]);
 
 	setMessage('Teste Datentyp Array of DINT');
-	assertEQUAL(s32Value1, s32Value2);
+	assert.EQUAL(s32Value1, s32Value2);
 (**********************************************) 	
 
 	u32Value1[0] := 4344;
 	u32Value2[0] := 4344;
 	
 	setMessage('Teste Datentyp UDINT');
-	assertEQUAL(u32Value1[0], u32Value2[0]);
+	assert.EQUAL(u32Value1[0], u32Value2[0]);
 
 	setMessage('Teste Datentyp Array of UDINT');
-	assertEQUAL(u32Value1, u32Value2);
+	assert.EQUAL(u32Value1, u32Value2);
 (**********************************************) 	
 
 	r32Value1[0] := 133.53245;
 	r32Value2[0] := 133.53245;
 	
 	setMessage('Teste Datentyp REAL');
-	assertEQUAL(r32Value1[0], r32Value2[0]);
+	assert.EQUAL(r32Value1[0], r32Value2[0]);
 
 	setMessage('Teste Datentyp Array of REAL');
-	assertEQUAL(r32Value1, r32Value2);
+	assert.EQUAL(r32Value1, r32Value2);
 (**********************************************) 	
 
 	r64Value1[0] := 1232.53325;
 	r64Value2[0] := 1232.53325;
 
 	setMessage('Teste Datentyp LREAL');
-	assertEQUAL(r64Value1[0], r64Value2[0]);
+	assert.EQUAL(r64Value1[0], r64Value2[0]);
 
 	setMessage('Teste Datentyp Array of LREAL');
-	assertEQUAL(r64Value1, r64Value2);
+	assert.EQUAL(r64Value1, r64Value2);
 
 (**********************************************) 	
 
@@ -187,7 +187,7 @@ END_VAR
 	strValue2[0] := 'Hallo Welt';
 
 	setMessage('Teste Datentyp String ist gleich');
-	assertStringEqual(ADR(strValue1[0]), ADR(strValue2[0]));
+	assert.StringEqual(ADR(strValue1[0]), ADR(strValue2[0]));
 
 	//setMessage('Teste Datentyp Array of String ist gleich');
 	//assertEQUAL(strValue1, strValue2);
@@ -196,10 +196,10 @@ END_VAR
 	strValue2[0] := 'Hallo Welt';
 	
 	setMessage('Teste Datentyp String ist ungleich');
-	assertStringNotEqual(ADR(strValue1[0]), ADR(strValue2[0]));
+	assert.StringNotEqual(ADR(strValue1[0]), ADR(strValue2[0]));
 
 	//setMessage('Teste Datentyp Array of String ist ungleich');
-	//assertNotEQUAL(strValue1, strValue2);
+	//assert.NotEQUAL(strValue1, strValue2);
 	
 (**********************************************) 	
 
@@ -239,36 +239,5 @@ END_VAR
 	prepare := ERetCode_t.eRetDone;]]></ST>
       </Implementation>
     </Method>
-    <LineIds Name="FB_Test_Base">
-      <LineId Id="9" Count="0" />
-    </LineIds>
-    <LineIds Name="FB_Test_Base.cleanup">
-      <LineId Id="25" Count="0" />
-      <LineId Id="24" Count="0" />
-    </LineIds>
-    <LineIds Name="FB_Test_Base.execute">
-      <LineId Id="112" Count="91" />
-      <LineId Id="111" Count="0" />
-      <LineId Id="249" Count="0" />
-      <LineId Id="251" Count="4" />
-      <LineId Id="267" Count="1" />
-      <LineId Id="256" Count="0" />
-      <LineId Id="270" Count="1" />
-      <LineId Id="269" Count="0" />
-      <LineId Id="272" Count="0" />
-      <LineId Id="257" Count="1" />
-      <LineId Id="264" Count="0" />
-      <LineId Id="259" Count="0" />
-      <LineId Id="265" Count="1" />
-      <LineId Id="250" Count="0" />
-      <LineId Id="261" Count="2" />
-      <LineId Id="260" Count="0" />
-      <LineId Id="248" Count="0" />
-      <LineId Id="24" Count="0" />
-    </LineIds>
-    <LineIds Name="FB_Test_Base.prepare">
-      <LineId Id="25" Count="0" />
-      <LineId Id="24" Count="0" />
-    </LineIds>
   </POU>
 </TcPlcObject>

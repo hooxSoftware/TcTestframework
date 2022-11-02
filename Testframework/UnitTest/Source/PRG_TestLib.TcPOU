@@ -65,7 +65,7 @@ END_VAR]]></Declaration>
 	EState_t.eStateInit:	
 		
 		IF i_bStart = FALSE THEN 
-		   logInfo('Testlib V1.1.1 Ready');
+		   logInfo('Testlib V2.1.0 Ready');
 			o_eState := EState_t.eStateIdle; 
 		END_IF
 
@@ -297,9 +297,6 @@ END_VAR
 		u16TestSuitIdx := 0;
 
 		fbUnitTest.addString('<?xml version="1.0" ?>');
-		fbUnitTest.addCrlf();
-
-		fbUnitTest.addString('s');
 		fbUnitTest.addCrlf();
 
 		iActTestSuite := getFirstTestSuite();

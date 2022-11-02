@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.9">
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.11">
   <POU Name="FB_Test_Base_Ptr" Id="{18af484c-a194-47ec-b09e-eee8a132e9b6}" SpecialFunc="None">
     <Declaration><![CDATA[{attribute 'hide'}
 FUNCTION_BLOCK FB_Test_Base_Ptr EXTENDS FB_TestBase
@@ -93,10 +93,10 @@ END_VAR
 	bValue2[0] := TRUE;
 	
 	setMessage('Teste Pointer to BOOL equal');
-	assertPtrEQUAL(ADR(bValue1[0]), ADR(bValue1[0]));
+	assert.PtrEQUAL(ADR(bValue1[0]), ADR(bValue1[0]));
 	
 	setMessage('Teste Pointer to BOOL NOT equal');
-	assertPtrNOTEQUAL(ADR(bValue1), ADR(bValue2));
+	assert.PtrNOTEQUAL(ADR(bValue1), ADR(bValue2));
 
 (**********************************************) 
 	
@@ -104,88 +104,88 @@ END_VAR
 	s8Value2[0] := 32;
 	
 	setMessage('Teste Pointer to BOOL SINT equal');
-	assertPtrEQUAL(ADR(s8Value1[0]), ADR(s8Value1[0]));
+	assert.PtrEQUAL(ADR(s8Value1[0]), ADR(s8Value1[0]));
 
 	setMessage('Teste Pointer to SINT not equal');
-	assertPtrNOTEQUAL(ADR(s8Value1), ADR(s8Value2));
+	assert.PtrNOTEQUAL(ADR(s8Value1), ADR(s8Value2));
 (**********************************************) 	
 
 	u8Value1[0] := 34;
 	u8Value2[0] := 34;
 	
 	setMessage('Teste Pointer to USINT equal');
-	assertPtrEQUAL(ADR(u8Value1[0]), ADR(u8Value1[0]));
+	assert.PtrEQUAL(ADR(u8Value1[0]), ADR(u8Value1[0]));
 
 	setMessage('Teste Pointer to USINT not equal');
-	assertPtrNOTEQUAL(ADR(u8Value1), ADR(u8Value2));
+	assert.PtrNOTEQUAL(ADR(u8Value1), ADR(u8Value2));
 (**********************************************) 	
 	
 	s16Value1[0] := 1323;
 	s16Value2[0] := 1323;
 	
 	setMessage('Teste Pointer to INT equal');
-	assertPtrEQUAL(ADR(s16Value1[0]), ADR(s16Value1[0]));
+	assert.PtrEQUAL(ADR(s16Value1[0]), ADR(s16Value1[0]));
 
 	setMessage('Teste Pointer to INT not equal');
-	assertPtrNOTEQUAL(ADR(s16Value1), ADR(s16Value2));
+	assert.PtrNOTEQUAL(ADR(s16Value1), ADR(s16Value2));
 (**********************************************) 	
 
 	u16Value1[0] := 3124;
 	u16Value2[0] := 3124;
 	
 	setMessage('Teste Pointer to UINT equal');
-	assertPtrEQUAL(ADR(u16Value1[0]) , ADR(u16Value1[0]) );
+	assert.PtrEQUAL(ADR(u16Value1[0]) , ADR(u16Value1[0]) );
 
 	setMessage('Teste Pointer to  UINT not equal');
-	assertPtrNOTEQUAL(ADR(u16Value1) , ADR(u16Value2));
+	assert.PtrNOTEQUAL(ADR(u16Value1) , ADR(u16Value2));
 (**********************************************) 	
 
 	s32Value1[0] := 1244;
 	s32Value2[0] := 1244;
 	
 	setMessage('Teste Pointer to DINT equal');
-	assertPtrEQUAL(ADR(s32Value1[0]), ADR(s32Value1[0]));
+	assert.PtrEQUAL(ADR(s32Value1[0]), ADR(s32Value1[0]));
 
 	setMessage('Teste Pointer to  DINT not equal');
-	assertPtrNOTEQUAL(ADR(s32Value1), ADR(s32Value2));
+	assert.PtrNOTEQUAL(ADR(s32Value1), ADR(s32Value2));
 (**********************************************) 	
 
 	u32Value1[0] := 4344;
 	u32Value2[0] := 4344;
 	
 	setMessage('Teste Pointer to UDINT equal');
-	assertPtrEQUAL(ADR(u32Value1[0]), ADR(u32Value1[0]));
+	assert.PtrEQUAL(ADR(u32Value1[0]), ADR(u32Value1[0]));
 
 	setMessage('Teste Pointer to  UDINT not equal');
-	assertPtrNOTEQUAL(ADR(u32Value1), ADR(u32Value2));
+	assert.PtrNOTEQUAL(ADR(u32Value1), ADR(u32Value2));
 (**********************************************) 	
 
 	r32Value1[0] := 133.53245;
 	r32Value2[0] := 133.53245;
 	
 	setMessage('Teste Pointer to REAL equal');
-	assertPtrEQUAL(ADR(r32Value1[0]), ADR(r32Value1[0]));
+	assert.PtrEQUAL(ADR(r32Value1[0]), ADR(r32Value1[0]));
 
 	setMessage('Teste Pointer to  REAL not equal');
-	assertPtrNOTEQUAL(ADR(r32Value1), ADR(r32Value2));
+	assert.PtrNOTEQUAL(ADR(r32Value1), ADR(r32Value2));
 (**********************************************) 	
 
 	r64Value1[0] := 1232.53325;
 	r64Value2[0] := 1232.53325;
 
 	setMessage('Teste Pointer to LREAL equal');
-	assertPtrEQUAL(ADR(r64Value1[0]), ADR(r64Value1[0]));
+	assert.PtrEQUAL(ADR(r64Value1[0]), ADR(r64Value1[0]));
 
 	setMessage('Teste Pointer to LREAL not equal');
-	assertPtrNOTEQUAL(ADR(r64Value1), ADR(r64Value2));
+	assert.PtrNOTEQUAL(ADR(r64Value1), ADR(r64Value2));
 
 (**********************************************)
 
 	setMessage('Teste Pointer = 0');	
-	assertPtrNull(pActual := 0);
+	assert.PtrNull(pActual := 0);
 	
 	setMessage('Teste Pointer <> 0');	
-	assertPtrNotNull(pActual := ADR(r32Value1[0]));	
+	assert.PtrNotNull(pActual := ADR(r32Value1[0]));	
 	
 (**********************************************)	
 	
@@ -229,26 +229,5 @@ END_VAR
 	prepare := ERetCode_t.eRetDone;]]></ST>
       </Implementation>
     </Method>
-    <LineIds Name="FB_Test_Base_Ptr">
-      <LineId Id="9" Count="0" />
-    </LineIds>
-    <LineIds Name="FB_Test_Base_Ptr.cleanup">
-      <LineId Id="25" Count="0" />
-      <LineId Id="24" Count="0" />
-    </LineIds>
-    <LineIds Name="FB_Test_Base_Ptr.execute">
-      <LineId Id="112" Count="91" />
-      <LineId Id="111" Count="0" />
-      <LineId Id="247" Count="0" />
-      <LineId Id="246" Count="0" />
-      <LineId Id="248" Count="1" />
-      <LineId Id="262" Count="0" />
-      <LineId Id="250" Count="11" />
-      <LineId Id="24" Count="0" />
-    </LineIds>
-    <LineIds Name="FB_Test_Base_Ptr.prepare">
-      <LineId Id="25" Count="0" />
-      <LineId Id="24" Count="0" />
-    </LineIds>
   </POU>
 </TcPlcObject>

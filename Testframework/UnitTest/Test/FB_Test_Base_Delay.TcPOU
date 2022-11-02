@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.9">
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.11">
   <POU Name="FB_Test_Base_Delay" Id="{e59d7c4a-e04d-4575-8e5a-1de80b51c7c7}" SpecialFunc="None">
     <Declaration><![CDATA[{attribute 'hide'}
 FUNCTION_BLOCK FB_Test_Base_Delay EXTENDS FB_TestBase
@@ -85,15 +85,15 @@ END_VAR
 
 	bValue1 := TRUE;
 	bValue2 := TRUE;
-	assertEQUAL(bValue1, bValue2);
+	assert.EQUAL(bValue1, bValue2);
 
 	s32Value1 := 1593;
 	s32Value2 := 1593;
-	assertEQUAL(s32Value1, s32Value2);
+	assert.EQUAL(s32Value1, s32Value2);
 
 	r32Value1 := 5345.53245;
 	r32Value2 := 5345.53245;
-	assertEQUAL(r32Value1, r32Value2);
+	assert.EQUAL(r32Value1, r32Value2);
 
 	if fbDelay.Q then
 		execute := ERetCode_t.eRetDone;
@@ -131,35 +131,5 @@ END_VAR
 	fbDelay.IN := true;]]></ST>
       </Implementation>
     </Method>
-    <LineIds Name="FB_Test_Base_Delay">
-      <LineId Id="25" Count="0" />
-      <LineId Id="9" Count="0" />
-    </LineIds>
-    <LineIds Name="FB_Test_Base_Delay.cleanup">
-      <LineId Id="25" Count="0" />
-      <LineId Id="24" Count="0" />
-      <LineId Id="48" Count="1" />
-    </LineIds>
-    <LineIds Name="FB_Test_Base_Delay.execute">
-      <LineId Id="76" Count="1" />
-      <LineId Id="110" Count="0" />
-      <LineId Id="40" Count="0" />
-      <LineId Id="34" Count="0" />
-      <LineId Id="41" Count="0" />
-      <LineId Id="35" Count="1" />
-      <LineId Id="42" Count="1" />
-      <LineId Id="37" Count="1" />
-      <LineId Id="44" Count="1" />
-      <LineId Id="39" Count="0" />
-      <LineId Id="108" Count="0" />
-      <LineId Id="25" Count="0" />
-      <LineId Id="24" Count="0" />
-      <LineId Id="109" Count="0" />
-    </LineIds>
-    <LineIds Name="FB_Test_Base_Delay.prepare">
-      <LineId Id="25" Count="0" />
-      <LineId Id="24" Count="0" />
-      <LineId Id="48" Count="1" />
-    </LineIds>
   </POU>
 </TcPlcObject>
