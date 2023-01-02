@@ -18,7 +18,7 @@
     <Released>false</Released>
     <Title>TestFramework</Title>
     <Author>Patrick Dressel</Author>
-    <ProjectVersion>2.0.1</ProjectVersion>
+    <ProjectVersion>2.1.0</ProjectVersion>
     <Licenses>
     </Licenses>
     <LibraryCategories>
@@ -50,6 +50,9 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Datatypes\EResult_t.TcDUT">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Datatypes\EAssertion_t.TcDUT">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Datatypes\ERetCode_t.TcDUT">
@@ -116,6 +119,9 @@
       <ExcludeFromBuild>true</ExcludeFromBuild>
     </Compile>
     <Compile Include="PlcTask.TcTTO">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Source\FB_Assertion.TcPOU">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Source\FB_Testsuite.TcPOU">
