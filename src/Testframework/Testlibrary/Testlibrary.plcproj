@@ -5,7 +5,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{af5ea645-9f2e-4ae3-a77e-16ff20108cf1}</ProjectGuid>
     <SubObjectsSortedByName>True</SubObjectsSortedByName>
-    <Name>UnitTest</Name>
+    <Name>Testlibrary</Name>
     <ProgramVersion>3.1.4022.6</ProgramVersion>
     <Application>{72e5541d-009e-48df-895c-34cee1a4f0c2}</Application>
     <TypeSystem>{38b1abbd-00b5-4f81-a4df-d04bc2ff93fb}</TypeSystem>
@@ -23,29 +23,29 @@
     </Licenses>
     <LibraryCategories>
       <LibraryCategory>
-        <Id>{47214238-9515-dead-c0de-94b14aafcbe4}</Id>
+        <Id>{47214238-9515-dead-c0de-94b14aafcbe0}</Id>
         <Version>1.0.0.0</Version>
         <DefaultName>Hoox.Software</DefaultName>
       </LibraryCategory>
       <LibraryCategory>
-        <Id>{a5fb11f2-cfce-dead-c0de-510f69f80427}</Id>
+        <Id>{47214238-9515-dead-c0de-94b14aafcbe1}</Id>
         <Version>1.0.0.0</Version>
         <ParentCategory>
-          <Id>{47214238-9515-dead-c0de-94b14aafcbe4}</Id>
+          <Id>{47214238-9515-dead-c0de-94b14aafcbe0}</Id>
+        </ParentCategory>
+        <DefaultName>Testsuite</DefaultName>
+      </LibraryCategory>
+      <LibraryCategory>
+        <Id>{47214238-9515-dead-c0de-94b14aafcbe2}</Id>
+        <Version>1.0.0.0</Version>
+        <ParentCategory>
+          <Id>{47214238-9515-dead-c0de-94b14aafcbe0}</Id>
         </ParentCategory>
         <DefaultName>Application</DefaultName>
       </LibraryCategory>
-      <LibraryCategory>
-        <Id>{a5fb11f2-cfcd-dead-c0de-510f69f80427}</Id>
-        <Version>1.0.0.0</Version>
-        <ParentCategory>
-          <Id>{47214238-9515-dead-c0de-94b14aafcbe4}</Id>
-        </ParentCategory>
-        <DefaultName>Unit Test</DefaultName>
-      </LibraryCategory>
     </LibraryCategories>
     <SelectedLibraryCategories>
-      <Id>{a5fb11f2-cfcd-dead-c0de-510f69f80427}</Id>
+      <Id>{47214238-9515-dead-c0de-94b14aafcbe1}</Id>
     </SelectedLibraryCategories>
   </PropertyGroup>
   <ItemGroup>
@@ -196,7 +196,7 @@
     </LibraryReference>
   </ItemGroup>
   <ItemGroup>
-    <None Include="UnitTest.tmc">
+    <None Include="Testlibrary.tmc">
       <SubType>Content</SubType>
     </None>
   </ItemGroup>
