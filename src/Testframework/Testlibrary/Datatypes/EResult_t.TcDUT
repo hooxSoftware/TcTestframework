@@ -5,7 +5,7 @@
 {attribute 'strict'}
 TYPE EResult_t :
 (
-    eStateIdle,
+   eStateIdle,
 	eStateSkipped,
 	eStatePassed,
 	eStateFailed,

@@ -29,16 +29,16 @@ VAR_OUTPUT
 	o_eResult       : EResult_t;
 END_VAR
 VAR
-	strId	  		: ObjectId_t;
+	strId	  			: ObjectId_t;
 	strClassName	: ObjectId_t;
 	strPath			: ObjectId_t;
 	strMessage 	 	: StrMessage_t;
 	u32StartTime	: UDINT;
 	u32EndTime		: UDINT;
-	iTestSuite      : ITestsuite_t;
+	iTestSuite     : ITestsuite_t;
 	bRegistered 	: BOOL;
-    sResult         : STestcase_t;
-    assert          : FB_Assertion;
+	sResult        : STestcase_t;
+	assert         : FB_Assertion;
 END_VAR
 ]]></Declaration>
     <Implementation>
@@ -149,8 +149,8 @@ END_VAR
 ]]></Declaration>
       <Implementation>
         <ST><![CDATA[
-	sResult.u32Passed 		:= 0;
-	sResult.u32Failed 		:= 0;
+	sResult.u32Passed 	  := 0;
+	sResult.u32Failed 	  := 0;
 	u32StartTime 	        := 0;
 	u32EndTime 		        := 0;
 	o_eResult 		        := EResult_t.eStateIdle;
@@ -259,10 +259,10 @@ END_VAR
 ]]></Declaration>
       <Implementation>
         <ST><![CDATA[	
-	strId 		 := i_strId;
-	strClassName := i_strClassName;
-	strPath 	 := i_strPath;
-	iTestSuite 	 := i_iTestSuite;
+	strId 		 	:= i_strId;
+	strClassName 	:= i_strClassName;
+	strPath 	 		:= i_strPath;
+	iTestSuite 	 	:= i_iTestSuite;
 
     IF i_bExecute = FALSE THEN
         o_eResult := EResult_t.eStateSkipped;
@@ -639,10 +639,22 @@ PROPERTY Result : STestcase_t
 END_VAR
 ]]></Declaration>
         <Implementation>
-          <ST><![CDATA[
-    sResult.u32Time := getTime();
-    sResult.eState  := o_eResult; 
-    Result          := sResult;]]></ST>
+          <ST><![CDATA[   
+	sResult.u32Time 	:= getTime();
+	sResult.eState  	:= o_eResult; 
+	sResult.u32Passed := assert.o_u32Passed;
+	sResult.u32Failed := assert.o_u32Failed;
+
+	CASE assert.o_eState OF
+	EAssertion_t.eStatePassed:
+		o_eResult := EResult_t.eStatePassed;
+	EAssertion_t.eStatefailed:
+		o_eResult := EResult_t.eStateFailed;
+	EAssertion_t.eStateFailedFatal:
+		o_eResult := EResult_t.eStateFailedFatal;
+	END_CASE;
+
+	Result          	:= sResult;]]></ST>
         </Implementation>
       </Get>
     </Property>

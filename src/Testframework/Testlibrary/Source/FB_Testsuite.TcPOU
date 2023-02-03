@@ -153,8 +153,8 @@ END_VAR
 				   sTestResult.eState  = EResult_t.eStateFailedFatal THEN
 					
 					sStatistic.u32Executed := sStatistic.u32Executed + 1;	
-                    (* update Result *)
-                    sTestResult := iTest.Result;
+					  (* update Result *)
+					  sTestResult := iTest.Result;
 				
 					sStatistic.u32Passed 	:= sStatistic.u32Passed + sTestResult.u32Passed;
 					sStatistic.u32Failed 	:= sStatistic.u32Failed + sTestResult.u32Failed;
@@ -182,19 +182,16 @@ END_VAR
 						IF sTestResult.eState = EResult_t.eStateFailedFatal THEN
 							o_eResult := sTestResult.eState;
 							o_eState  := EState_t.eStateCleanUp;
-							iTest 	  := getFirstTestCase();	
-						END_IF;
-						
-	
-					EResult_t.eStateFailedFatal:
-	
-						o_eState := EState_t.eStateCleanUp;
-						iTest 	:= getFirstTestCase();				
+							iTest 	 := getFirstTestCase();	
+						END_IF;		
 	
 					END_CASE;
 	
 					IF o_eResult <> EResult_t.eStateFailedFatal THEN
 						iTest 	 := getNextTestCase();
+					ELSE
+						o_eState := EState_t.eStateCleanUp;
+						iTest 	:= getFirstTestCase();							
 					END_IF;
 	
 				END_IF;
@@ -391,7 +388,8 @@ VAR_INPUT
 END_VAR
 ]]></Declaration>
       <Implementation>
-        <ST><![CDATA[]]></ST>
+        <ST><![CDATA[
+	getResult := o_eResult;]]></ST>
       </Implementation>
     </Method>
     <Method Name="getState" Id="{043e226a-4a17-4c00-b80f-6dbe5fb3b88f}">

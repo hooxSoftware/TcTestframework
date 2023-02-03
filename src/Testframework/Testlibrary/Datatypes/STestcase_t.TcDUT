@@ -5,8 +5,8 @@
 STRUCT
 	u32Passed 		: UDINT;
 	u32Failed 		: UDINT;
-    u32Time         : UDINT;
-    eState          : EResult_t;
+	u32Time         : UDINT;
+	eState          : EResult_t;
 END_STRUCT
 END_TYPE
 ]]></Declaration>

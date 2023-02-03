@@ -300,6 +300,8 @@ END_VAR
 		fbUnitTest.addCrlf();
 
 		iActTestSuite := getFirstTestSuite();
+		fbUnitTest.addString('<testsuites>');
+		fbUnitTest.addCrlf();
 
 		WHILE (iActTestSuite <> 0) DO
 
