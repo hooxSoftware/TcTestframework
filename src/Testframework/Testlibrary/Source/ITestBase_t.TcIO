@@ -1,22 +1,22 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.11">
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
   <Itf Name="ITestBase_t" Id="{9c48b1f4-ee79-43bd-b9a3-d78583bb60da}">
     <Declaration><![CDATA[INTERFACE ITestBase_t
 ]]></Declaration>
     <Method Name="_cleanup" Id="{fafc9c7e-f319-4379-b168-0ec8f0292d03}">
-      <Declaration><![CDATA[METHOD PUBLIC _cleanup : ERetCode_t
+      <Declaration><![CDATA[METHOD PUBLIC FINAL _cleanup : ERetCode_t
 VAR_INPUT
 END_VAR
 ]]></Declaration>
     </Method>
     <Method Name="_execute" Id="{acf175e3-b737-4368-87ef-537fb8e7d94a}">
-      <Declaration><![CDATA[METHOD PUBLIC _execute : ERetCode_t
+      <Declaration><![CDATA[METHOD PUBLIC FINAL _execute : ERetCode_t
 VAR_INPUT
 END_VAR
 ]]></Declaration>
     </Method>
     <Method Name="_prepare" Id="{2a2e458a-0f88-4594-94f6-e3fb93469a62}">
-      <Declaration><![CDATA[METHOD PUBLIC _prepare : ERetCode_t
+      <Declaration><![CDATA[METHOD PUBLIC FINAL _prepare : ERetCode_t
 VAR_INPUT
 END_VAR
 ]]></Declaration>

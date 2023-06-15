@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.11">
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
   <Itf Name="ITestsuite_t" Id="{64d669ca-ee83-4507-a72e-0264a93c3904}">
     <Declaration><![CDATA[INTERFACE ITestsuite_t
 ]]></Declaration>
