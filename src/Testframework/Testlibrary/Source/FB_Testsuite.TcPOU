@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.11">
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
   <POU Name="FB_Testsuite" Id="{ae8bbd51-73a9-4be0-b082-2ec8a068e7f6}" SpecialFunc="None">
     <Declaration><![CDATA[(******************************************************************************
 Baustein: FB_Testsuite
@@ -116,101 +116,85 @@ END_VAR
 			IF iTest <> 0 THEN
 				logInfo(CONCAT('Execute Testcase ', iTest.getId()));
 			END_IF;
+			sStatistic.u32Executed  := 0;
+			sStatistic.u32Passed 	:= 0;
+			sStatistic.u32Failed 	:= 0;
+			sStatistic.u32Asserts 	:= 0;
 			o_eState  := EState_t.eStatePrepare;
 			o_eResult := EResult_t.eStatePassed;
 		END_IF;
 
 	EState_t.eStatePrepare:
-	
-		sStatistic.u32Executed  := 0;
-		sStatistic.u32Passed 	:= 0;
-		sStatistic.u32Failed 	:= 0;
-		sStatistic.u32Asserts 	:= 0;
 
 		IF iTest <> 0 THEN
-            sTestResult := iTest.Result;
-            IF sTestResult.eState <> EResult_t.eStateSkipped THEN
-                IF iTest._prepare() = ERetCode_t.eRetDone THEN
-                    iTest 	:= getNextTestCase();
-                END_IF;
-            ELSE
-                iTest 	:= getNextTestCase();
-            END_IF;
+			sTestResult := iTest.Result;
+			IF sTestResult.eState <> EResult_t.eStateSkipped THEN
+				 IF iTest._prepare() = ERetCode_t.eRetDone THEN
+					  o_eState := EState_t.eStateExecute;
+				 END_IF;
+			ELSE
+				 iTest 	:= getNextTestCase();
+			END_IF;
 		ELSE
-			o_eState := EState_t.eStateExecute;
-			iTest 	 := getFirstTestCase();
+			o_eState := EState_t.eStateREady;			
 		END_IF;
 
 	EState_t.eStateExecute:
 
-		IF iTest <> 0 THEN
+		sTestResult := iTest.Result;
 
-            sTestResult := iTest.Result;
-
-			IF sTestResult.eState <> EResult_t.eStateSkipped THEN
-
-				IF iTest._execute()    = ERetCode_t.eRetDone		 OR 
-				   sTestResult.eState  = EResult_t.eStateFailedFatal THEN
-					
-					sStatistic.u32Executed := sStatistic.u32Executed + 1;	
-					  (* update Result *)
-					  sTestResult := iTest.Result;
-				
-					sStatistic.u32Passed 	:= sStatistic.u32Passed + sTestResult.u32Passed;
-					sStatistic.u32Failed 	:= sStatistic.u32Failed + sTestResult.u32Failed;
-					sStatistic.u32Asserts   := sStatistic.u32Passed + sStatistic.u32Failed;
-					
-					// Status des aktuellen Tests auswerten
-					CASE sTestResult.eState OF
-					EResult_t.eStatePassed     : logInfo('	Test Passed');
-					EResult_t.eStateFailed     : logInfo('	Test Failed');
-					EResult_t.eStateFailedFatal: logInfo('	Test Failed Fatal');	
-					END_CASE
-					
-					// Status der Testsuite ermitteln
-					CASE o_eResult OF 
-	
-					EResult_t.eStatePassed:
-						// Status des letzen Tests übernehmen
-						o_eResult := sTestResult.eState;
-						
+		IF iTest._execute()    = ERetCode_t.eRetDone		 	  OR 
+			sTestResult.eState  = EResult_t.eStateFailedFatal THEN
+			
+			sStatistic.u32Executed := sStatistic.u32Executed + 1;	
+			  (* update Result *)
+			  sTestResult := iTest.Result;
 		
-					EResult_t.eStateFailed:
-						// Status nur übernehmen wenn ein Fatal-Status
-						// ermittelt wird und der Test sofort abgebrochen
-						// werden soll.
-						IF sTestResult.eState = EResult_t.eStateFailedFatal THEN
-							o_eResult := sTestResult.eState;
-							o_eState  := EState_t.eStateCleanUp;
-							iTest 	 := getFirstTestCase();	
-						END_IF;		
-	
-					END_CASE;
-	
-					IF o_eResult <> EResult_t.eStateFailedFatal THEN
-						iTest 	 := getNextTestCase();
-					ELSE
-						o_eState := EState_t.eStateCleanUp;
-						iTest 	:= getFirstTestCase();							
-					END_IF;
-	
-				END_IF;
-			ELSE
-				iTest 	 := getNextTestCase();
-			END_IF;
-		ELSE
+			sStatistic.u32Passed 	:= sStatistic.u32Passed + sTestResult.u32Passed;
+			sStatistic.u32Failed 	:= sStatistic.u32Failed + sTestResult.u32Failed;
+			sStatistic.u32Asserts   := sStatistic.u32Passed + sStatistic.u32Failed;
+			
+			// Status des aktuellen Tests auswerten
+			CASE sTestResult.eState OF
+			EResult_t.eStatePassed     : logInfo('	Test Passed');
+			EResult_t.eStateFailed     : logInfo('	Test Failed');
+			EResult_t.eStateFailedFatal: logInfo('	Test Failed Fatal');	
+			END_CASE
+			
+			// Status der Testsuite ermitteln
+			CASE o_eResult OF 
+
+			EResult_t.eStatePassed:
+				// Status des letzen Tests übernehmen
+				o_eResult := sTestResult.eState;
+				
+
+			EResult_t.eStateFailed:
+				// Status nur übernehmen wenn ein Fatal-Status
+				// ermittelt wird und der Test sofort abgebrochen
+				// werden soll.
+				IF sTestResult.eState = EResult_t.eStateFailedFatal THEN
+					o_eResult := sTestResult.eState;
+					o_eState  := EState_t.eStateCleanUp;
+				END_IF;		
+
+			END_CASE;
+
 			o_eState := EState_t.eStateCleanUp;
-			iTest 	:= getFirstTestCase();
+
+			IF o_eResult = EResult_t.eStateFailedFatal THEN
+				o_eState := EState_t.eStateReady;					
+			END_IF;
+
 		END_IF;
 
 	ESTate_t.eStateCleanUp:
 
 		IF iTest <> 0 THEN
-            IF sTestResult.eState <> EResult_t.eStateSkipped THEN
-                IF iTest._cleanup() = ERetCode_t.eRetDone THEN
-                    iTest 	:= getNextTestCase();
-                END_IF;
-            END_IF;
+			IF iTest._cleanup() = ERetCode_t.eRetDone THEN
+				iTest 	:= getNextTestCase();
+				o_eState := EState_t.eStatePrepare;
+			END_IF;
 		ELSE
 			o_eState := EState_t.eStateReady;
 		END_IF;
