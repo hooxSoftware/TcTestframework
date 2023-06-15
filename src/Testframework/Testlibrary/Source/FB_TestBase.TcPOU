@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.11">
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
   <POU Name="FB_TestBase" Id="{77b52f8d-9a49-403a-aba1-80915f687878}" SpecialFunc="None">
     <Declaration><![CDATA[(******************************************************************************
 Baustein: FB_TestBase
@@ -111,7 +111,7 @@ Output
 -
 ******************************************************************************)
 {attribute 'hide'} 
-METHOD PUBLIC FINAL _execute : ERetCode_t
+METHOD PUBLIC _execute : ERetCode_t
 VAR_INPUT
 END_VAR
 ]]></Declaration>
@@ -188,7 +188,7 @@ END_VAR
 ]]></Declaration>
       <Implementation>
         <ST><![CDATA[
-	cleanup := ERetCode_t.eRetFailed;
+	cleanup := ERetCode_t.eRetDone;
 
 	
 	
@@ -592,7 +592,7 @@ END_VAR
 ]]></Declaration>
       <Implementation>
         <ST><![CDATA[
-	prepare := ERetCode_t.eRetFailed;]]></ST>
+	prepare := ERetCode_t.eRetDone;]]></ST>
       </Implementation>
     </Method>
     <Method Name="register" Id="{4a228bed-2579-4e19-893d-8dcd5cfaa8a3}">
