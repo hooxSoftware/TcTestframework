@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.11">
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
   <POU Name="PRG_TestLib" Id="{dbeace52-75a3-4dfa-9955-9febf020e88e}" SpecialFunc="None">
     <Declaration><![CDATA[(******************************************************************************
 Baustein: PRG_TestLibrary
@@ -65,7 +65,7 @@ END_VAR]]></Declaration>
 	EState_t.eStateInit:	
 		
 		IF i_bStart = FALSE THEN 
-		   logInfo('Testlib V2.1.0 Ready');
+		   logInfo('Testlib V2.2.1 Ready');
 			o_eState := EState_t.eStateIdle; 
 		END_IF
 
@@ -81,7 +81,7 @@ END_VAR]]></Declaration>
 	
 		bHwBusy := TRUE;
 		
-		o_eResult 	  				:= EResult_t.eStatePassed;
+		o_eResult 	  					:= EResult_t.eStatePassed;
 		o_sStatistic.u32Executed 	:= 0;
 		o_sStatistic.u32TestCases	:= 0;
 		o_sStatistic.u32Asserts  	:= 0;
