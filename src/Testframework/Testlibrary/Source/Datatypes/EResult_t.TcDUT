@@ -1,10 +1,12 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.11">
-  <DUT Name="EAssertion_t" Id="{718fcced-2366-499d-bde0-c52581db0fd1}">
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+  <DUT Name="EResult_t" Id="{ab665a68-6565-4f52-bb64-6093dc936587}">
     <Declaration><![CDATA[{attribute 'qualified_only'}
 {attribute 'strict'}
-TYPE EAssertion_t :
+TYPE EResult_t :
 (
+   eStateIdle,
+	eStateSkipped,
 	eStatePassed,
 	eStateFailed,
 	eStateFailedFatal

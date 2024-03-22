@@ -18,7 +18,7 @@
     <Released>false</Released>
     <Title>TestFramework</Title>
     <Author>Patrick Dressel</Author>
-    <ProjectVersion>2.2.1</ProjectVersion>
+    <ProjectVersion>2.2.2</ProjectVersion>
     <Licenses>
     </Licenses>
     <LibraryCategories>
@@ -49,76 +49,76 @@
     </SelectedLibraryCategories>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="Datatypes\EResult_t.TcDUT">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Datatypes\EAssertion_t.TcDUT">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Datatypes\ERetCode_t.TcDUT">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Datatypes\EState_t.TcDUT">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Datatypes\IdHandle_t.TcDUT">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Datatypes\ObjectId_t.TcDUT">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Datatypes\Report\EExportState_t.TcDUT">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Datatypes\Report\EReportType_t.TcDUT">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Datatypes\Report\NameHandle_t.TcDUT">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Datatypes\Report\PathHandle_t.TcDUT">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Datatypes\Report\StrFileName_t.TcDUT">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Datatypes\Report\StrPathName_t.TcDUT">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Datatypes\Report\TestReportHandle_t.TcDUT">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Datatypes\Report\UBaseTypes_t.TcDUT">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Datatypes\Report\UTime_t.TcDUT">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Datatypes\SStatistic_t.TcDUT">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Datatypes\STestcase_t.TcDUT">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Datatypes\StringHandle_t.TcDUT">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Datatypes\StrMessage_t.TcDUT">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Datatypes\TestCaseHandle_t.TcDUT">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="GVLs\GVL_Parameter.TcGVL">
-      <SubType>Code</SubType>
-      <LinkAlways>true</LinkAlways>
-    </Compile>
     <Compile Include="GVLs\GVL_Sample.TcGVL">
       <SubType>Code</SubType>
       <LinkAlways>true</LinkAlways>
       <ExcludeFromBuild>true</ExcludeFromBuild>
     </Compile>
+    <Compile Include="Parameter.TcGVL">
+      <SubType>Code</SubType>
+      <LinkAlways>true</LinkAlways>
+    </Compile>
     <Compile Include="PlcTask.TcTTO">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Source\Datatypes\EAssertion_t.TcDUT">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Source\Datatypes\EResult_t.TcDUT">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Source\Datatypes\ERetCode_t.TcDUT">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Source\Datatypes\EState_t.TcDUT">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Source\Datatypes\IdHandle_t.TcDUT">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Source\Datatypes\ObjectId_t.TcDUT">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Source\Datatypes\Report\EExportState_t.TcDUT">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Source\Datatypes\Report\EReportType_t.TcDUT">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Source\Datatypes\Report\NameHandle_t.TcDUT">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Source\Datatypes\Report\PathHandle_t.TcDUT">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Source\Datatypes\Report\StrFileName_t.TcDUT">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Source\Datatypes\Report\StrPathName_t.TcDUT">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Source\Datatypes\Report\TestReportHandle_t.TcDUT">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Source\Datatypes\Report\UBaseTypes_t.TcDUT">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Source\Datatypes\Report\UTime_t.TcDUT">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Source\Datatypes\SStatistic_t.TcDUT">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Source\Datatypes\STestcase_t.TcDUT">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Source\Datatypes\StringHandle_t.TcDUT">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Source\Datatypes\StrMessage_t.TcDUT">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Source\Datatypes\TestCaseHandle_t.TcDUT">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Source\FB_Assertion.TcPOU">
@@ -130,10 +130,10 @@
     <Compile Include="Source\FB_TestBase.TcPOU">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Source\ITestBase_t.TcIO">
+    <Compile Include="Source\interfaces\ITestBase_t.TcIO">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Source\ITestsuite_t.TcIO">
+    <Compile Include="Source\interfaces\ITestsuite_t.TcIO">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Source\PRG_TestLib.TcPOU">
@@ -165,10 +165,11 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Datatypes" />
-    <Folder Include="Datatypes\Report" />
     <Folder Include="GVLs" />
     <Folder Include="Source" />
+    <Folder Include="Source\Datatypes" />
+    <Folder Include="Source\Datatypes\Report" />
+    <Folder Include="Source\interfaces" />
     <Folder Include="Source\Report" />
     <Folder Include="Test" />
   </ItemGroup>

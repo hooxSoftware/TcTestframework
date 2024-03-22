@@ -1,41 +1,24 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
   <POU Name="FB_Testsuite" Id="{ae8bbd51-73a9-4be0-b082-2ec8a068e7f6}" SpecialFunc="None">
-    <Declaration><![CDATA[(******************************************************************************
-Baustein: FB_Testsuite
-Spezifikation: doc/Spezifikation.pdf, Kap. x.y.z
--------------------------------------------------------------------------------
-erstellt:
-von:
-Geändert:
-von:
--------------------------------------------------------------------------------
-Beschreibung
-Dieser Baustein enthält alle zugeordneten Testfälle. Ein Testfall
-ist ein abgeleiteter Baustein (FB) von FB_TestBase.
-
--------------------------------------------------------------------------------
-Input
--
-
-Output
--
-******************************************************************************)
+    <Declaration><![CDATA[//
+// Dieser Baustein enthält alle zugeordneten Testfälle. Ein Testfall
+// ist ein abgeleiteter Baustein (FB) von FB_TestBase.
+// ### Interfaces
+//     - ITestsuite_t
+//
 FUNCTION_BLOCK FB_Testsuite
-    IMPLEMENTS ITestsuite_t
-VAR_INPUT
-END_VAR
+IMPLEMENTS ITestsuite_t
 VAR_OUTPUT
-	o_eState  		: EState_t;
-	o_eResult 		: EResult_t;
+	o_eState  		: EState_t;  // state of testsuite
+	o_eResult 		: EResult_t; // last result
 END_VAR
 VAR
-	strId			: ObjectId_t;
+	strId				: ObjectId_t;
 	strPath			: ObjectId_t;
-	bRegistered     : BOOL;
-	a_iTest  		: ARRAY [0..255] OF ITestBase_t;
+	bRegistered    : BOOL;
+	a_iTest  		: ARRAY [0..Parameter.u16Tests] OF ITestBase_t;
 	iTest     		: ITestBase_t;
-	u16TestCases  	: UINT;
 	u16Index 		: UINT;
 	sStatistic 		: SStatistic_t;
 END_VAR
@@ -44,41 +27,23 @@ END_VAR
       <ST><![CDATA[]]></ST>
     </Implementation>
     <Method Name="addTestcase" Id="{80822225-6192-4f00-bbb8-24a92c6881f7}">
-      <Declaration><![CDATA[(******************************************************************************
-Baustein: FB_Testsuite.addTestcase
-Spezifikation: doc/Spezifikation.pdf, Kap. x.y.z
--------------------------------------------------------------------------------
-erstellt:
-von:
-Geändert:
-von:
--------------------------------------------------------------------------------
-Beschreibung
-Diese Methode
-
--------------------------------------------------------------------------------
-Input
-i_pTestCase
-
-Output
--
-******************************************************************************)
+      <Declaration><![CDATA[//
+// add testcase to suite
+// 
 {attribute 'hide'} 
 METHOD PUBLIC addTestcase : BOOL
 VAR_INPUT
-	i_iTestCase : ITestBase_t;
+	i_iTestCase : ITestBase_t; // new testcase
 END_VAR
 ]]></Declaration>
       <Implementation>
         <ST><![CDATA[
 	addTestcase := FALSE;
 
-	IF 	i_iTestCase  <> 0   AND 
-		u16TestCases <  255 THEN
+	IF i_iTestCase  			   <> 0   					AND 
+		sStatistic.u32TestCases <  Parameter.u16Tests THEN
 		
-		a_iTest[u16TestCases] := i_iTestCase;
-		
-		u16TestCases := u16TestCases +1;
+		a_iTest[sStatistic.u32TestCases] := i_iTestCase;
 		
 		sStatistic.u32TestCases := sStatistic.u32TestCases + 1;
 		
@@ -87,7 +52,10 @@ END_VAR
       </Implementation>
     </Method>
     <Method Name="execute" Id="{44c9852e-be60-482d-af64-b35cb0a07d5a}">
-      <Declaration><![CDATA[METHOD execute : BOOL
+      <Declaration><![CDATA[//
+// ...
+// 
+METHOD execute : BOOL
 VAR_INPUT
 	i_bStart	: BOOL;
 END_VAR
@@ -260,29 +228,12 @@ END_VAR
       </Implementation>
     </Method>
     <Method Name="getFirstTestCase" Id="{565a7440-2552-4228-bd2b-b6378bb5c8b9}">
-      <Declaration><![CDATA[(******************************************************************************
-Baustein: FB_Testsuite.getFirstTestCase
-Spezifikation: doc/Spezifikation.pdf, Kap. x.y.z
--------------------------------------------------------------------------------
-erstellt:
-von:
-Geändert:
-von:
--------------------------------------------------------------------------------
-Beschreibung
-Diese Methode
-
--------------------------------------------------------------------------------
-Input
--
-
-Output
--
-******************************************************************************)
+      <Declaration><![CDATA[//
+// ...
+// 
 {attribute 'hide'} 
 METHOD PUBLIC getFirstTestCase : ITestBase_t
-VAR_INPUT
-END_VAR
+
 ]]></Declaration>
       <Implementation>
         <ST><![CDATA[
@@ -291,29 +242,12 @@ END_VAR
       </Implementation>
     </Method>
     <Method Name="getId" Id="{f75a7191-de66-4010-8dda-4a26aa6a90f4}">
-      <Declaration><![CDATA[(******************************************************************************
-Baustein: FB_Testsuite.getId
-Spezifikation: doc/Spezifikation.pdf, Kap. x.y.z
--------------------------------------------------------------------------------
-erstellt:
-von:
-Geändert:
-von:
--------------------------------------------------------------------------------
-Beschreibung
-Diese Methode
-
--------------------------------------------------------------------------------
-Input
--
-
-Output
--
-******************************************************************************)
+      <Declaration><![CDATA[//
+// ...
+// 
 {attribute 'hide'} 
 METHOD PUBLIC getId : STRING
-VAR_INPUT
-END_VAR
+
 ]]></Declaration>
       <Implementation>
         <ST><![CDATA[
@@ -321,45 +255,29 @@ END_VAR
       </Implementation>
     </Method>
     <Method Name="getNextTestCase" Id="{caddd296-a017-4642-872a-27f49eaad75c}">
-      <Declaration><![CDATA[(******************************************************************************
-Baustein: FB_Testsuite.getNextTestCase
-Spezifikation: doc/Spezifikation.pdf, Kap. x.y.z
--------------------------------------------------------------------------------
-erstellt:
-von:
-Geändert:
-von:
--------------------------------------------------------------------------------
-Beschreibung
-Diese Methode
-
--------------------------------------------------------------------------------
-Input
--
-
-Output
--
-******************************************************************************)
+      <Declaration><![CDATA[//
+// ...
+// 
 {attribute 'hide'} 
 METHOD PUBLIC getNextTestCase : ITestBase_t
-VAR_INPUT
-END_VAR
+
 ]]></Declaration>
       <Implementation>
         <ST><![CDATA[
 	getNextTestCase := 0;
 	u16Index 		 := u16Index + 1;
 
-	IF u16Index < u16TestCases THEN
+	IF u16Index < sStatistic.u32TestCases THEN
 		getNextTestCase := a_iTest[u16Index];
 	END_IF;]]></ST>
       </Implementation>
     </Method>
     <Method Name="getPath" Id="{0c655e80-1810-4039-ac18-fb19e58b187c}">
-      <Declaration><![CDATA[{attribute 'hide'} 
+      <Declaration><![CDATA[//
+// ...
+// 
+{attribute 'hide'} 
 METHOD PUBLIC getPath : ObjectId_t
-VAR_INPUT
-END_VAR
 ]]></Declaration>
       <Implementation>
         <ST><![CDATA[
@@ -367,9 +285,11 @@ END_VAR
       </Implementation>
     </Method>
     <Method Name="getResult" Id="{da61837f-a28c-4b0f-93ef-935f7efb76a4}">
-      <Declaration><![CDATA[METHOD getResult : EResult_t
-VAR_INPUT
-END_VAR
+      <Declaration><![CDATA[//
+// ...
+// 
+METHOD getResult : EResult_t
+
 ]]></Declaration>
       <Implementation>
         <ST><![CDATA[
@@ -377,32 +297,19 @@ END_VAR
       </Implementation>
     </Method>
     <Method Name="getState" Id="{043e226a-4a17-4c00-b80f-6dbe5fb3b88f}">
-      <Declaration><![CDATA[METHOD getState : EState_t
+      <Declaration><![CDATA[//
+// ...
+// 
+METHOD getState : EState_t
 ]]></Declaration>
       <Implementation>
         <ST><![CDATA[getState := o_eState;]]></ST>
       </Implementation>
     </Method>
     <Method Name="logInfo" Id="{4162b475-e111-4ea4-af72-09599d7cdb23}">
-      <Declaration><![CDATA[(******************************************************************************
-Baustein: FB_Testsuite.logInfo
-Spezifikation: doc/Spezifikation.pdf, Kap. x.y.z
--------------------------------------------------------------------------------
-erstellt:
-von:
-Geändert:
-von:
--------------------------------------------------------------------------------
-Beschreibung
-Diese Methode
-
--------------------------------------------------------------------------------
-Input
-i_strMessage
-
-Output
--
-******************************************************************************)
+      <Declaration><![CDATA[//
+// ...
+// 
 {attribute 'hide'} 
 METHOD PROTECTED logInfo : BOOL
 VAR_INPUT
@@ -417,25 +324,9 @@ END_VAR
       </Implementation>
     </Method>
     <Method Name="register" Id="{3a42094d-f3f7-40aa-9e2e-e1eb00f9e432}">
-      <Declaration><![CDATA[(******************************************************************************
-Baustein: FB_Testsuite.register
-Spezifikation: doc/Spezifikation.pdf, Kap. x.y.z
--------------------------------------------------------------------------------
-erstellt:
-von:
-Geändert:
-von:
--------------------------------------------------------------------------------
-Beschreibung
-Diese Methode
-
--------------------------------------------------------------------------------
-Input
--
-
-Output
--
-******************************************************************************)
+      <Declaration><![CDATA[//
+// ...
+// 
 {attribute 'hide'} 
 METHOD PROTECTED register : BOOL
 VAR_INPUT
@@ -447,7 +338,9 @@ END_VAR
       </Implementation>
     </Method>
     <Property Name="Result" Id="{a498e662-1794-43fc-873e-a36fb9fd250b}">
-      <Declaration><![CDATA[{warning 'Eigenschaftenimplementierung hinzufügen'}
+      <Declaration><![CDATA[//
+// ...
+// 
 PROPERTY Result : SStatistic_t
 ]]></Declaration>
       <Get Name="Get" Id="{55f23317-ab5c-4ecf-9850-69ee41479e24}">
@@ -455,7 +348,8 @@ PROPERTY Result : SStatistic_t
 END_VAR
 ]]></Declaration>
         <Implementation>
-          <ST><![CDATA[Result := sStatistic;]]></ST>
+          <ST><![CDATA[
+	Result := sStatistic;]]></ST>
         </Implementation>
       </Get>
     </Property>

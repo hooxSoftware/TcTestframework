@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.9">
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
   <DUT Name="EReportType_t" Id="{d6fbd902-e500-4190-ba1b-36716e3ffec5}">
     <Declaration><![CDATA[{attribute 'qualified_only'}
 {attribute 'strict'}

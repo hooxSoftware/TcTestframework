@@ -1,45 +1,27 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
   <POU Name="PRG_TestLib" Id="{dbeace52-75a3-4dfa-9955-9febf020e88e}" SpecialFunc="None">
-    <Declaration><![CDATA[(******************************************************************************
-Baustein: PRG_TestLibrary
-Spezifikation: doc/Spezifikation.pdf, Kap. x.y.z
--------------------------------------------------------------------------------
-erstellt:
-von:
-Geändert:
-von:
--------------------------------------------------------------------------------
-Beschreibung
-Dieser Baustein etnhält alle Testsuites und führt diese aus.
-
--------------------------------------------------------------------------------
-Input
-	i_bStart : mit positiver Flanke werden die registrierten Testsuites ausgeführt
-
-Output
-	o_eState  		: EState_t;
-	o_eResult 		: EResult_t;
-	o_sStatistic	: SStatistic_t;
-******************************************************************************)
+    <Declaration><![CDATA[//
+// This prgoram runs all testsuites.
+// It must be attached to a task in the testproject
+//
 {attribute 'global_init_slot' := '41000'}
 PROGRAM PRG_TestLib
 VAR_INPUT
-	i_bStart : BOOL;
+	i_bStart : BOOL;	// start testrun
 END_VAR
 VAR_OUTPUT
-	o_eState  		: EState_t;
-	o_eResult 		: EResult_t;
-	o_sStatistic	: SStatistic_t;
+	o_eState  		: EState_t;			// state of testrun
+	o_eResult 		: EResult_t;		// overall result
+	o_sStatistic	: SStatistic_t;	// statistics
 END_VAR
 VAR
 	bHwStart AT %I* : BOOL;
 	bHwBusy  AT %Q* : BOOL;
 	bHwReady AT %Q* : BOOL;
 	
-	a_iTestSuite 	: ARRAY [0..255] OF ITestSuite_t;
-	u16TestSuites 	: UINT;
-	u16Index	  	: UINT;
+	a_iTestSuite 	: ARRAY [0..Parameter.u16Testsuites] OF ITestSuite_t;
+	u16Index	  		: UINT;
 	iActTestSuite 	: ITestSuite_t;
 	pTestReport		: POINTER TO FB_TestReportBase;
 	eRetCode 		: ERetCode_t;
@@ -65,7 +47,7 @@ END_VAR]]></Declaration>
 	EState_t.eStateInit:	
 		
 		IF i_bStart = FALSE THEN 
-		   logInfo('Testlib V2.2.1 Ready');
+		   logInfo('Testlib V2.2.2 Ready');
 			o_eState := EState_t.eStateIdle; 
 		END_IF
 
@@ -107,15 +89,16 @@ END_VAR]]></Declaration>
 			END_IF
 			
 			iActTestSuite.execute(i_bStart := FALSE);
-			sTempResult := iActTestSuite.Result;
-
 			o_eState := EState_t.eStateCleanUp;
+			
+			sTempResult := iActTestSuite.Result;
 
 			o_sStatistic.u32Executed 	:= o_sStatistic.u32Executed  + sTempResult.u32Executed;
 			o_sStatistic.u32TestCases	:= o_sStatistic.u32TestCases + sTempResult.u32TestCases; 
 			o_sStatistic.u32Asserts  	:= o_sStatistic.u32Asserts   + sTempResult.u32Asserts;
 			o_sStatistic.u32Passed   	:= o_sStatistic.u32Passed    + sTempResult.u32Passed;
 			o_sStatistic.u32Failed	 	:= o_sStatistic.u32Failed    + sTempResult.u32Failed;
+
 		END_IF
 	
 	EState_t.eStateCleanUp:
@@ -167,29 +150,13 @@ END_VAR]]></Declaration>
 	END_CASE]]></ST>
     </Implementation>
     <Method Name="addTestReport" Id="{01e7f184-904d-4319-bf24-cb63b7c8dbc8}">
-      <Declaration><![CDATA[(******************************************************************************
-Baustein: PRG_UnitTestLib.addTestReport
-Spezifikation: doc/Spezifikation.pdf, Kap. x.y.z
--------------------------------------------------------------------------------
-erstellt:
-von:
-Geändert:
-von:
--------------------------------------------------------------------------------
-Beschreibung
-Diese Methode
-
--------------------------------------------------------------------------------
-Input
-i_pTestReport
-
-Output
--
-******************************************************************************)
+      <Declaration><![CDATA[//
+// add testreport
+//
 {attribute 'hide'} 
 METHOD PUBLIC addTestReport : BOOL
 VAR_INPUT
-	i_pTestReport : TestReportHandle_t;
+	i_pTestReport : TestReportHandle_t; // handle for external report
 END_VAR
 ]]></Declaration>
       <Implementation>
@@ -198,63 +165,45 @@ END_VAR
       </Implementation>
     </Method>
     <Method Name="addTestSuite" Id="{4899b7f4-5457-4c86-b63d-9b10a5e33440}">
-      <Declaration><![CDATA[(******************************************************************************
-Baustein: PRG_UnitTestLib.addTestSuite
-Spezifikation: doc/Spezifikation.pdf, Kap. x.y.z
--------------------------------------------------------------------------------
-erstellt:
-von:
-Geändert:
-von:
--------------------------------------------------------------------------------
-Beschreibung
-Diese Methode
-
--------------------------------------------------------------------------------
-Input
-i_pTestSuite
-
-Output
--
-******************************************************************************)
+      <Declaration><![CDATA[//
+// register testsuite
+//
 {attribute 'hide'} 
 METHOD PUBLIC addTestSuite : BOOL
 VAR_INPUT
-	i_iTestSuite : ITestSuite_t;
-END_VAR
-VAR
-    sStatistic : SStatistic_t;
+	i_iTestSuite : ITestSuite_t; // new testsuite to register
 END_VAR
 ]]></Declaration>
       <Implementation>
         <ST><![CDATA[
 	addTestSuite := FALSE;
 
-	IF 	i_iTestSuite  <> 0   AND 
-		u16TestSuites <  255 THEN
+	IF i_iTestSuite  				 <> 0   AND 
+		o_sStatistic.u32TestSuites <  Parameter.u16Testsuites THEN
 		
-		a_iTestSuite[u16TestSuites] := i_iTestSuite;
-		sStatistic      := i_iTestSuite.Result;
-		u16TestSuites   := u16TestSuites +1;
-	
-		o_sStatistic.u32TestSuites := o_sStatistic.u32TestSuites + 1;
-		o_sStatistic.u32TestCases  := o_sStatistic.u32TestCases + sStatistic.u32TestCases;
+		a_iTestSuite[o_sStatistic.u32TestSuites] := i_iTestSuite;
+
+		o_sStatistic.u32TestSuites := o_sStatistic.u32TestSuites + 1;		
 		
 		addTestSuite := TRUE;
 	END_IF]]></ST>
       </Implementation>
     </Method>
     <Method Name="createReport" Id="{d9afc7ed-2e81-46b0-adaa-c3b998a94e06}">
-      <Declaration><![CDATA[{attribute 'hide'} 
+      <Declaration><![CDATA[//
+// create report
+// define unittest or external report
+//
+{attribute 'hide'} 
 METHOD PRIVATE createReport : ERetCode_t
 VAR_INPUT
-	i_eReporttype : EReportType_t;
+	i_eReporttype : EReportType_t; // define which report
 END_VAR
 VAR
 	eRetcode    : ERetCode_t;
 	u32Temp     : UDINT;
-    sTestResult : STestcase_t;
-    sStatistic  : SStatistic_t;
+	sTestResult : STestcase_t;
+	sStatistic  : SStatistic_t;
 END_VAR
 ]]></Declaration>
       <Implementation>
@@ -444,29 +393,11 @@ END_VAR
       </Implementation>
     </Method>
     <Method Name="getFirstTestSuite" Id="{6dd3fe68-4fa4-401b-93b4-4e9d66a75960}">
-      <Declaration><![CDATA[(******************************************************************************
-Baustein: PRG_UnitTestLib.getFirstTestSuite
-Spezifikation: doc/Spezifikation.pdf, Kap. x.y.z
--------------------------------------------------------------------------------
-erstellt:
-von:
-Geändert:
-von:
--------------------------------------------------------------------------------
-Beschreibung
-Diese Methode
-
--------------------------------------------------------------------------------
-Input
--
-
-Output
--
-******************************************************************************)
+      <Declaration><![CDATA[//
+// returns the first testsuite
+//
 {attribute 'hide'} 
 METHOD PRIVATE getFirstTestSuite : ITestSuite_t
-VAR_INPUT
-END_VAR
 ]]></Declaration>
       <Implementation>
         <ST><![CDATA[
@@ -475,66 +406,30 @@ END_VAR
       </Implementation>
     </Method>
     <Method Name="getNextTestSuite" Id="{25155ea4-e257-4500-9294-2e5b075f342b}">
-      <Declaration><![CDATA[(******************************************************************************
-Baustein: PRG_UnitTestLib.getNextTestSuite
-Spezifikation: doc/Spezifikation.pdf, Kap. x.y.z
--------------------------------------------------------------------------------
-erstellt:
-von:
-Geändert:
-von:
--------------------------------------------------------------------------------
-Beschreibung
-Diese Methode
-
--------------------------------------------------------------------------------
-Input
--
-
-Output
--
-******************************************************************************)
+      <Declaration><![CDATA[//
+// returns the the next testsuite
+//
 {attribute 'hide'} 
 METHOD PRIVATE getNextTestSuite : ITestSuite_t
-VAR_INPUT
-END_VAR
+
 ]]></Declaration>
       <Implementation>
         <ST><![CDATA[
 	getNextTestSuite := 0;
 	u16Index 		 := u16Index + 1;
 
-	IF u16Index < u16TestSuites THEN
+	IF u16Index < o_sStatistic.u32TestSuites THEN
 		getNextTestSuite := a_iTestSuite[u16Index];
 	END_IF;]]></ST>
       </Implementation>
     </Method>
     <Method Name="getTime" Id="{04976903-c590-4bd7-9b55-bd9bdde13ab5}">
-      <Declaration><![CDATA[(******************************************************************************
-Baustein: PRG_UnitTestLib.getTime
-Spezifikation: doc/Spezifikation.pdf, Kap. x.y.z
--------------------------------------------------------------------------------
-erstellt:
-von:
-Geändert:
-von:
--------------------------------------------------------------------------------
-Beschreibung
-Diese Methode
-
--------------------------------------------------------------------------------
-Input
--
-
-Output
--
-******************************************************************************)
+      <Declaration><![CDATA[//
+// returns the actual Systemstime
+//
 {attribute 'hide'} 
 METHOD getTime : TimeStruct
-VAR_INPUT
-END_VAR
-VAR
-END_VAR
+
 ]]></Declaration>
       <Implementation>
         <ST><![CDATA[
@@ -543,29 +438,13 @@ END_VAR
       </Implementation>
     </Method>
     <Method Name="logError" Id="{9690f9c4-e79c-461f-b5e8-03d0cd8a943f}">
-      <Declaration><![CDATA[(******************************************************************************
-Baustein: PRG_UnitTestLib.logError
-Spezifikation: doc/Spezifikation.pdf, Kap. x.y.z
--------------------------------------------------------------------------------
-erstellt:
-von:
-Geändert:
-von:
--------------------------------------------------------------------------------
-Beschreibung
-Diese Methode
-
--------------------------------------------------------------------------------
-Input
-i_strMessage
-
-Output
--
-******************************************************************************)
+      <Declaration><![CDATA[//
+// wrapper for error logging
+//
 {attribute 'hide'} 
 METHOD PROTECTED logError : BOOL
 VAR_INPUT
-	i_strMessage : StrMessage_t;
+	i_strMessage : StrMessage_t; // message for output
 END_VAR
 ]]></Declaration>
       <Implementation>
@@ -576,29 +455,13 @@ END_VAR
       </Implementation>
     </Method>
     <Method Name="logInfo" Id="{8bbf780e-46b8-44f0-9d7d-eeee4895fdf7}">
-      <Declaration><![CDATA[(******************************************************************************
-Baustein: PRG_UnitTestLib.logInfo
-Spezifikation: doc/Spezifikation.pdf, Kap. x.y.z
--------------------------------------------------------------------------------
-erstellt:
-von:
-Geändert:
-von:
--------------------------------------------------------------------------------
-Beschreibung
-Diese Methode
-
--------------------------------------------------------------------------------
-Input
-i_strMessage
-
-Output
--
-******************************************************************************)
+      <Declaration><![CDATA[//
+// wrapper for information logging
+//
 {attribute 'hide'} 
 METHOD PUBLIC logInfo : BOOL
 VAR_INPUT
-	i_strMessage : StrMessage_t;
+	i_strMessage : StrMessage_t; // message for output
 END_VAR
 ]]></Declaration>
       <Implementation>

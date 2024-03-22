@@ -1,65 +1,29 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.11">
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
   <POU Name="FB_Assertion" Id="{be4e3f75-a80c-457d-8258-79ca47381125}" SpecialFunc="None">
-    <Declaration><![CDATA[(******************************************************************************
-Baustein: FB_TestBase
-Spezifikation: doc/Spezifikation.pdf, Kap. x.y.z
--------------------------------------------------------------------------------
-erstellt:
-von:
-Geändert:
-von:
--------------------------------------------------------------------------------
-Beschreibung
-Dieser Baustein stellt die Basis für einen Unittest dar und enthält
-alle notwendigen Variablen und Methoden zur Testauswertung.
-
--------------------------------------------------------------------------------
-Input
--
-
-Output
-	o_eState : EState_t;
-	o_eResult: EResult_t;
-******************************************************************************)
+    <Declaration><![CDATA[//
+// This functionblock contains different types
+// of assertions to use.
+// 
 FUNCTION_BLOCK FB_Assertion
-VAR_INPUT
-END_VAR
 VAR_OUTPUT
-    o_eState    : EAssertion_t;
-    o_u32Passed : UDINT;
-    o_u32Failed : UDINT;
+    o_eState    : EAssertion_t;  // actual state PASSED, FAILED,..
+    o_u32Passed : UDINT;			// nb of assertions passed 
+    o_u32Failed : UDINT;			// nb of assertions failed
 END_VAR
-VAR
-END_VAR
+
 ]]></Declaration>
     <Implementation>
       <ST><![CDATA[
 	]]></ST>
     </Implementation>
     <Method Name="_FALSE" Id="{5d0cddd6-ce12-4645-b843-57f3c730a1b8}">
-      <Declaration><![CDATA[(******************************************************************************
-Baustein: FB_TestBase.assertFALSE
-Spezifikation: doc/Spezifikation.pdf, Kap. x.y.z
--------------------------------------------------------------------------------
-erstellt:
-von:
-Geändert:
-von:
--------------------------------------------------------------------------------
-Beschreibung
-Diese Methode...
-
--------------------------------------------------------------------------------
-Input
-	bValue : BOOL;
-
-Output
--
-******************************************************************************)
+      <Declaration><![CDATA[//
+// internal assert value is false
+// 
 METHOD PROTECTED FINAL _FALSE : BOOL
 VAR_INPUT
-	bValue : BOOL;
+	bValue : BOOL; // value should be false
 END_VAR
 ]]></Declaration>
       <Implementation>
@@ -72,28 +36,13 @@ END_VAR
       </Implementation>
     </Method>
     <Method Name="_FALSE_Fatal" Id="{b16d08c0-2ccd-4f8f-9051-c40b5dce96aa}">
-      <Declaration><![CDATA[(******************************************************************************
-Baustein: FB_TestBase.assertFALSE_Fatal
-Spezifikation: doc/Spezifikation.pdf, Kap. x.y.z
--------------------------------------------------------------------------------
-erstellt:
-von:
-Geändert:
-von:
--------------------------------------------------------------------------------
-Beschreibung
-Diese Methode
-
--------------------------------------------------------------------------------
-Input
-	bValue : BOOL;
-
-Output
--
-******************************************************************************)
+      <Declaration><![CDATA[//
+// internal assert fatal value is false
+// if this fails the testrun will stop 
+//
 METHOD PROTECTED FINAL _FALSE_Fatal : BOOL
 VAR_INPUT
-	bValue : BOOL;
+	bValue : BOOL; // value should be false
 END_VAR
 ]]></Declaration>
       <Implementation>
@@ -106,28 +55,12 @@ END_VAR
       </Implementation>
     </Method>
     <Method Name="_TRUE" Id="{33441899-c4bc-4d14-95fa-d19d583dc529}">
-      <Declaration><![CDATA[(******************************************************************************
-Baustein: FB_TestBase.assertTRUE
-Spezifikation: doc/Spezifikation.pdf, Kap. x.y.z
--------------------------------------------------------------------------------
-erstellt:
-von:
-Geändert:
-von:
--------------------------------------------------------------------------------
-Beschreibung
-Diese Methode...
-
--------------------------------------------------------------------------------
-Input
-	bValue : BOOL;
-
-Output
--
-******************************************************************************)
+      <Declaration><![CDATA[//
+// internal assert value is true
+// 
 METHOD PROTECTED FINAL _TRUE : BOOL
 VAR_INPUT
-	bValue : BOOL;
+	bValue : BOOL; // value should be true
 END_VAR
 ]]></Declaration>
       <Implementation>
@@ -140,29 +73,13 @@ END_VAR
       </Implementation>
     </Method>
     <Method Name="_TRUE_Fatal" Id="{7bbdf6d0-09c5-488d-91c4-d00613f0b38a}">
-      <Declaration><![CDATA[
-(******************************************************************************
-Baustein: FB_TestBase.assertTRUE_Fatal
-Spezifikation: doc/Spezifikation.pdf, Kap. x.y.z
--------------------------------------------------------------------------------
-erstellt:
-von:
-Geändert:
-von:
--------------------------------------------------------------------------------
-Beschreibung
-Diese Methode
-
--------------------------------------------------------------------------------
-Input
--
-
-Output
--
-******************************************************************************)
+      <Declaration><![CDATA[//
+// internal assert fatal value is true
+// if this fails the testrun will stop 
+//
 METHOD PROTECTED FINAL _TRUE_Fatal : BOOL
 VAR_INPUT
-	bValue : BOOL;
+	bValue : BOOL; // value should be true
 END_VAR
 ]]></Declaration>
       <Implementation>
@@ -175,7 +92,11 @@ END_VAR
       </Implementation>
     </Method>
     <Method Name="addFailed" Id="{dab15cdd-53a9-46ec-a8a6-15d74a10126c}">
-      <Declaration><![CDATA[METHOD INTERNAL FINAL addFailed : BOOL
+      <Declaration><![CDATA[//
+// this method increments the FAILED-counter
+// and set the teststate to failed
+//
+METHOD INTERNAL FINAL addFailed : BOOL
 VAR_INPUT
     bFatal : BOOL;
 END_VAR
@@ -192,7 +113,10 @@ END_VAR
       </Implementation>
     </Method>
     <Method Name="addPassed" Id="{ccf7db72-22ee-405b-b2ea-a9fe4a64ee81}">
-      <Declaration><![CDATA[METHOD INTERNAL FINAL addPassed : BOOL
+      <Declaration><![CDATA[//
+// this method increments the PASSED-counter
+//
+METHOD INTERNAL FINAL addPassed : BOOL
 
 ]]></Declaration>
       <Implementation>
@@ -202,34 +126,20 @@ END_VAR
       </Implementation>
     </Method>
     <Method Name="EQUAL" Id="{7b129b1a-521c-4e4e-b4f7-4b82ebc8b1be}">
-      <Declaration><![CDATA[(******************************************************************************
-Baustein: FB_TestBase.assertEQUAL
-Spezifikation: doc/Spezifikation.pdf, Kap. x.y.z
--------------------------------------------------------------------------------
-erstellt:
-von:
-Geändert:
-von:
--------------------------------------------------------------------------------
-Beschreibung
-Diese Methode
-
--------------------------------------------------------------------------------
-Input
-	Actual   : ANY;
-	Expected : ANY;
-
-Output
--
-******************************************************************************)
+      <Declaration><![CDATA[//
+// assert value is equal
+// both values are checked if they can be compared
+// if not a FAILED-FATAL will be the result
+// 
 METHOD PUBLIC FINAL EQUAL : BOOL
 VAR_INPUT
-	Actual   : ANY;
-	Expected : ANY;
+	Actual   : ANY; // actual value
+	Expected : ANY; // value to compare
 END_VAR
 ]]></Declaration>
       <Implementation>
-        <ST><![CDATA[	EQUAL := FALSE;
+        <ST><![CDATA[
+	EQUAL := FALSE;
 	
 	IF validate(Actual, Expected) = FALSE THEN
 		addFailed(true);
@@ -241,34 +151,20 @@ END_VAR
       </Implementation>
     </Method>
     <Method Name="EQUAL_Fatal" Id="{b854c5b5-ec0c-40ad-afcf-59c63bec21fa}">
-      <Declaration><![CDATA[(******************************************************************************
-Baustein: FB_TestBase.assertEQUAL_Fatal
-Spezifikation: doc/Spezifikation.pdf, Kap. x.y.z
--------------------------------------------------------------------------------
-erstellt:
-von:
-Geändert:
-von:
--------------------------------------------------------------------------------
-Beschreibung
-Diese Methode
-
--------------------------------------------------------------------------------
-Input
-	Actual   : ANY;
-	Expected : ANY;
-
-Output
--
-******************************************************************************)
+      <Declaration><![CDATA[//
+// assert value is equal 
+// both values are checked if they can be compared
+// if not a FAILED-FATAL will be the result
+// 
 METHOD PUBLIC FINAL EQUAL_Fatal : BOOL
 VAR_INPUT
-	Actual   : ANY;
-	Expected : ANY;
+	Actual   : ANY; // actual value
+	Expected : ANY; // value to compare
 END_VAR
 ]]></Declaration>
       <Implementation>
-        <ST><![CDATA[	EQUAL_Fatal := FALSE;
+        <ST><![CDATA[
+	EQUAL_Fatal := FALSE;
 	
 	IF validate(Actual, Expected) = FALSE THEN
 		addFailed(true);
@@ -279,25 +175,9 @@ END_VAR
       </Implementation>
     </Method>
     <Method Name="logError" Id="{5d9700b2-77a6-4ba8-9703-51e9b1eb84d3}">
-      <Declaration><![CDATA[(******************************************************************************
-Baustein: FB_TestBase.logError
-Spezifikation: doc/Spezifikation.pdf, Kap. x.y.z
--------------------------------------------------------------------------------
-erstellt:
-von:
-Geändert:
-von:
--------------------------------------------------------------------------------
-Beschreibung
-Diese Methode
-
--------------------------------------------------------------------------------
-Input
--
-
-Output
--
-******************************************************************************)
+      <Declaration><![CDATA[//
+// assert value is
+// 
 {attribute 'hide'} 
 METHOD PROTECTED FINAL logError : BOOL
 VAR_INPUT
@@ -312,30 +192,15 @@ END_VAR
       </Implementation>
     </Method>
     <Method Name="NotEqual" Id="{9a3f38e7-93fe-476e-b34c-73ead16ddc7b}">
-      <Declaration><![CDATA[(******************************************************************************
-Baustein: FB_TestBase.assertNotEqual
-Spezifikation: doc/Spezifikation.pdf, Kap. x.y.z
--------------------------------------------------------------------------------
-erstellt:
-von:
-Geändert:
-von:
--------------------------------------------------------------------------------
-Beschreibung
-Diese Methode
-
--------------------------------------------------------------------------------
-Input
-	Actual   : ANY;
-	Expected : ANY;
-
-Output
--
-******************************************************************************)
+      <Declaration><![CDATA[//
+// assert values are not equal
+// both values are checked if they can be compared
+// if not a FAILED-FATAL will be the result
+// 
 METHOD PUBLIC FINAL NotEqual : BOOL
 VAR_INPUT
-	Actual   : ANY;
-	Expected : ANY;
+	Actual   : ANY; // actual value
+	Expected : ANY; // value to compare
 END_VAR
 ]]></Declaration>
       <Implementation>
@@ -351,30 +216,15 @@ END_VAR
       </Implementation>
     </Method>
     <Method Name="NotEqual_Fatal" Id="{907fcdde-94e0-4e09-8666-32a40bdd61d1}">
-      <Declaration><![CDATA[(******************************************************************************
-Baustein: FB_TestBase.assertNotEqual_Fatal
-Spezifikation: doc/Spezifikation.pdf, Kap. x.y.z
--------------------------------------------------------------------------------
-erstellt:
-von:
-Geändert:
-von:
--------------------------------------------------------------------------------
-Beschreibung
-Diese Methode
-
--------------------------------------------------------------------------------
-Input
-	Actual   : ANY;
-	Expected : ANY;
-
-Output
--
-******************************************************************************)
+      <Declaration><![CDATA[//
+// assert values are not equal
+// both values are checked if they can be compared
+// if not a FAILED-FATAL will be the result
+// 
 METHOD PUBLIC FINAL NotEqual_Fatal : BOOL
 VAR_INPUT
-	Actual   : ANY;
-	Expected : ANY;
+	Actual   : ANY; // actual value
+	Expected : ANY; // value to compare
 END_VAR
 ]]></Declaration>
       <Implementation>
@@ -390,61 +240,28 @@ END_VAR
       </Implementation>
     </Method>
     <Method Name="PtrEqual" Id="{0e87afe4-4cf6-4fcd-afac-72ec1b53c682}">
-      <Declaration><![CDATA[(******************************************************************************
-Baustein: FB_TestBase.assertPtrEqual
-Spezifikation: doc/Spezifikation.pdf, Kap. x.y.z
--------------------------------------------------------------------------------
-erstellt:
-von:
-Geändert:
-von:
--------------------------------------------------------------------------------
-Beschreibung
-Diese Methode
-
--------------------------------------------------------------------------------
-Input
-	pActual   : PVOID;
-	pExpected : PVOID;
-	
-Output
--
-******************************************************************************)
+      <Declaration><![CDATA[//
+// assert pointer are equal
+// 
 METHOD PUBLIC FINAL PtrEqual : BOOL
 VAR_INPUT
-	pActual   : PVOID;
-	pExpected : PVOID;
-END_VAR]]></Declaration>
+	pActual   : PVOID; // actual value
+	pExpected : PVOID; // value to compare
+END_VAR
+]]></Declaration>
       <Implementation>
         <ST><![CDATA[
 	_TRUE(pActual = pExpected);]]></ST>
       </Implementation>
     </Method>
     <Method Name="PtrEqual_Fatal" Id="{cb5b95d8-041c-4e75-923c-8d0c46ecf594}">
-      <Declaration><![CDATA[(******************************************************************************
-Baustein: FB_TestBase.assertPtrEqual_Fatal
-Spezifikation: doc/Spezifikation.pdf, Kap. x.y.z
--------------------------------------------------------------------------------
-erstellt:
-von:
-Geändert:
-von:
--------------------------------------------------------------------------------
-Beschreibung
-Diese Methode
-
--------------------------------------------------------------------------------
-Input
-	pActual   : PVOID;
-	pExpected : PVOID;
-
-Output
--
-******************************************************************************)
+      <Declaration><![CDATA[//
+// assert value is
+// 
 METHOD PUBLIC FINAL PtrEqual_Fatal : BOOL
 VAR_INPUT
-	pActual   : PVOID;
-	pExpected : PVOID;
+	pActual   : PVOID; // actual value
+	pExpected : PVOID; // value to compare
 END_VAR]]></Declaration>
       <Implementation>
         <ST><![CDATA[
@@ -452,30 +269,13 @@ END_VAR]]></Declaration>
       </Implementation>
     </Method>
     <Method Name="PtrNotEqual" Id="{d83cb42a-ec40-4298-ad3b-ca6221090345}">
-      <Declaration><![CDATA[(******************************************************************************
-Baustein: FB_TestBase.assertPtrNotEqual
-Spezifikation: doc/Spezifikation.pdf, Kap. x.y.z
--------------------------------------------------------------------------------
-erstellt:
-von:
-Geändert:
-von:
--------------------------------------------------------------------------------
-Beschreibung
-Diese Methode
-
--------------------------------------------------------------------------------
-Input
-	pActual   : PVOID;
-	pExpected : PVOID;
-
-Output
--
-******************************************************************************)
+      <Declaration><![CDATA[//
+// assert value is
+// 
 METHOD PUBLIC FINAL PtrNotEqual : BOOL
 VAR_INPUT
-	pActual   : PVOID;
-	pExpected : PVOID;
+	pActual   : PVOID; // actual value
+	pExpected : PVOID; // value to compare
 END_VAR
 ]]></Declaration>
       <Implementation>
@@ -484,30 +284,13 @@ END_VAR
       </Implementation>
     </Method>
     <Method Name="PtrNotEqual_Fatal" Id="{ccb134b1-6189-4d9b-b744-60bfe77d9e9a}">
-      <Declaration><![CDATA[(******************************************************************************
-Baustein: FB_TestBase.assertPtrNotEqual_Fatal
-Spezifikation: doc/Spezifikation.pdf, Kap. x.y.z
--------------------------------------------------------------------------------
-erstellt:
-von:
-Geändert:
-von:
--------------------------------------------------------------------------------
-Beschreibung
-Diese Methode
-
--------------------------------------------------------------------------------
-Input
-	pActual   : PVOID;
-	pExpected : PVOID;
-
-Output
--
-******************************************************************************)
+      <Declaration><![CDATA[//
+// assert value is
+// 
 METHOD PUBLIC FINAL PtrNotEqual_Fatal : BOOL
 VAR_INPUT
-	pActual   : PVOID;
-	pExpected : PVOID;
+	pActual   : PVOID; // actual value
+	pExpected : PVOID; // value to compare
 END_VAR
 ]]></Declaration>
       <Implementation>
@@ -516,28 +299,12 @@ END_VAR
       </Implementation>
     </Method>
     <Method Name="PtrNotNull" Id="{3f8ffc58-8d3c-432f-9dc8-a76ce2976671}">
-      <Declaration><![CDATA[(******************************************************************************
-Baustein: FB_TestBase.assertPtrNotNull
-Spezifikation: doc/Spezifikation.pdf, Kap. x.y.z
--------------------------------------------------------------------------------
-erstellt:
-von:
-Geändert:
-von:
--------------------------------------------------------------------------------
-Beschreibung
-Diese Methode
-
--------------------------------------------------------------------------------
-Input
-	pActual   : PVOID;
-
-Output
--
-******************************************************************************)
+      <Declaration><![CDATA[//
+// assert pointer is not NULL
+ // 
 METHOD PUBLIC FINAL PtrNotNull : BOOL
 VAR_INPUT
-	pActual   : PVOID;
+	pActual   : PVOID;  // actual value
 END_VAR
 ]]></Declaration>
       <Implementation>
@@ -546,28 +313,12 @@ END_VAR
       </Implementation>
     </Method>
     <Method Name="PtrNotNull_Fatal" Id="{9a0fc9f9-4120-43fd-9e7d-83dfc53bae0e}">
-      <Declaration><![CDATA[(******************************************************************************
-Baustein: FB_TestBase.assertPtrNotNull_Fatal
-Spezifikation: doc/Spezifikation.pdf, Kap. x.y.z
--------------------------------------------------------------------------------
-erstellt:
-von:
-Geändert:
-von:
--------------------------------------------------------------------------------
-Beschreibung
-Diese Methode
-
--------------------------------------------------------------------------------
-Input
-	pActual   : PVOID;
-
-Output
--
-******************************************************************************)
+      <Declaration><![CDATA[//
+// assert value is
+// 
 METHOD PUBLIC FINAL PtrNotNull_Fatal : BOOL
 VAR_INPUT
-	pActual   : PVOID;
+	pActual   : PVOID;  // actual value
 END_VAR
 ]]></Declaration>
       <Implementation>
@@ -576,28 +327,12 @@ END_VAR
       </Implementation>
     </Method>
     <Method Name="PtrNull" Id="{0000430f-85a3-4af9-8d98-245c56d77f21}">
-      <Declaration><![CDATA[(******************************************************************************
-Baustein: FB_TestBase.assertPtrNull
-Spezifikation: doc/Spezifikation.pdf, Kap. x.y.z
--------------------------------------------------------------------------------
-erstellt:
-von:
-Geändert:
-von:
--------------------------------------------------------------------------------
-Beschreibung
-Diese Methode
-
--------------------------------------------------------------------------------
-Input
-	pActual   : PVOID;
-
-Output
--
-******************************************************************************)
+      <Declaration><![CDATA[//
+// assert value is
+// 
 METHOD PUBLIC FINAL PtrNull : BOOL
 VAR_INPUT
-	pActual   : PVOID;
+	pActual   : PVOID;  // actual value
 END_VAR
 ]]></Declaration>
       <Implementation>
@@ -606,28 +341,12 @@ END_VAR
       </Implementation>
     </Method>
     <Method Name="PtrNull_Fatal" Id="{0ae5fe62-cb34-4a36-979d-a2dff0bba45d}">
-      <Declaration><![CDATA[(******************************************************************************
-Baustein: FB_TestBase.assertPtrNull_Fatal
-Spezifikation: doc/Spezifikation.pdf, Kap. x.y.z
--------------------------------------------------------------------------------
-erstellt:
-von:
-Geändert:
-von:
--------------------------------------------------------------------------------
-Beschreibung
-Diese Methode
-
--------------------------------------------------------------------------------
-Input
-	pActual   : PVOID;
-
-Output
--
-******************************************************************************)
+      <Declaration><![CDATA[//
+// assert value is
+// 
 METHOD PUBLIC FINAL PtrNull_Fatal : BOOL
 VAR_INPUT
-	pActual   : PVOID;
+	pActual   : PVOID;  // actual value
 END_VAR
 ]]></Declaration>
       <Implementation>
@@ -636,27 +355,9 @@ END_VAR
       </Implementation>
     </Method>
     <Method Name="RealEqual" Id="{81ce98b7-bf90-4e23-98b5-2b57df1bbaa9}">
-      <Declaration><![CDATA[(******************************************************************************
-Baustein: FB_TestBase.assertRealEqual
-Spezifikation: doc/Spezifikation.pdf, Kap. x.y.z
--------------------------------------------------------------------------------
-erstellt:
-von:
-Geändert:
-von:
--------------------------------------------------------------------------------
-Beschreibung
-Diese Methode
-
--------------------------------------------------------------------------------
-Input
-	r32Actual 		: REAL;
-	r32Expected 	: REAL;
-	r32Granularity 	: REAL;
-
-Output
--
-******************************************************************************)
+      <Declaration><![CDATA[//
+// assert value is
+// 
 METHOD PUBLIC FINAL RealEqual : BOOL
 VAR_INPUT
 	r32Actual 		: REAL;
@@ -670,27 +371,9 @@ END_VAR
       </Implementation>
     </Method>
     <Method Name="RealEqual_Fatal" Id="{3b28ccdb-8e06-4281-b988-467260ff3e08}">
-      <Declaration><![CDATA[(******************************************************************************
-Baustein: FB_TestBase.assertRealEqual_Fatal
-Spezifikation: doc/Spezifikation.pdf, Kap. x.y.z
--------------------------------------------------------------------------------
-erstellt:
-von:
-Geändert:
-von:
--------------------------------------------------------------------------------
-Beschreibung
-Diese Methode
-
--------------------------------------------------------------------------------
-Input
-	r32Actual 		: REAL;
-	r32Expected 	: REAL;
-	r32Granularity 	: REAL;
-
-Output
--
-******************************************************************************)
+      <Declaration><![CDATA[//
+// assert value is
+// 
 METHOD PUBLIC FINAL RealEqual_Fatal : BOOL
 VAR_INPUT
 	r32Actual 		: REAL;
@@ -704,27 +387,9 @@ END_VAR
       </Implementation>
     </Method>
     <Method Name="RealNotEqual" Id="{0b529790-35ec-40e2-aba8-b5fea7f61b63}">
-      <Declaration><![CDATA[(******************************************************************************
-Baustein: FB_TestBase.assertRealNotEqual
-Spezifikation: doc/Spezifikation.pdf, Kap. x.y.z
--------------------------------------------------------------------------------
-erstellt:
-von:
-Geändert:
-von:
--------------------------------------------------------------------------------
-Beschreibung
-Diese Methode
-
--------------------------------------------------------------------------------
-Input
-	r32Actual 		: REAL;
-	r32Expected 	: REAL;
-	r32Granularity 	: REAL;
-
-Output
--
-******************************************************************************)
+      <Declaration><![CDATA[//
+// assert value is
+// 
 METHOD PUBLIC FINAL RealNotEqual : BOOL
 VAR_INPUT
 	r32Actual 		: REAL;
@@ -738,27 +403,9 @@ END_VAR
       </Implementation>
     </Method>
     <Method Name="RealNotEqual_Fatal" Id="{1735b76d-6f2b-4a89-998d-4bc44aedb937}">
-      <Declaration><![CDATA[(******************************************************************************
-Baustein: FB_TestBase.assertRealNotEqual_Fatal
-Spezifikation: doc/Spezifikation.pdf, Kap. x.y.z
--------------------------------------------------------------------------------
-erstellt:
-von:
-Geändert:
-von:
--------------------------------------------------------------------------------
-Beschreibung
-Diese Methode
-
--------------------------------------------------------------------------------
-Input
-	r32Actual 		: REAL;
-	r32Expected 	: REAL;
-	r32Granularity 	: REAL;
-
-Output
--
-******************************************************************************)
+      <Declaration><![CDATA[//
+// assert value is
+// 
 METHOD PUBLIC FINAL RealNotEqual_Fatal : BOOL
 VAR_INPUT
 	r32Actual 		: REAL;
@@ -772,9 +419,11 @@ END_VAR
       </Implementation>
     </Method>
     <Method Name="reset" Id="{ba2a517a-dfb4-4a68-8b79-dca5e9087525}">
-      <Declaration><![CDATA[METHOD PUBLIC reset
-VAR_INPUT
-END_VAR
+      <Declaration><![CDATA[//
+// reset the assert instance
+//
+METHOD PUBLIC reset
+
 ]]></Declaration>
       <Implementation>
         <ST><![CDATA[
@@ -783,26 +432,9 @@ END_VAR
       </Implementation>
     </Method>
     <Method Name="StringEqual" Id="{336b3f59-bb36-4871-b1e8-f2d66a6189bc}">
-      <Declaration><![CDATA[(******************************************************************************
-Baustein: FB_TestBase.assertStringEqual
-Spezifikation: doc/Spezifikation.pdf, Kap. x.y.z
--------------------------------------------------------------------------------
-erstellt:
-von:
-Geändert:
-von:
--------------------------------------------------------------------------------
-Beschreibung
-Diese Methode
-
--------------------------------------------------------------------------------
-Input
-	pActual 	: StringHandle_t;
-	pExpected 	: StringHandle_t;
-
-Output
--
-******************************************************************************)
+      <Declaration><![CDATA[//
+// assert value is
+// 
 METHOD PUBLIC FINAL StringEqual : BOOL
 VAR_INPUT
 	pActual 	: StringHandle_t;
@@ -819,26 +451,9 @@ END_VAR
       </Implementation>
     </Method>
     <Method Name="StringEqual_Fatal" Id="{73fa3e9d-0e28-4ae5-95ea-ac67a4ef420e}">
-      <Declaration><![CDATA[(******************************************************************************
-Baustein: FB_TestBase.assertStringEqual_Fatal
-Spezifikation: doc/Spezifikation.pdf, Kap. x.y.z
--------------------------------------------------------------------------------
-erstellt:
-von:
-Geändert:
-von:
--------------------------------------------------------------------------------
-Beschreibung
-Diese Methode
-
--------------------------------------------------------------------------------
-Input
-	pActual 	: StringHandle_t;
-	pExpected 	: StringHandle_t;
-
-Output
--
-******************************************************************************)
+      <Declaration><![CDATA[//
+// assert value is
+// 
 METHOD PUBLIC FINAL StringEqual_Fatal : BOOL
 VAR_INPUT
 	pActual 	: StringHandle_t;
@@ -855,26 +470,9 @@ END_VAR
       </Implementation>
     </Method>
     <Method Name="StringNotEqual" Id="{a5eae576-a410-4c34-ba52-60362ceb8fd0}">
-      <Declaration><![CDATA[(******************************************************************************
-Baustein: FB_TestBase.assertStringNotEqual
-Spezifikation: doc/Spezifikation.pdf, Kap. x.y.z
--------------------------------------------------------------------------------
-erstellt:
-von:
-Geändert:
-von:
--------------------------------------------------------------------------------
-Beschreibung
-Diese Methode
-
--------------------------------------------------------------------------------
-Input
-	pActual 	: StringHandle_t;
-	pExpected 	: StringHandle_t;
-
-Output
--
-******************************************************************************)
+      <Declaration><![CDATA[//
+// assert value is
+// 
 METHOD PUBLIC FINAL StringNotEqual : BOOL
 VAR_INPUT
 	pActual 	: StringHandle_t;
@@ -891,26 +489,9 @@ END_VAR
       </Implementation>
     </Method>
     <Method Name="StringNotEqual_fatal" Id="{1da521b6-26f6-49ed-a3a5-439eb4c91bff}">
-      <Declaration><![CDATA[(******************************************************************************
-Baustein: FB_TestBase.assertStringNotEqual_fatal
-Spezifikation: doc/Spezifikation.pdf, Kap. x.y.z
--------------------------------------------------------------------------------
-erstellt:
-von:
-Geändert:
-von:
--------------------------------------------------------------------------------
-Beschreibung
-Diese Methode
-
--------------------------------------------------------------------------------
-Input
-	pExpected 	: StringHandle_t;
-	pActual 	: StringHandle_t;
-
-Output
--
-******************************************************************************)
+      <Declaration><![CDATA[//
+// assert value is
+// 
 METHOD PUBLIC FINAL StringNotEqual_fatal : BOOL
 VAR_INPUT
 	pExpected 	: StringHandle_t;
@@ -927,27 +508,9 @@ END_VAR
       </Implementation>
     </Method>
     <Method Name="strncmp" Id="{c5cf5079-398f-424e-9bbe-5c649c8eca2a}">
-      <Declaration><![CDATA[(******************************************************************************
-Baustein: FB_TestBase.strncmp
-Spezifikation: doc/Spezifikation.pdf, Kap. x.y.z
--------------------------------------------------------------------------------
-erstellt:
-von:
-Geändert:
-von:
--------------------------------------------------------------------------------
-Beschreibung
-Diese Methode
-
--------------------------------------------------------------------------------
-Input
-	strInput 	: StringHandle_t;
-	strCompare 	: StringHandle_t;
-	s16Size		: INT;
-
-Output
--
-******************************************************************************)
+      <Declaration><![CDATA[//
+// assert value is
+// 
 {attribute 'hide'} 
 METHOD PRIVATE FINAL strncmp : BOOL
 VAR_INPUT
@@ -994,26 +557,9 @@ END_VAR]]></Declaration>
       </Implementation>
     </Method>
     <Method Name="validate" Id="{4963d428-7a6a-46e4-92b4-91bfe12a5c16}">
-      <Declaration><![CDATA[(******************************************************************************
-Baustein: FB_TestBase.validate
-Spezifikation: doc/Spezifikation.pdf, Kap. x.y.z
--------------------------------------------------------------------------------
-erstellt:
-von:
-Geändert:
-von:
--------------------------------------------------------------------------------
-Beschreibung
-Diese Methode
-
--------------------------------------------------------------------------------
-Input
-	var1 : ANY;
-	var2 : ANY;
-
-Output
--
-******************************************************************************)
+      <Declaration><![CDATA[//
+// assert value is
+// 
 {attribute 'hide'} 
 METHOD PRIVATE FINAL validate : BOOL
 VAR_INPUT
