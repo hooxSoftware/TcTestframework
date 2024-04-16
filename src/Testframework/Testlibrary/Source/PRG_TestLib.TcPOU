@@ -65,7 +65,7 @@ END_VAR]]></Declaration>
 	EState_t.eStateInit:	
 		
 		IF i_bStart = FALSE THEN 
-		   logInfo('Testlib V2.2.1 Ready');
+		   logInfo('Testlib V2.2.2 Ready');
 			o_eState := EState_t.eStateIdle; 
 		END_IF
 

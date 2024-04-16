@@ -640,11 +640,6 @@ END_VAR
 ]]></Declaration>
         <Implementation>
           <ST><![CDATA[   
-	sResult.u32Time 	:= getTime();
-	sResult.eState  	:= o_eResult; 
-	sResult.u32Passed := assert.o_u32Passed;
-	sResult.u32Failed := assert.o_u32Failed;
-
 	CASE assert.o_eState OF
 	EAssertion_t.eStatePassed:
 		o_eResult := EResult_t.eStatePassed;
@@ -653,6 +648,11 @@ END_VAR
 	EAssertion_t.eStateFailedFatal:
 		o_eResult := EResult_t.eStateFailedFatal;
 	END_CASE;
+
+	sResult.u32Time 	:= getTime();
+	sResult.eState  	:= o_eResult; 
+	sResult.u32Passed := assert.o_u32Passed;
+	sResult.u32Failed := assert.o_u32Failed;
 
 	Result          	:= sResult;]]></ST>
         </Implementation>

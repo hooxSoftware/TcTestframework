@@ -148,7 +148,7 @@ END_VAR
 			
 			sStatistic.u32Executed := sStatistic.u32Executed + 1;	
 			  (* update Result *)
-			  sTestResult := iTest.Result;
+			sTestResult := iTest.Result;
 		
 			sStatistic.u32Passed 	:= sStatistic.u32Passed + sTestResult.u32Passed;
 			sStatistic.u32Failed 	:= sStatistic.u32Failed + sTestResult.u32Failed;
