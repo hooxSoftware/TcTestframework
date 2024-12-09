@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.13">
   <POU Name="FB_TestBase" Id="{77b52f8d-9a49-403a-aba1-80915f687878}" SpecialFunc="None">
     <Declaration><![CDATA[(******************************************************************************
 Baustein: FB_TestBase
@@ -22,9 +22,7 @@ Output
 	o_eResult: EResult_t;
 ******************************************************************************)
 FUNCTION_BLOCK FB_TestBase
-    IMPLEMENTS ITestBase_t
-VAR_INPUT
-END_VAR
+IMPLEMENTS ITestBase_t
 VAR_OUTPUT
 	o_eResult       : EResult_t;
 END_VAR
@@ -631,12 +629,10 @@ END_VAR
       </Implementation>
     </Method>
     <Property Name="Result" Id="{098c66a5-b85f-4544-bdc8-e9830f10d1fa}">
-      <Declaration><![CDATA[{warning 'Eigenschaftenimplementierung hinzufügen'}
-PROPERTY Result : STestcase_t
+      <Declaration><![CDATA[PROPERTY Result : STestcase_t
 ]]></Declaration>
       <Get Name="Get" Id="{74b42ec5-7997-4155-b252-215f59ff35a1}">
-        <Declaration><![CDATA[VAR
-END_VAR
+        <Declaration><![CDATA[
 ]]></Declaration>
         <Implementation>
           <ST><![CDATA[   
@@ -699,7 +695,8 @@ END_VAR
 ]]></Declaration>
       <Implementation>
         <ST><![CDATA[
-	IF o_eResult < EResult_t.eStateFailed THEN
+	IF o_eResult       < EResult_t.eStateFailed    AND 
+		assert.o_eState = EAssertion_t.eStatePassed THEN
 		strMessage := strValue;
 	END_IF;]]></ST>
       </Implementation>

@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.11">
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.13">
   <POU Name="FB_Assertion" Id="{be4e3f75-a80c-457d-8258-79ca47381125}" SpecialFunc="None">
     <Declaration><![CDATA[(******************************************************************************
 Baustein: FB_TestBase
@@ -23,15 +23,12 @@ Output
 	o_eResult: EResult_t;
 ******************************************************************************)
 FUNCTION_BLOCK FB_Assertion
-VAR_INPUT
-END_VAR
 VAR_OUTPUT
     o_eState    : EAssertion_t;
     o_u32Passed : UDINT;
     o_u32Failed : UDINT;
 END_VAR
-VAR
-END_VAR
+
 ]]></Declaration>
     <Implementation>
       <ST><![CDATA[
