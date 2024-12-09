@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.13">
   <POU Name="PRG_TestLib" Id="{dbeace52-75a3-4dfa-9955-9febf020e88e}" SpecialFunc="None">
     <Declaration><![CDATA[(******************************************************************************
 Baustein: PRG_TestLibrary
@@ -39,7 +39,7 @@ VAR
 	
 	a_iTestSuite 	: ARRAY [0..255] OF ITestSuite_t;
 	u16TestSuites 	: UINT;
-	u16Index	  	: UINT;
+	u16Index	  		: UINT;
 	iActTestSuite 	: ITestSuite_t;
 	pTestReport		: POINTER TO FB_TestReportBase;
 	eRetCode 		: ERetCode_t;
@@ -51,6 +51,11 @@ VAR
 	u16TestSuitIdx	: UINT;
 	iTestCase  		: ITestBase_t;
 	sTempResult     : SStatistic_t;
+	
+	xmlTestsuites	  	: FB_XmlTag;
+	xmlTestsuite	  	: FB_XmlTag;
+	xmlTest	  			: FB_XmlTag;
+	xmlTestResult		: FB_XmlTag;		
 END_VAR
 VAR CONSTANT 
 END_VAR]]></Declaration>
@@ -131,7 +136,7 @@ END_VAR]]></Declaration>
 			IF iActTestSuite <> 0 THEN
 				o_eState := EState_t.eStateExecute;
 			ELSE
-				o_eState := EState_t.eStateExport;
+				o_eState := EState_t.eStateBuildUnitTestFile;
 				logInfo('+++++++++++++ Test Ende ++++++++++++++');
 			END_IF		
 			
@@ -145,7 +150,7 @@ END_VAR]]></Declaration>
 		
 	EState_t.eStateBuildUnitTestFile:
 
-		IF createReport(EReporttype_t.eUnitTestReport) = ERetCode_t.eRetDone THEN
+		IF createReportnew(EReporttype_t.eUnitTestReport) = ERetCode_t.eRetDone THEN
 			o_eState := EState_t.eStateReady;
 		END_IF;
 		
@@ -253,8 +258,8 @@ END_VAR
 VAR
 	eRetcode    : ERetCode_t;
 	u32Temp     : UDINT;
-    sTestResult : STestcase_t;
-    sStatistic  : SStatistic_t;
+	sTestResult : STestcase_t;
+	sStatistic  : SStatistic_t;
 END_VAR
 ]]></Declaration>
       <Implementation>
@@ -422,6 +427,164 @@ END_VAR
 	END_CASE;
 
 	IF createReport = ERetCode_t.eRetDone THEN
+		u16ReportState := 0;
+	END_IF;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+(**)]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="createReportNew" Id="{5277f294-701a-4077-b3b8-a58ee9a3a84d}">
+      <Declaration><![CDATA[{attribute 'hide'} 
+METHOD PRIVATE createReportNew : ERetCode_t
+VAR_INPUT
+	i_eReporttype : EReportType_t;
+END_VAR
+VAR
+	eRetcode    : ERetCode_t;
+	u32Temp     : UDINT;
+	sTestResult : STestcase_t;
+	sStatistic  : SStatistic_t;
+	
+
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[
+	createReportNew := ERetCode_t.eRetBusy;
+
+	CASE u16ReportState OF
+
+	0: 
+		IF i_eReporttype = EReportType_t.eUnitTestReport THEN
+			u16ReportState := 20;
+		END_IF;
+		
+// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+//
+// Export Unittest Ergebnisse
+// 
+// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+	20:		
+
+		eRetcode := fbUnitTest.open(GVL_Parameter.strExportDirectory, 'Unittest.xml');
+
+		IF eRetcode = ERetCode_t.eRetDone THEN
+
+			u16ReportState := 21;
+
+		ELSIF eRetcode = ERetCode_t.eRetFailed THEN
+
+			logError('createReport Unittest.xml : Datei nicht geöffnet');
+			u16ReportState := 22;
+
+		END_IF;	
+
+	21:
+
+		u16TestSuitIdx := 0;
+
+		fbUnitTest.addString('<?xml version="1.0" ?>');
+		fbUnitTest.addCrlf();
+
+		iActTestSuite := getFirstTestSuite();
+		xmlTestsuites.create('testsuites').close();		
+
+		WHILE (iActTestSuite <> 0) DO
+
+         sStatistic	   := iActTestSuite.Result;
+			u16TestSuitIdx := u16TestSuitIdx+1;
+
+			xmlTestsuite.create('testsuite')
+							.AddAttribute('name', 		iActTestSuite.getId())
+							.AddAttribute('tests', 		UDINT_TO_STRING(sStatistic.u32TestCases))
+							.AddAttribute('disabled', 	UDINT_TO_STRING(sStatistic.u32TestCases-sStatistic.u32Executed))
+							.AddAttribute('errors', 	UDINT_TO_STRING(sStatistic.u32TestCases))
+							.AddAttribute('failures', 	UDINT_TO_STRING(sStatistic.u32Failed))
+							.AddAttribute('hostname', 	'')
+							.AddAttribute('id', 			UINT_TO_STRING(u16TestSuitIdx))
+							.AddAttribute('package', 	iActTestSuite.getPath())
+							.close();
+
+			iTestCase := iActTestSuite.getFirstTestCase();
+
+			WHILE (iTestCase <> 0) DO
+        
+            sTestResult := iTestCase.Result;
+				
+				xmlTest.create('testcase')			
+						.AddAttribute('name', 			iTestCase.getId())
+						.AddAttribute('assertions', 	UDINT_TO_STRING(sTestResult.u32Failed + sTestResult.u32Passed))
+						.AddAttribute('classname', 	iTestCase.getClassName())
+						.AddAttribute('time', 			UDINT_TO_STRING(sTestResult.u32Time))
+						.close();
+
+				CASE sTestResult.eState OF
+
+				EResult_t.eStatePassed :
+
+					xmlTestResult.create('passed');
+
+				EResult_t.eStateFailed, 
+				EResult_t.eStateFailedFatal :
+			
+					xmlTestResult.create('failure')
+									 .AddAttribute('message', iTestCase.getMessage());
+					
+				EResult_t.eStateSkipped:
+
+					xmlTestResult.create('skipped');
+
+				END_CASE;
+				
+				xmlTestResult.close();
+				
+				xmlTest.AddTag(xmlTestResult);					
+				xmlTestsuite.AddTag(xmlTest);
+
+				iTestCase := iActTestSuite.getNextTestCase();
+		
+			END_WHILE
+
+			xmlTestsuites.AddTag(xmlTestsuite);
+						
+			iActTestSuite := getNextTestSuite();
+
+		END_WHILE
+		
+		fbUnitTest.addObject(xmlTestsuites);
+
+		u16ReportState := 22;
+
+	22:
+		IF fbUnitTest.o_bOpen  = TRUE AND 
+		   fbUnitTest.o_bEmpty = TRUE THEN
+			fbUnitTest.close();
+		END_IF;
+
+		IF fbUnitTest.o_bOpen  = FALSE THEN
+			createReportNew 	:= ERetCode_t.eRetDone;
+		END_IF;
+
+	ELSE
+		createReportNew := ERetCode_t.eRetFailed;
+	END_CASE;
+
+	IF createReportNew = ERetCode_t.eRetDone THEN
 		u16ReportState := 0;
 	END_IF;
 

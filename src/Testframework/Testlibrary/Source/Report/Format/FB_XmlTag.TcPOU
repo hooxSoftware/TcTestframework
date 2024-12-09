@@ -1,0 +1,198 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.13">
+  <POU Name="FB_XmlTag" Id="{435a1a43-be26-45e9-bf2f-52130ac9a5eb}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION_BLOCK FB_XmlTag
+IMPLEMENTS IFileData_t
+VAR
+	strBuffer 		: STRING(1024);
+	strName   		: STRING;
+	u32Attributes 	: UDINT;
+	strTags 			: STRING(1024);
+	u32Tag 	      : UDINT;
+	eFormat  		: EXmlFormat_t;
+	strTemp 			: STRING(1024);
+	u32Size 			: UDINT;
+END_VAR
+
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[]]></ST>
+    </Implementation>
+    <Method Name="_len" Id="{a2a41ae4-c675-42fd-946c-5c7804ec3c78}">
+      <Declaration><![CDATA[METHOD PRIVATE _len : UDINT
+VAR_INPUT
+	pSrc 	 : POINTER TO BYTE;
+	u32Max : UDINT;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[	
+	_len := 0;
+
+	WHILE (pSrc^ <> 0 and _len < u32Max) DO
+		_len := _len+1;
+		pSrc := pSrc+1;
+	END_WHILE]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="AddAttribute" Id="{140ac930-2d25-4641-afc4-79046e2d66bd}">
+      <Declaration><![CDATA[METHOD PUBLIC AddAttribute : Reference to FB_XmlTag
+VAR_INPUT
+	strName  : STRING;
+	strValue : STRING;
+END_VAR
+VAR
+	strAttr  : STRING;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[
+	AddAttribute REF= THIS^;
+
+	strAttr := ' ';
+	strAttr := concat(strAttr, strName);
+	strAttr := concat(strAttr, '="');
+	strAttr := concat(strAttr, strValue);
+	strAttr := concat(strAttr, '"');
+	
+	strBuffer := concat(strBuffer, strAttr);
+	
+	u32Attributes := u32Attributes+1;
+	
+	calculateSize();]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="AddTag" Id="{62a2eb85-416d-4932-9fd1-77fea12fbae2}">
+      <Declaration><![CDATA[METHOD PUBLIC AddTag : BOOL
+VAR_INPUT
+	fbXml : FB_XmlTag;
+END_VAR
+VAR	
+	strTag : STRING(1024);
+END_VAR]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[
+	strTag 	 := fbXml.getXml();
+	strTags 	 := CONCAT(strTags, strTag);
+
+	
+	u32Tag := u32Tag + 1;
+	
+	
+	calculateSize();]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="calculateSize" Id="{3f2fe1a6-3eea-4b8a-bd3d-ce66fba523b3}">
+      <Declaration><![CDATA[METHOD PRIVATE calculateSize
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[
+	u32Size := to_udint(len(strBuffer) + len(strTags));]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="close" Id="{e7a98b51-483e-4989-b269-9d932ba59cc9}">
+      <Declaration><![CDATA[METHOD PUBLIC close : BOOL
+
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[
+	strBuffer := concat(strBuffer, '/>');
+
+]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="create" Id="{1da6bb30-6717-483e-99e9-ff8e61d03112}">
+      <Declaration><![CDATA[METHOD PUBLIC create : reference to FB_XmlTag
+VAR_INPUT
+	strValue : STRING;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[
+	create REF= THIS^;
+	
+	u32Attributes := 0;
+	u32Tag        := 0;
+	strName   	  := strValue;
+	strTags 		  := '';
+	strBuffer 	  := '<';
+	strBuffer 	  := concat(strBuffer, strName);	
+	
+	calculateSize();]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="getDataPtr" Id="{9ca8d591-3fdd-401d-b85c-918e151d4b1b}">
+      <Declaration><![CDATA[METHOD getDataPtr : POINTER TO BYTE
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[
+	getXml();
+	
+	getDataPtr := adr(strTemp);]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="getSize" Id="{d34997c0-dcbc-4d52-a11e-3c429e4e3731}">
+      <Declaration><![CDATA[METHOD getSize : UDINT
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[
+	getXml();
+
+	getSize := _len(ADR(strTemp), SIZEOF(strTemp));]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="getXml" Id="{1123ca17-ac7e-4c47-ba91-88666c27b61e}">
+      <Declaration><![CDATA[METHOD PUBLIC getXml : STRING(1024)
+VAR
+	u32Len    : UDINT;
+	pSrc 		 : POINTER TO BYTE;
+	pDst 		 : POINTER TO BYTE;
+	pTmp 		 : POINTER TO BYTE;
+	pTmp2 	 : POINTER TO BYTE;
+	strTagEnd : STRING;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[
+	pSrc := ADR(strBuffer);
+	pDst := ADR(strTemp);
+	u32Len := _len(ADR(strBuffer), SIZEOF(strBuffer));
+
+	MEMSET(pDst, 0, SIZEOF(strTemp));
+	MEMCPY(pDst, pSrc, u32Len);
+	pDst    := pDst + u32Len;
+			
+	IF u32Tag > 0 THEN
+		pTmp 	  := pDst-2;
+		pTmp2   := pTmp+1;
+		pTmp^   := pTmp2^;
+		pTmp2^  := 0;
+				
+		strTagEnd := '</';
+		strTagEnd := CONCAT(strTagEnd, strName);
+		strTagEnd := CONCAT(strTagEnd, '>');
+		
+		MEMCPY(pTmp2, ADR(strTags), len(strTags));
+		pTmp2 := pTmp2 + _len(ADR(strTags), SIZEOF(strTags));
+		MEMCPY(pTmp2, ADR(strTagEnd), len(strTagEnd));
+	END_IF;
+	
+	
+	getXml := strTemp;]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="setFormat" Id="{590e571a-d1ff-424e-b573-9329448ed4b9}">
+      <Declaration><![CDATA[METHOD PUBLIC setFormat : REFERENCE TO FB_XmlTag
+VAR_INPUT
+	eFormat : EXmlFormat_t;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[
+	setFormat REF= THIS^;
+	
+	this^.eFormat := eFormat;]]></ST>
+      </Implementation>
+    </Method>
+  </POU>
+</TcPlcObject>

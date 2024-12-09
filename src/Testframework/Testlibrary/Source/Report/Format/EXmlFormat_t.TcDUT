@@ -1,0 +1,14 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.13">
+  <DUT Name="EXmlFormat_t" Id="{91f8955e-84c6-433e-b538-797f9301380b}">
+    <Declaration><![CDATA[{attribute 'qualified_only'}
+{attribute 'strict'}
+TYPE EXmlFormat_t :
+(
+	ePlainXml := 0,
+	eStructuredXml
+);
+END_TYPE
+]]></Declaration>
+  </DUT>
+</TcPlcObject>

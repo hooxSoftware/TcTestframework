@@ -119,39 +119,48 @@
     <Compile Include="GVLs\GVL_Sample.TcGVL">
       <SubType>Code</SubType>
       <LinkAlways>true</LinkAlways>
-      <ExcludeFromBuild>true</ExcludeFromBuild>
+      <ExcludeFromBuild>false</ExcludeFromBuild>
     </Compile>
     <Compile Include="PlcTask.TcTTO">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Source\FB_Assertion.TcPOU">
+    <Compile Include="Source\Report\File\FB_CoverageFile.TcPOU">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Source\FB_Testsuite.TcPOU">
+    <Compile Include="Source\Report\File\FB_FileBase.TcPOU">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Source\FB_TestBase.TcPOU">
+    <Compile Include="Source\Report\File\FB_TestReportBase.TcPOU">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Source\ITestBase_t.TcIO">
+    <Compile Include="Source\Report\File\FB_TextReport.TcPOU">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Source\ITestsuite_t.TcIO">
+    <Compile Include="Source\Report\File\IFileData_t.TcIO">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Source\PRG_TestLib.TcPOU">
+    <Compile Include="Source\Report\Format\EXmlFormat_t.TcDUT">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Source\Report\FB_CoverageFile.TcPOU">
+    <Compile Include="Source\Report\Format\FB_XmlTag.TcPOU">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Source\Report\FB_TestReportBase.TcPOU">
+    <Compile Include="Source\Testlib\FB_Assertion.TcPOU">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Source\Report\FB_FileBase.TcPOU">
+    <Compile Include="Source\Testlib\PRG_TestLib.TcPOU">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Source\Report\FB_TextReport.TcPOU">
+    <Compile Include="Source\Testsuite\FB_Testsuite.TcPOU">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Source\Testsuite\ITestsuite_t.TcIO">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Source\TestBase\FB_TestBase.TcPOU">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Source\TestBase\ITestBase_t.TcIO">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Test\FB_Test_Base.TcPOU">
@@ -166,12 +175,20 @@
     <Compile Include="Test\FB_Test_Base_Delay.TcPOU">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Test\PRG_Temp.TcPOU">
+      <SubType>Code</SubType>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Datatypes" />
     <Folder Include="Datatypes\Report" />
     <Folder Include="GVLs" />
     <Folder Include="Source" />
+    <Folder Include="Source\Report\File" />
+    <Folder Include="Source\Report\Format" />
+    <Folder Include="Source\TestBase" />
+    <Folder Include="Source\Testsuite" />
+    <Folder Include="Source\Testlib" />
     <Folder Include="Source\Report" />
     <Folder Include="Test" />
   </ItemGroup>

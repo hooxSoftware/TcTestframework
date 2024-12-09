@@ -1,0 +1,60 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.13">
+  <POU Name="PRG_Temp" Id="{806ea42a-08ff-4016-b5d7-a487b82ad908}" SpecialFunc="None">
+    <Declaration><![CDATA[PROGRAM PRG_Temp
+VAR
+	xmlTag	  	: FB_XmlTag;
+	xmlPassed  	: FB_XmlTag;
+	xmlFailed  	: FB_XmlTag;
+	xmlSkipped 	: FB_XmlTag;
+	bTest 		: BOOL;
+	
+	
+	xmlTestsuites	  	: FB_XmlTag;
+	xmlTestsuite	  	: FB_XmlTag;
+	xmlTest	  			: FB_XmlTag;
+	xmlTestResult		: FB_XmlTag;
+	
+	xml : STRING(255);
+
+	a_iTestSuite 	: ARRAY [0..255] OF ITestSuite_t;
+	u16TestSuites 	: UINT;
+	u16Index	  	: UINT;
+	iActTestSuite 	: ITestSuite_t;
+	pTestReport		: POINTER TO FB_TestReportBase;
+	eRetCode 		: ERetCode_t;
+
+	fbSystemTime 	: FB_LocalSystemTime;
+	
+	fbUnittest 		: FB_CoverageFile;
+	u16ReportState  : UINT;
+	u16TestSuitIdx	: UINT;
+	iTestCase  		: ITestBase_t;
+	sTempResult     : SStatistic_t;
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[
+	IF bTest THEN
+		btest := FALSE;
+		xmlTag.create('Testcase')
+			.AddAttribute('name', 			'Testid 1')
+			.AddAttribute('assertions', 	'6')
+			.AddAttribute('classname', 	'ctest')
+			.AddAttribute('time', 			'0.100')
+			.close();
+			
+		xmlPassed.create('passed').close();
+		xmlFailed.create('failed').AddAttribute('message', 'quark').close();
+		xmlSkipped.create('skipped').close();	
+		
+		xmlTag.AddTag(xmlPassed);
+		xmlTag.AddTag(xmlSkipped);
+		
+		xml := xmlTag.getXml();
+		
+	END_IF
+	]]></ST>
+    </Implementation>
+  </POU>
+</TcPlcObject>
