@@ -48,8 +48,8 @@ END_VAR
 		xmlFailed.create('failed').AddAttribute('message', 'quark').close();
 		xmlSkipped.create('skipped').close();	
 		
-		xmlTag.AddTag(xmlPassed);
-		xmlTag.AddTag(xmlSkipped);
+		xmlTag.AddTag(xmlFailed);
+		
 		
 		xml := xmlTag.getXml();
 		

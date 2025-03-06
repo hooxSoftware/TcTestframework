@@ -6,35 +6,20 @@ IMPLEMENTS IFileData_t
 VAR
 	strBuffer 		: STRING(1024);
 	strName   		: STRING;
+	strTagEnd 		: STRING;
 	u32Attributes 	: UDINT;
 	strTags 			: STRING(1024);
 	u32Tag 	      : UDINT;
 	eFormat  		: EXmlFormat_t;
 	strTemp 			: STRING(1024);
 	u32Size 			: UDINT;
+	strCRLF   		: STRING := '$R$N';
 END_VAR
 
 ]]></Declaration>
     <Implementation>
       <ST><![CDATA[]]></ST>
     </Implementation>
-    <Method Name="_len" Id="{a2a41ae4-c675-42fd-946c-5c7804ec3c78}">
-      <Declaration><![CDATA[METHOD PRIVATE _len : UDINT
-VAR_INPUT
-	pSrc 	 : POINTER TO BYTE;
-	u32Max : UDINT;
-END_VAR
-]]></Declaration>
-      <Implementation>
-        <ST><![CDATA[	
-	_len := 0;
-
-	WHILE (pSrc^ <> 0 and _len < u32Max) DO
-		_len := _len+1;
-		pSrc := pSrc+1;
-	END_WHILE]]></ST>
-      </Implementation>
-    </Method>
     <Method Name="AddAttribute" Id="{140ac930-2d25-4641-afc4-79046e2d66bd}">
       <Declaration><![CDATA[METHOD PUBLIC AddAttribute : Reference to FB_XmlTag
 VAR_INPUT
@@ -73,12 +58,11 @@ END_VAR]]></Declaration>
       <Implementation>
         <ST><![CDATA[
 	strTag 	 := fbXml.getXml();
-	strTags 	 := CONCAT(strTags, strTag);
-
+	
+	_CONCAT(ADR(strTags), SIZEOF(strTags), ADR(strTag), SIZEOF(strTag));
 	
 	u32Tag := u32Tag + 1;
-	
-	
+		
 	calculateSize();]]></ST>
       </Implementation>
     </Method>
@@ -97,8 +81,18 @@ END_VAR]]></Declaration>
       <Implementation>
         <ST><![CDATA[
 	strBuffer := concat(strBuffer, '/>');
+	
+	IF eFormat = EXmlFormat_t.eStructuredXml THEN
+		_CONCAT(ADR(strBuffer), SIZEOF(strBuffer), ADR(strCRLF), SIZEOF(strCRLF));
+	END_IF	
 
-]]></ST>
+	strTagEnd := '</';
+	strTagEnd := CONCAT(strTagEnd, strName);
+	strTagEnd := CONCAT(strTagEnd, '>');	
+	
+	IF eFormat = EXmlFormat_t.eStructuredXml THEN
+		_CONCAT(ADR(strTagEnd), SIZEOF(strTagEnd), ADR(strCRLF), SIZEOF(strCRLF));
+	END_IF	]]></ST>
       </Implementation>
     </Method>
     <Method Name="create" Id="{1da6bb30-6717-483e-99e9-ff8e61d03112}">
@@ -117,6 +111,8 @@ END_VAR
 	strTags 		  := '';
 	strBuffer 	  := '<';
 	strBuffer 	  := concat(strBuffer, strName);	
+	
+
 	
 	calculateSize();]]></ST>
       </Implementation>
@@ -144,39 +140,26 @@ END_VAR
     <Method Name="getXml" Id="{1123ca17-ac7e-4c47-ba91-88666c27b61e}">
       <Declaration><![CDATA[METHOD PUBLIC getXml : STRING(1024)
 VAR
-	u32Len    : UDINT;
-	pSrc 		 : POINTER TO BYTE;
-	pDst 		 : POINTER TO BYTE;
-	pTmp 		 : POINTER TO BYTE;
-	pTmp2 	 : POINTER TO BYTE;
-	strTagEnd : STRING;
+	u32Len    : UDINT;	
 END_VAR
 ]]></Declaration>
       <Implementation>
         <ST><![CDATA[
-	pSrc := ADR(strBuffer);
-	pDst := ADR(strTemp);
 	u32Len := _len(ADR(strBuffer), SIZEOF(strBuffer));
 
-	MEMSET(pDst, 0, SIZEOF(strTemp));
-	MEMCPY(pDst, pSrc, u32Len);
-	pDst    := pDst + u32Len;
+	MEMSET(ADR(strTemp), 0, SIZEOF(strTemp));
+
+	_CONCAT(ADR(strTemp), SIZEOF(strTemp), ADR(strBuffer), SIZEOF(strBuffer));
 			
 	IF u32Tag > 0 THEN
-		pTmp 	  := pDst-2;
-		pTmp2   := pTmp+1;
-		pTmp^   := pTmp2^;
-		pTmp2^  := 0;
-				
-		strTagEnd := '</';
-		strTagEnd := CONCAT(strTagEnd, strName);
-		strTagEnd := CONCAT(strTagEnd, '>');
 		
-		MEMCPY(pTmp2, ADR(strTags), len(strTags));
-		pTmp2 := pTmp2 + _len(ADR(strTags), SIZEOF(strTags));
-		MEMCPY(pTmp2, ADR(strTagEnd), len(strTagEnd));
+		strTemp := DELETE(strTemp, 1, UDINT_TO_INT(u32Len-3));
+						
+		_CONCAT(ADR(strTemp), SIZEOF(strTemp), ADR(strTags), SIZEOF(strTags));
+		
+		_CONCAT(ADR(strTemp), SIZEOF(strTemp), ADR(strTagEnd), SIZEOF(strTagEnd));
+		
 	END_IF;
-	
 	
 	getXml := strTemp;]]></ST>
       </Implementation>

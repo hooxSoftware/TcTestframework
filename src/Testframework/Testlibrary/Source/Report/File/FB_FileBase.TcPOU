@@ -499,9 +499,9 @@ END_VAR
 	strFileName := i_strName;
 	strFilePath := i_strPath;
 
-	fbOpen.sPathName := CONCAT(strFilePath, strFileName);
-	fbOpen.nMode 	 := FOPEN_MODEWRITE OR FOPEN_MODEBINARY;	
-	fbOpen.bExecute  := TRUE;
+	fbOpen.sPathName 	:= CONCAT(strFilePath, strFileName);
+	fbOpen.nMode 	 	:= FOPEN_MODEWRITE OR FOPEN_MODEBINARY;	
+	fbOpen.bExecute  	:= TRUE;
 			
 	IF trgOpen.Q = TRUE THEN
 		o_bOpen := true;

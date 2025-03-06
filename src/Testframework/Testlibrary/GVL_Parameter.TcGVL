@@ -1,9 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<TcPlcObject Version="1.1.0.1">
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.13">
   <GVL Name="GVL_Parameter" Id="{06b1eece-8629-4f9e-b6a4-2d2d8f628d63}" ParameterList="True">
     <Declaration><![CDATA[{attribute 'qualified_only'}
 VAR_GLOBAL CONSTANT
-	strExportDirectory : STRING := 'C:\TwinCAT\3.1\Boot\CurrentConfig\';
+	strExportDirectory : STRING := 'C:\testresult\';
 END_VAR]]></Declaration>
   </GVL>
 </TcPlcObject>

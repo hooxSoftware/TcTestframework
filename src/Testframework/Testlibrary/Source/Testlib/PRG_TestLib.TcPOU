@@ -44,13 +44,14 @@ VAR
 	pTestReport		: POINTER TO FB_TestReportBase;
 	eRetCode 		: ERetCode_t;
 
-	fbSystemTime 	: FB_LocalSystemTime;
+	fbSystemTime 		: FB_LocalSystemTime;
 	
-	fbUnittest 		: FB_CoverageFile;
-	u16ReportState  : UINT;
-	u16TestSuitIdx	: UINT;
-	iTestCase  		: ITestBase_t;
-	sTempResult     : SStatistic_t;
+	fbExportFolder		: FB_CreateDir;
+	fbUnittest 			: FB_CoverageFile;
+	u16ReportState  	: UINT;
+	u16TestSuitIdx		: UINT;
+	iTestCase  			: ITestBase_t;
+	sTempResult     	: SStatistic_t;
 	
 	xmlTestsuites	  	: FB_XmlTag;
 	xmlTestsuite	  	: FB_XmlTag;
@@ -58,6 +59,8 @@ VAR
 	xmlTestResult		: FB_XmlTag;		
 END_VAR
 VAR CONSTANT 
+	ADSERR_DEVICE_ACCESSDENIED : UDINT := 16#723;
+	ADSERR_DEVICE_NOTFOUND     : UDINT := 16#70C;
 END_VAR]]></Declaration>
     <Implementation>
       <ST><![CDATA[
@@ -69,7 +72,7 @@ END_VAR]]></Declaration>
 	
 	EState_t.eStateInit:	
 		
-		IF i_bStart = FALSE THEN 
+		IF checkExportFolder() THEN 
 		   logInfo('Testlib V2.2.3 Ready');
 			o_eState := EState_t.eStateIdle; 
 		END_IF
@@ -247,6 +250,33 @@ END_VAR
 		
 		addTestSuite := TRUE;
 	END_IF]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="checkExportFolder" Id="{3970a4c1-81c0-43b5-92e1-35b07fa37074}">
+      <Declaration><![CDATA[// 
+// Lt. Infosys wird ADSERR_DEVICE_ACCESSDENIED zurückgegeben wenn der
+// Ordner bereits existiert. Das reicht an der Stelle um zu wissen das 
+// es soweit passt.
+{attribute 'hide'} 
+METHOD INTERNAL checkExportFolder : BOOL
+
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[
+	checkExportFolder := FALSE;
+	
+	fbExportFolder(sNetId 		:= '',
+						sPathName 	:= GVL_Parameter.strExportDirectory,
+						ePath 		:= E_OpenPath.PATH_GENERIC,
+						bExecute 	:= TRUE,
+						tTimeout 	:= T#5S);
+						
+	IF (fbExportFolder.bBusy  = FALSE) AND 
+		(fbExportFolder.bError = FALSE OR 
+			fbExportFolder.nErrId = ADSERR_DEVICE_ACCESSDENIED OR 
+			fbExportFolder.nErrId = ADSERR_DEVICE_NOTFOUND) THEN
+		checkExportFolder := true;
+	END_IF;	]]></ST>
       </Implementation>
     </Method>
     <Method Name="createReport" Id="{d9afc7ed-2e81-46b0-adaa-c3b998a94e06}">
@@ -501,8 +531,11 @@ END_VAR
 		fbUnitTest.addString('<?xml version="1.0" ?>');
 		fbUnitTest.addCrlf();
 
+		xmlTestsuites.create('testsuites')
+						 .setFormat(EXmlFormat_t.eStructuredXml)
+						 .close();	
+		
 		iActTestSuite := getFirstTestSuite();
-		xmlTestsuites.create('testsuites').close();		
 
 		WHILE (iActTestSuite <> 0) DO
 
@@ -510,6 +543,7 @@ END_VAR
 			u16TestSuitIdx := u16TestSuitIdx+1;
 
 			xmlTestsuite.create('testsuite')
+							.setFormat(EXmlFormat_t.eStructuredXml)
 							.AddAttribute('name', 		iActTestSuite.getId())
 							.AddAttribute('tests', 		UDINT_TO_STRING(sStatistic.u32TestCases))
 							.AddAttribute('disabled', 	UDINT_TO_STRING(sStatistic.u32TestCases-sStatistic.u32Executed))
@@ -527,6 +561,7 @@ END_VAR
             sTestResult := iTestCase.Result;
 				
 				xmlTest.create('testcase')			
+						.setFormat(EXmlFormat_t.eStructuredXml)
 						.AddAttribute('name', 			iTestCase.getId())
 						.AddAttribute('assertions', 	UDINT_TO_STRING(sTestResult.u32Failed + sTestResult.u32Passed))
 						.AddAttribute('classname', 	iTestCase.getClassName())
@@ -537,23 +572,28 @@ END_VAR
 
 				EResult_t.eStatePassed :
 
-					xmlTestResult.create('passed');
+					xmlTestResult.create('passed')
+									 .setFormat(EXmlFormat_t.eStructuredXml)
+								 	 .close();
 
 				EResult_t.eStateFailed, 
 				EResult_t.eStateFailedFatal :
 			
 					xmlTestResult.create('failure')
-									 .AddAttribute('message', iTestCase.getMessage());
+									 .setFormat(EXmlFormat_t.eStructuredXml)
+									 .AddAttribute('message', iTestCase.getMessage())
+									 .close();
 					
 				EResult_t.eStateSkipped:
 
-					xmlTestResult.create('skipped');
+					xmlTestResult.create('skipped')
+									 .setFormat(EXmlFormat_t.eStructuredXml)
+								 	 .close();
+
 
 				END_CASE;
 				
-				xmlTestResult.close();
-				
-				xmlTest.AddTag(xmlTestResult);					
+				xmlTest.AddTag(xmlTestResult);				 
 				xmlTestsuite.AddTag(xmlTest);
 
 				iTestCase := iActTestSuite.getNextTestCase();
