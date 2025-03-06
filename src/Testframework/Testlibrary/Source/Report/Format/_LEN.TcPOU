@@ -1,0 +1,21 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.13">
+  <POU Name="_LEN" Id="{49524f06-7335-4cbd-a109-2925dfa8cbc4}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION _LEN : UDINT
+VAR_INPUT
+	pSrc 	 : POINTER TO BYTE;
+	u32Max : UDINT;
+END_VAR
+
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[	
+	_len := 0;
+
+	WHILE (pSrc^ <> 0 and _len < u32Max) DO
+		_len := _len+1;
+		pSrc := pSrc+1;
+	END_WHILE]]></ST>
+    </Implementation>
+  </POU>
+</TcPlcObject>

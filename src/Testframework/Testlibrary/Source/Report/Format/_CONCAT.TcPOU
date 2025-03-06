@@ -1,0 +1,39 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.13">
+  <POU Name="_CONCAT" Id="{a068cb8d-c34f-44db-bcfa-c72657fc0b03}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION _CONCAT : BOOL
+VAR_INPUT
+	pDst 	 		: POINTER TO BYTE;
+	u32DstSize 	: UDINT;
+	pSrc 	 		: POINTER TO BYTE;
+	u32SrcSize 	: UDINT;
+END_VAR
+VAR
+	u32DstLen 	: UDINT;
+	u32SrcLen   : UDINT;
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[
+	_CONCAT := FALSE;
+	u32SrcLen  := _LEN(pSrc, u32SrcSize);
+	u32DstLen  := _LEN(pDst, u32DstSize);
+				
+	IF u32SrcLen + u32DstLen > (u32DstSize) THEN
+		RETURN;
+	END_IF
+	
+	pDst := pDst + u32DstLen;
+	 
+	MEMCPY(pDst, pSrc, u32SrcLen);
+	
+	pDst := pDst+u32SrcLen;
+	
+	pDst^ := 0;
+	
+	_CONCAT := TRUE;
+	
+	]]></ST>
+    </Implementation>
+  </POU>
+</TcPlcObject>

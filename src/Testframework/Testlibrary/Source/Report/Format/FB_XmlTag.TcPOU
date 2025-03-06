@@ -1,0 +1,181 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.13">
+  <POU Name="FB_XmlTag" Id="{435a1a43-be26-45e9-bf2f-52130ac9a5eb}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION_BLOCK FB_XmlTag
+IMPLEMENTS IFileData_t
+VAR
+	strBuffer 		: STRING(1024);
+	strName   		: STRING;
+	strTagEnd 		: STRING;
+	u32Attributes 	: UDINT;
+	strTags 			: STRING(1024);
+	u32Tag 	      : UDINT;
+	eFormat  		: EXmlFormat_t;
+	strTemp 			: STRING(1024);
+	u32Size 			: UDINT;
+	strCRLF   		: STRING := '$R$N';
+END_VAR
+
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[]]></ST>
+    </Implementation>
+    <Method Name="AddAttribute" Id="{140ac930-2d25-4641-afc4-79046e2d66bd}">
+      <Declaration><![CDATA[METHOD PUBLIC AddAttribute : Reference to FB_XmlTag
+VAR_INPUT
+	strName  : STRING;
+	strValue : STRING;
+END_VAR
+VAR
+	strAttr  : STRING;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[
+	AddAttribute REF= THIS^;
+
+	strAttr := ' ';
+	strAttr := concat(strAttr, strName);
+	strAttr := concat(strAttr, '="');
+	strAttr := concat(strAttr, strValue);
+	strAttr := concat(strAttr, '"');
+	
+	strBuffer := concat(strBuffer, strAttr);
+	
+	u32Attributes := u32Attributes+1;
+	
+	calculateSize();]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="AddTag" Id="{62a2eb85-416d-4932-9fd1-77fea12fbae2}">
+      <Declaration><![CDATA[METHOD PUBLIC AddTag : BOOL
+VAR_INPUT
+	fbXml : FB_XmlTag;
+END_VAR
+VAR	
+	strTag : STRING(1024);
+END_VAR]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[
+	strTag 	 := fbXml.getXml();
+	
+	_CONCAT(ADR(strTags), SIZEOF(strTags), ADR(strTag), SIZEOF(strTag));
+	
+	u32Tag := u32Tag + 1;
+		
+	calculateSize();]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="calculateSize" Id="{3f2fe1a6-3eea-4b8a-bd3d-ce66fba523b3}">
+      <Declaration><![CDATA[METHOD PRIVATE calculateSize
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[
+	u32Size := to_udint(len(strBuffer) + len(strTags));]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="close" Id="{e7a98b51-483e-4989-b269-9d932ba59cc9}">
+      <Declaration><![CDATA[METHOD PUBLIC close : BOOL
+
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[
+	strBuffer := concat(strBuffer, '/>');
+	
+	IF eFormat = EXmlFormat_t.eStructuredXml THEN
+		_CONCAT(ADR(strBuffer), SIZEOF(strBuffer), ADR(strCRLF), SIZEOF(strCRLF));
+	END_IF	
+
+	strTagEnd := '</';
+	strTagEnd := CONCAT(strTagEnd, strName);
+	strTagEnd := CONCAT(strTagEnd, '>');	
+	
+	IF eFormat = EXmlFormat_t.eStructuredXml THEN
+		_CONCAT(ADR(strTagEnd), SIZEOF(strTagEnd), ADR(strCRLF), SIZEOF(strCRLF));
+	END_IF	]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="create" Id="{1da6bb30-6717-483e-99e9-ff8e61d03112}">
+      <Declaration><![CDATA[METHOD PUBLIC create : reference to FB_XmlTag
+VAR_INPUT
+	strValue : STRING;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[
+	create REF= THIS^;
+	
+	u32Attributes := 0;
+	u32Tag        := 0;
+	strName   	  := strValue;
+	strTags 		  := '';
+	strBuffer 	  := '<';
+	strBuffer 	  := concat(strBuffer, strName);	
+	
+
+	
+	calculateSize();]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="getDataPtr" Id="{9ca8d591-3fdd-401d-b85c-918e151d4b1b}">
+      <Declaration><![CDATA[METHOD getDataPtr : POINTER TO BYTE
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[
+	getXml();
+	
+	getDataPtr := adr(strTemp);]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="getSize" Id="{d34997c0-dcbc-4d52-a11e-3c429e4e3731}">
+      <Declaration><![CDATA[METHOD getSize : UDINT
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[
+	getXml();
+
+	getSize := _len(ADR(strTemp), SIZEOF(strTemp));]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="getXml" Id="{1123ca17-ac7e-4c47-ba91-88666c27b61e}">
+      <Declaration><![CDATA[METHOD PUBLIC getXml : STRING(1024)
+VAR
+	u32Len    : UDINT;	
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[
+	u32Len := _len(ADR(strBuffer), SIZEOF(strBuffer));
+
+	MEMSET(ADR(strTemp), 0, SIZEOF(strTemp));
+
+	_CONCAT(ADR(strTemp), SIZEOF(strTemp), ADR(strBuffer), SIZEOF(strBuffer));
+			
+	IF u32Tag > 0 THEN
+		
+		strTemp := DELETE(strTemp, 1, UDINT_TO_INT(u32Len-3));
+						
+		_CONCAT(ADR(strTemp), SIZEOF(strTemp), ADR(strTags), SIZEOF(strTags));
+		
+		_CONCAT(ADR(strTemp), SIZEOF(strTemp), ADR(strTagEnd), SIZEOF(strTagEnd));
+		
+	END_IF;
+	
+	getXml := strTemp;]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="setFormat" Id="{590e571a-d1ff-424e-b573-9329448ed4b9}">
+      <Declaration><![CDATA[METHOD PUBLIC setFormat : REFERENCE TO FB_XmlTag
+VAR_INPUT
+	eFormat : EXmlFormat_t;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[
+	setFormat REF= THIS^;
+	
+	this^.eFormat := eFormat;]]></ST>
+      </Implementation>
+    </Method>
+  </POU>
+</TcPlcObject>

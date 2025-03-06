@@ -1,0 +1,18 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.13">
+  <Itf Name="IFileData_t" Id="{d3a5a00e-a1d7-415f-9d71-ec953fc53d9c}">
+    <Declaration><![CDATA[INTERFACE IFileData_t
+]]></Declaration>
+    <Method Name="getDataPtr" Id="{8ee49171-46d8-42d1-aff3-8925c0b66377}">
+      <Declaration><![CDATA[METHOD getDataPtr : POINTER TO BYTE
+
+]]></Declaration>
+    </Method>
+    <Method Name="getSize" Id="{191272b1-c804-462b-bc3e-038ca6fa97ef}">
+      <Declaration><![CDATA[METHOD getSize : UDINT
+VAR_INPUT
+END_VAR
+]]></Declaration>
+    </Method>
+  </Itf>
+</TcPlcObject>
