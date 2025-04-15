@@ -61,6 +61,7 @@ END_VAR
 VAR CONSTANT 
 	ADSERR_DEVICE_ACCESSDENIED : UDINT := 16#723;
 	ADSERR_DEVICE_NOTFOUND     : UDINT := 16#70C;
+	ADSERR_DEVICE_EXISTS     	: UDINT := 16#70F;
 END_VAR]]></Declaration>
     <Implementation>
       <ST><![CDATA[
@@ -73,7 +74,7 @@ END_VAR]]></Declaration>
 	EState_t.eStateInit:	
 		
 		IF checkExportFolder() THEN 
-		   logInfo('Testlib V2.2.3 Ready');
+		   logInfo('Testlib V2.2.5 Ready');
 			o_eState := EState_t.eStateIdle; 
 		END_IF
 
@@ -274,6 +275,7 @@ METHOD INTERNAL checkExportFolder : BOOL
 	IF (fbExportFolder.bBusy  = FALSE) AND 
 		(fbExportFolder.bError = FALSE OR 
 			fbExportFolder.nErrId = ADSERR_DEVICE_ACCESSDENIED OR 
+			fbExportFolder.nErrId = ADSERR_DEVICE_EXISTS 		OR 
 			fbExportFolder.nErrId = ADSERR_DEVICE_NOTFOUND) THEN
 		checkExportFolder := true;
 	END_IF;	]]></ST>
