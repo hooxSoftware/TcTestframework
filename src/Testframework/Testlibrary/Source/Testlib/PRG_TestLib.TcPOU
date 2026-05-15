@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.13">
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.15">
   <POU Name="PRG_TestLib" Id="{dbeace52-75a3-4dfa-9955-9febf020e88e}" SpecialFunc="None">
     <Declaration><![CDATA[(******************************************************************************
 Baustein: PRG_TestLibrary
@@ -74,7 +74,7 @@ END_VAR]]></Declaration>
 	EState_t.eStateInit:	
 		
 		IF checkExportFolder() THEN 
-		   logInfo('Testlib V2.2.5 Ready');
+		   logInfo('Testlib V2.2.6 Ready');
 			o_eState := EState_t.eStateIdle; 
 		END_IF
 
@@ -549,7 +549,7 @@ END_VAR
 							.AddAttribute('name', 		iActTestSuite.getId())
 							.AddAttribute('tests', 		UDINT_TO_STRING(sStatistic.u32TestCases))
 							.AddAttribute('disabled', 	UDINT_TO_STRING(sStatistic.u32TestCases-sStatistic.u32Executed))
-							.AddAttribute('errors', 	UDINT_TO_STRING(sStatistic.u32TestCases))
+							.AddAttribute('errors', 	UDINT_TO_STRING(0))
 							.AddAttribute('failures', 	UDINT_TO_STRING(sStatistic.u32Failed))
 							.AddAttribute('hostname', 	'')
 							.AddAttribute('id', 			UINT_TO_STRING(u16TestSuitIdx))

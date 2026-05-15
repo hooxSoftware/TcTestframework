@@ -13,7 +13,7 @@
 		</System>
 		<Plc>
 			<Project GUID="{AF5EA645-9F2E-4AE3-A77E-16FF20108CF1}" Name="Testlibrary" PrjFilePath="Testlibrary\Testlibrary.plcproj" TmcFilePath="Testlibrary\Testlibrary.tmc" ReloadTmc="true" AmsPort="851" FileArchiveSettings="#x000e" CopyTmcToTarget="true" CopyTpyToTarget="false" SymbolicMapping="true">
-				<Instance Id="#x08502000" TcSmClass="TComPlcObjDef" KeepUnrestoredLinks="2" TmcPath="Testlibrary\Testlibrary.tmc" TmcHash="{B99FD662-A19A-8C50-2F6B-58598D0B049A}">
+				<Instance Id="#x08502000" TcSmClass="TComPlcObjDef" KeepUnrestoredLinks="2" TmcPath="Testlibrary\Testlibrary.tmc" TmcHash="{8C8E153E-92CB-4AFC-87BF-87AE36033131}">
 					<Name>Testlibrary Instance</Name>
 					<CLSID ClassFactory="TcPlc30">{08500001-0000-0000-F000-000000000064}</CLSID>
 					<Vars VarGrpType="1">

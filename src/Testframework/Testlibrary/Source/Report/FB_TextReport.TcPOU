@@ -1,0 +1,180 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4022.18">
+  <POU Name="FB_TextReport" Id="{3b012d41-7e00-4335-8587-d56a2a32ec42}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION_BLOCK FB_TextReport EXTENDS FB_TestReportBase
+VAR_INPUT
+END_VAR
+VAR_OUTPUT
+END_VAR
+VAR
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[]]></ST>
+    </Implementation>
+    <Method Name="BuildFile" Id="{fc563d74-bc6f-4dab-994a-1845441da6c6}">
+      <Declaration><![CDATA[(******************************************************************************
+Baustein: FB_TestReportBase.BuildFile
+Spezifikation: doc/Spezifikation.pdf, Kap. x.y.z
+-------------------------------------------------------------------------------
+erstellt:
+von:
+Geändert:
+von:
+-------------------------------------------------------------------------------
+Beschreibung
+Diese Methode muss vom ableitenden Baustein überschrieben werden und
+wird von der Basisklasse aus aufgerufen wenn der Report erstellt werden
+soll.
+
+-------------------------------------------------------------------------------
+Input
+-
+
+Output
+-
+******************************************************************************)
+METHOD PROTECTED BuildFile : ERetCode_t
+VAR_INPUT
+	i_u32Line : UDINT;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[
+	BuildFile := ERetCode_t.eRetBusy;
+
+	CASE i_u32Line OF
+
+	0: addString('Test Report :');
+	   addDate(getTime());
+	   addString(' - ');
+	   addTime(getTime());
+	1: addString('++++++++++++++++++++++++++++++++++++++++++++++++++');
+	2: //
+	3: //
+
+	4: addString('Asserts gesamt: ');
+	   addValue(sStatistic.u32Asserts);
+
+	5: addString('Asserts passed: ');
+	   addValue(sStatistic.u32Passed);
+
+	6: addString('Asserts failed: ');
+	   addValue(sStatistic.u32Failed);
+
+	7: //
+
+	9:  addString('Ergebnis : ');
+		IF sStatistic.u32Failed > 0 THEN
+			addString('FAILED');
+		ELSE
+			addString('PASSED');
+		END_IF;
+
+	10: addString('++++++++++++++++++++++++++++++++++++++++++++++++++');
+	
+	99: BuildFile := ERetCode_t.eRetDone;
+
+	END_CASE;
+
+
+
+	]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="getFileName" Id="{781f0045-a5e7-4897-bc3c-2f4f70da5c1c}">
+      <Declaration><![CDATA[(******************************************************************************
+Baustein: FB_TestReportBase.getFileName
+Spezifikation: doc/Spezifikation.pdf, Kap. x.y.z
+-------------------------------------------------------------------------------
+erstellt:
+von:
+Geändert:
+von:
+-------------------------------------------------------------------------------
+Beschreibung
+Diese Methode muss vom ableitenden Baustein überschrieben werden und
+wird von der Basisklasse aus aufgerufen wenn der Report erstellt werden
+soll.
+
+-------------------------------------------------------------------------------
+Input
+-
+
+Output
+-
+******************************************************************************)
+METHOD PROTECTED getFileName : ERetCode_t
+VAR_INPUT
+	i_pFileName : NameHandle_t;
+	i_pPath		: PathHandle_t;
+END_VAR
+VAR
+	sTime : TIMESTRUCT;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[
+	i_pFileName^ := 'Exp_';
+	i_pPath^ 	 := 'C:\Users\Administrator\Desktop\TestResult\';
+
+	sTime := getTime();
+
+	i_pFileName^ := Concat(i_pFileName^, WORD_TO_STRING(sTime.wYear));
+	i_pFileName^ := Concat(i_pFileName^, DWORD_TO_DECSTR(sTime.wMonth, 2));
+	i_pFileName^ := Concat(i_pFileName^, DWORD_TO_DECSTR(sTime.wDay  , 2));
+	i_pFileName^ := Concat(i_pFileName^, '_');
+	i_pFileName^ := Concat(i_pFileName^, DWORD_TO_DECSTR(sTime.wHour  , 2));
+	i_pFileName^ := Concat(i_pFileName^, DWORD_TO_DECSTR(sTime.wMinute, 2));
+	i_pFileName^ := Concat(i_pFileName^, '.txt');]]></ST>
+      </Implementation>
+    </Method>
+    <LineIds Name="FB_TextReport">
+      <LineId Id="9" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_TextReport.BuildFile">
+      <LineId Id="55" Count="1" />
+      <LineId Id="43" Count="1" />
+      <LineId Id="46" Count="0" />
+      <LineId Id="45" Count="0" />
+      <LineId Id="36" Count="0" />
+      <LineId Id="82" Count="0" />
+      <LineId Id="81" Count="0" />
+      <LineId Id="38" Count="0" />
+      <LineId Id="32" Count="0" />
+      <LineId Id="73" Count="0" />
+      <LineId Id="62" Count="0" />
+      <LineId Id="61" Count="0" />
+      <LineId Id="31" Count="0" />
+      <LineId Id="64" Count="2" />
+      <LineId Id="68" Count="1" />
+      <LineId Id="67" Count="0" />
+      <LineId Id="70" Count="1" />
+      <LineId Id="74" Count="3" />
+      <LineId Id="79" Count="1" />
+      <LineId Id="78" Count="0" />
+      <LineId Id="63" Count="0" />
+      <LineId Id="40" Count="0" />
+      <LineId Id="35" Count="0" />
+      <LineId Id="54" Count="0" />
+      <LineId Id="57" Count="0" />
+      <LineId Id="49" Count="0" />
+      <LineId Id="51" Count="0" />
+      <LineId Id="50" Count="0" />
+      <LineId Id="34" Count="0" />
+      <LineId Id="30" Count="0" />
+    </LineIds>
+    <LineIds Name="FB_TextReport.getFileName">
+      <LineId Id="29" Count="0" />
+      <LineId Id="28" Count="0" />
+      <LineId Id="30" Count="0" />
+      <LineId Id="37" Count="0" />
+      <LineId Id="36" Count="0" />
+      <LineId Id="32" Count="0" />
+      <LineId Id="31" Count="0" />
+      <LineId Id="39" Count="1" />
+      <LineId Id="38" Count="0" />
+      <LineId Id="41" Count="2" />
+    </LineIds>
+  </POU>
+</TcPlcObject>
