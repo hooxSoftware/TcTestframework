@@ -1,0 +1,14 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+
+<Build	xmlns="https://hoox.software"
+		xmlns:xsi="https://www.w3.org/2001/XMLSchema-instance"
+		xsi:schemaLocation="https://hoox.software https://hoox.software/generator.xsd" Debug="0">
+
+    <Twincat library="1">
+        <Path>$WORKSPACE\\src</Path>
+		<Version>tcxae</Version>
+		<Export>$WORKSPACE</Export>
+    </Twincat>
+
+</Build>
+
