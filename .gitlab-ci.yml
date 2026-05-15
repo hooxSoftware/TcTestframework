@@ -28,7 +28,7 @@ build_Library:
   script:
     - $env:WORKSPACE = $CI_PROJECT_DIR
     - . $CI_GENERATOR $CI_PROJECT_DIR\test\library.xml
-      
+    - | 
       $library = Get-ChildItem -Path "$env:CI_PROJECT_DIR" -Filter "Testframework*.library" | Select-Object -First 1
 
       if ($library) 
