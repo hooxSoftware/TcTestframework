@@ -4,7 +4,6 @@ stages:          # List of stages for jobs, and their order of execution
   - package
 
 variables:
-  LASAL: 'C:\Program Files (x86)\Sigmatek\Lasal\Class2\Bin\Lasal2.exe'
   NSIS_EXE:  'C:\Program Files (x86)\NSIS\makensis.exe'
   EXPORT_PATH: 'C:\gitlab\Sccx'
   VS_PATH: 'C:\Program Files (x86)\Microsoft Visual Studio\2019'
@@ -38,9 +37,6 @@ build_installers:
       $NsiDir       = "$env:CI_PROJECT_DIR\nsis\Python\Installer"
       $env:WORKSPACE = $CI_PROJECT_DIR
       
-      Write-Host "Lock secret files!" -NoNewline
-      Start-Process -FilePath $env:LASAL -ArgumentList $skript -Wait
-      Write-Host " done" -ForegroundColor Green
       # ---- Sigmatek ----
       Write-Host "Building Beckhoff installer..."       
       
