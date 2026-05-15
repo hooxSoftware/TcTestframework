@@ -1,0 +1,64 @@
+
+stages:          # List of stages for jobs, and their order of execution
+  - build
+  - package
+
+variables:
+  LASAL: 'C:\Program Files (x86)\Sigmatek\Lasal\Class2\Bin\Lasal2.exe'
+  NSIS_EXE:  'C:\Program Files (x86)\NSIS\makensis.exe'
+  EXPORT_PATH: 'C:\gitlab\Sccx'
+  VS_PATH: 'C:\Program Files (x86)\Microsoft Visual Studio\2019'
+  NSIS_REPO: 'http://gitlab-ci-token:$CI_JOB_TOKEN@192.168.103.250:19081/hoox/sccx/1000_hooxpython.git'
+  
+build-sps:       # This job runs in the build stage of sps
+  stage: build
+  script:
+    - $env:WORKSPACE = $CI_PROJECT_DIR
+    - . $CI_GENERATOR $CI_PROJECT_DIR\test\build.xml
+  artifacts:
+    paths: 
+      - src/logfile.txt
+
+
+build_installers:
+  stage: package
+  tags:
+    - windows
+  needs:
+    - build-sps
+  rules:
+    - if: $CI_COMMIT_TAG =~ /^[vV]\d+\.\d+\.\d+(-RC\d+)?$/
+  script:
+    - |
+      git clone $env:NSIS_REPO nsis
+
+      $Version      = $env:CI_COMMIT_TAG
+      $BasePath     = "$env:CI_PROJECT_DIR"
+      $PythonPath   = "$env:CI_PROJECT_DIR\nsis\Python"
+      $NsiDir       = "$env:CI_PROJECT_DIR\nsis\Python\Installer"
+      $env:WORKSPACE = $CI_PROJECT_DIR
+      
+      Write-Host "Lock secret files!" -NoNewline
+      Start-Process -FilePath $env:LASAL -ArgumentList $skript -Wait
+      Write-Host " done" -ForegroundColor Green
+      # ---- Sigmatek ----
+      Write-Host "Building Beckhoff installer..."       
+      
+      & "$env:NSIS_EXE" `
+          "/DVersion=$Version" `
+          "/DBasePath=$BasePath" `
+          "/DPythonPath=$PythonPath" `
+          "$NsiDir\Beckhoff_Testframework.nsi"
+      if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+
+      $Src  = "$NsiDir\TC3_Testframework_$Version.exe"
+      $Dest = "$env:EXPORT_PATH\TC3_Testframework_$Version.exe"
+      Move-Item -Path $Src -Destination $Dest -Force
+      Write-Host "Beckhoff -> $Dest"
+
+      $Zip = "$env:EXPORT_PATH\TC3_Testframework_.zip"
+      if (Test-Path $Zip) { Remove-Item $Zip }
+      Compress-Archive -Path $Dest -DestinationPath $Zip
+      Write-Host "Beckhoff ZIP erstellt"
+      
+      
