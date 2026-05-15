@@ -27,7 +27,21 @@ build_Library:
   #  - if: $CI_COMMIT_TAG =~ /^[vV]\d+\.\d+\.\d+(-RC\d+)?$/
   script:
     - $env:WORKSPACE = $CI_PROJECT_DIR
-    - . $CI_GENERATOR $CI_PROJECT_DIR\test\library.xml     
+    - . $CI_GENERATOR $CI_PROJECT_DIR\test\library.xml
+      
+      $library = Get-ChildItem -Path "$env:CI_PROJECT_DIR" -Filter "Testframework*.library" | Select-Object -First 1
+
+      if ($library) 
+      {
+         Write-Host "Found: $($library.Name)"
+         Copy-Item $library.FullName "C:\gitlab\Sccx\$($library.Name)" -Force
+      } 
+      else 
+      {
+         Write-Host "##[error] Keine .library Datei gefunden!"
+         exit 1
+      }  
+      
   artifacts:
     paths: 
       - "TestFramework_*.library"
