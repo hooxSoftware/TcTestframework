@@ -6,6 +6,7 @@
 
     <Twincat build="1">
         <Path>$WORKSPACE\\src</Path>
+		<Version>tcxae</Version>
     </Twincat>
 
 </Build>
