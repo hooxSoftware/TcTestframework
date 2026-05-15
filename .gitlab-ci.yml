@@ -34,7 +34,7 @@ build_Library:
       if ($library) 
       {
          Write-Host "Found: $($library.Name)"
-         Copy-Item $library.FullName "C:\gitlab\Sccx\$($library.Name)" -Force
+         Copy-Item $library.FullName "$env:EXPORT_PATH\$($library.Name)" -Force
       } 
       else 
       {
