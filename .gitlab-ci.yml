@@ -30,7 +30,7 @@ build_Library:
     - . $CI_GENERATOR $CI_PROJECT_DIR\test\library.xml     
   artifacts:
     paths: 
-      - Testframework*.library
+      - "TestFramework_*.library"
 
 build_installers:
   stage: package
