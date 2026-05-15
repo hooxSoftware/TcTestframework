@@ -1,0 +1,22 @@
+Software-Lizenzvertrag
+
+Dieser Lizenzvertrag (der "Vertrag") ist ein rechtsgueltiger Vertrag zwischen Ihnen, dem Endbenutzer, und Patrick Dressel (dem "Autor") ueber die Nutzung dieses Softwareprodukts ("Software").
+Durch die Installation und/oder Nutzung der Software erklaeren Sie sich mit den Bedingungen dieses Vertrages einverstanden.
+Sie koennen die Software kostenlos herunterladen und nutzen.
+ 
+Beschraenkungen und Einschraenkungen
+
+Sie sind nicht berechtigt, die Software zu vermieten, zu verleasen oder zu verkaufen. 
+Sie duerfen die Software nicht zurueckentwickeln, dekompilieren oder disassemblieren.
+ 
+Geltendes Recht
+
+Diese Vereinbarung unterliegt den Gesetzen der Bundesrepublik Deutschland.
+Sollte ein Teil dieses Vertrages von einem zustaendigen Gericht fuer nicht durchsetzbar befunden werden, so hat dies keinen Einfluss auf die Durchsetzbarkeit der anderen Teile dieses Vertrages.
+ 
+Haftungsausschluss
+
+Die Software wird ohne Maengelgewaehr zur Verfuegung gestellt, und der Autor lehnt jede Gewaehrleistung in Bezug auf die Software ab, einschließlich aller stillschweigenden Gewaehrleistungen der Marktfaehigkeit und Eignung.
+In keinem Fall haftet der Autor fuer besondere, direkte, indirekte oder Folgeschaeden oder fuer Schaeden jeglicher Art, die aus Nutzungsausfall, Datenverlust oder entgangenem Gewinn resultieren, unabhaengig davon, ob es sich um eine Vertragsklage, Fahrlaessigkeit oder eine andere unerlaubte Handlung handelt, die aus oder in Verbindung mit der Nutzung oder Leistung der Software entstehen.
+ 
+
