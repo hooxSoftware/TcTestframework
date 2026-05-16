@@ -390,3 +390,4 @@ _Libraries/
 *.~*
 /hmi/generated
 src/Testframework/Testlibrary/LineIDs.dbg
+src/Logfile.txt
